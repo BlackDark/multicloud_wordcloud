@@ -50,8 +50,8 @@ function cloud(d3) {
         var start = Date.now();
         while (Date.now() - start < timeInterval && ++i < n && timer) {
           var d = data[i];
-          d.x = (size[0] * (random() + .5)) >> 1;
-          d.y = (size[1] * (random() + .5)) >> 1;
+            d.x = d.startX == undefined ? (size[0] * (random() + .5)) >> 1 : d.startX;
+            d.y = d.startY == undefined ? (size[1] * (random() + .5)) >> 1 : d.startY;
           cloudSprite(d, data, i);
           if (d.hasText && place(board, d, bounds)) {
             tags.push(d);
@@ -77,6 +77,10 @@ function cloud(d3) {
       }
       return cloud;
     };
+
+      function placeForce(board, tag, bounds) {
+
+      }
 
     function place(board, tag, bounds) {
       var perimeter = [{x: 0, y: 0}, {x: size[0], y: size[1]}],
