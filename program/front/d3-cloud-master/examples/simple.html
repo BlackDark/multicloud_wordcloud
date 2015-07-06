@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<head>
+  <style>
+
+    .link {
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
+  </style>
+</head>
 <body>
 <script src="d3/d3.js"></script>
 <script src="../d3.layout.cloud.js"></script>
@@ -91,6 +100,10 @@ var fill = d3.scale.category20();
       startY: 490
     }
   ];
+
+  var showOrigPos = true
+  var originalPosLink;
+
   var force = d3.layout.force();
 
   var tokens = getObjects(4);
@@ -119,15 +132,17 @@ var layout = d3.layout.cloud()
   }
 
 function draw(words) {
-  d3.select("body").append("svg")
+  var textElements = d3.select("body").append("svg")
       .attr("width", layout.size()[0])
       .attr("height", layout.size()[1])
     .append("g")
       .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
     .selectAll("text")
       .data(words)
-    .enter().append("text")
-      .style("font-size", function(d) { return d.size + "px"; })
+    .enter().append("text");
+
+
+      textElements.style("font-size", function(d) { return d.size + "px"; })
       .style("font-family", "Impact")
       .style("fill", function(d, i) { return fill(i); })
       .style("font-size", function(d) { return d.size + "px"; })
@@ -136,13 +151,49 @@ function draw(words) {
        //console.log("Tag: " + d.text + " | Start: " + [d.startX, d.startY] + " | Current: " + [d.x + layout.size()[0] / 2, d.y + layout.size()[1] / 2]);
         return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
       })
-      .text(function(d) { return d.text; });
+      .text(function(d) { return d.text; })
+
+  textElements.append("title")
+      .text(function(d) {
+        return "X: " + d.startX +
+                ", Y: " + d.startY;
+      });
+
+  originalPosLink = d3.select("body").select("svg").append("g");
+
+  textElements.each(function(d) {
+    drawOriginalPositionLink([d.startX, d.startY], [d.x + layout.size()[0] / 2, d.y + layout.size()[1] / 2]);
+  })
 }
+
+  function drawOriginalPositionLink(startXY, currentXY) {
+    console.log(startXY + " " + currentXY);
+
+    if(!showOrigPos) {
+      return;
+    }
+
+      originalPosLink.append("line")
+          .attr("class", "link")
+          .attr("x1", function (d) {
+            return startXY[0];
+          })
+          .attr("y1", function (d) {
+            return startXY[1];
+          })
+          .attr("x2", function (d) {
+            return currentXY[0];
+          })
+          .attr("y2", function (d) {
+            return currentXY[1];
+          });
+  }
 
 
   function getObjects(numberOfDocuments) {
     var text = "What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply. The question we ask today is not whether our government is too big or too small, but whether it works - whether it helps families find jobs at a decent wage, care they can afford, a retirement that is dignified. Where the answer is yes, we intend to move forward. Where the answer is no, programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely, reform bad habits, and do our business in the light of day - because only then can we restore the vital trust between a people and their government.	Nor is the question before us whether the market is a force for good or ill. Its power to generate wealth and expand freedom is unmatched, but this crisis has reminded us that without a watchful eye, the market can spin out of control - and that a nation cannot prosper long when it favors only the prosperous. The success of our economy has always depended not just on the size of our Gross Domestic Product, but on the reach of our prosperity; on the ability to extend opportunity to every willing heart - not out of charity, but because it is the surest route to our common good.";
 
+    var text = "Test1 Test2 Test3 Test4 Test5 Test6 Test7 Test8 Test9";
     var tokenArray = text.split(" ");
 
     var te = [];
