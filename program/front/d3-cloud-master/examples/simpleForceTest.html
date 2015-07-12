@@ -30,6 +30,10 @@
 			user-select: none;
 		}
 
+		rect.overlap {
+			fill: red;
+		}
+
 		text {
 		}
 
@@ -44,10 +48,16 @@
 </head>
 <body>
 <script src="d3/d3.js"></script>
+<script src="cola/cola.v3.min.js"></script>
 <script>(function () {
 
+	var drawWords = false;
 	var drawLinks = false;
 	var showOriginalPos = true;
+	var reduceLinkStrength = false;
+	var variableCharge = true;
+	var collisionRemovalTimes = 200;
+
 	var fill = d3.scale.category20();
 
 	var width = 960,
@@ -55,7 +65,11 @@
 
 	function testStrength(link, index) {
 		if (link.strength) {
-			return link.strength;
+			if(reduceLinkStrength) {
+				return link.strength - 0.05 < 0 ? 0 : link.strength - 0.05;
+			} else {
+				return link.strength;
+			}
 		}
 
 		return 0.1;
@@ -65,10 +79,18 @@
 			.size([width, height])
 			// Gravity removed for positioning only with links
 			//.gravity(0)
-			.charge(-50)
+			.charge(variableCharge ? chargeTest : -60)
 			.linkDistance(20)
 			.linkStrength(testStrength)
 			.on("tick", tick);
+
+	function chargeTest(theNode) {
+		if(theNode.width) {
+			return theNode.width * (-4);
+		}
+
+		return 0;
+	}
 
 	var drag = force.drag()
 			.on("dragstart", dragstart);
@@ -88,7 +110,7 @@
 
 	force.nodes(nodes)
 				.links(links)
-				.on("end", drawOriginalPositionLink)
+				.on("end", onEnd)
 				.start();
 
 	if (drawLinks) {
@@ -108,18 +130,31 @@
 						+ " End4: " + d.end4
 			});
 
-		node.append("text")
-				.style("font-family", "Impact")
-				.style("fill", function(d, i) { return fill(i); })
-				.attr("text-anchor", "middle")
-				.style("font-size", function(d) {
-					var size = Math.floor(Math.random() * 15 + 12);
-					return size + "px"; })
-				.text(function(d) {
-					return d.text;
-				})
-				.on("dblclick", dblclick)
-				.call(drag);
+
+	node.each(function(current) {
+		if (drawWords) {
+			d3.select(this).append("text")
+					.style("font-family", "Impact")
+					.style("fill", function(d, i) { return fill(i); })
+					.attr("text-anchor", "middle")
+					.style("font-size", function(d) {
+						var size = Math.floor(Math.random() * 15 + 12);
+						return size + "px"; })
+					.text(function(d) {
+						return d.text;
+					})
+					.on("dblclick", dblclick)
+					.call(drag);
+		} else {
+			current.rectContainer = d3.select(this).append("rect")
+					.attr("width", function (d) {
+						return d.width
+					})
+					.attr("height", function (d) {
+						return d.size
+					});
+		}
+	});
 
 	function tick() {
 		if (drawLinks) {
@@ -137,84 +172,108 @@
 					});
 		}
 
+		var q = d3.geom.quadtree(nodes),
+				i = 3,
+				n = nodes.length;
+
+		while (++i < n) {
+			q.visit(collide(nodes[i]));
+		}
+
 		node.attr("transform", function(d) {
 			return "translate(" + [d.x, d.y] + ")";
 		});
-		node.each(collide(.5));
 	}
 
-	// Resolves collisions between d and all other circles.
-	function collide(alpha) {
-		var quadtree = d3.geom.quadtree(nodes);
+	function hasOverlap(node, nodes) {
+		var overlap = false;
 
-		return function (d) {
+		nodes.forEach(function(checkNode){
+			if (checkNode && (checkNode !== node)) {
 
-			for(var i = 4; i < nodes.length; i++) {
-				if(nodes[i] === d) {
-					continue;
-				}
+				var x = node.x - checkNode.x,
+						y = node.y - checkNode.y,
+						xSpacing = (checkNode.width + node.width) / 2,
+						ySpacing = (checkNode.height + node.height) / 2,
+						absX = Math.abs(x),
+						absY = Math.abs(y);
 
-				if ( (d.x + d.textWidth / 2) > (nodes[i].x - nodes[i].textWidth / 2) &&
-						(d.x - d.textWidth / 2) < (nodes[i].x + nodes[i].textWidth / 2)) {
-					var xDif = (d.x + d.textWidth / 2) - (nodes[i].x - nodes[i].textWidth / 2) * alpha;
-					//d.x -= xDif / 2;
-					//nodes[i].x += xDif;
-					d.x -= 1;
-					nodes[i].x += 2;
+				if (absX < xSpacing && absY < ySpacing) {
+					overlap = true;
 				}
 			}
+		});
 
-			return;
+		return overlap;
+	}
 
+	// Collision not working that good
+	function collide(node) {
 
-					var nx1 = d.x - d.textWidth,
-					nx2 = d.x + d.textWidth,
-					ny1 = d.y - d.size,
-					ny2 = d.y + d.size;
-			quadtree.visit(function (quad, x1, y1, x2, y2) {
+		return function(quad, x1, y1, x2, y2) {
+			var updated = false;
+			if (quad.point && (quad.point !== node)) {
 
-				var col = true;
-				if (quad.point && (quad.point !== d)) {
-					if ( (d.x + d.textWidth / 2) > (quad.point.x - quad.point.textWidth / 2) &&
-							(d.x - d.textWidth / 2) < (quad.point.x + quad.point.textWidth / 2)) {
-						var xDif = (d.x + d.textWidth / 2) - (quad.point.x - quad.point.textWidth / 2) * alpha;
-						console.log(d.x + " " + quad.point.x + " " + xDif);
-						//d.x -= xDif / 2;
-						//quad.point.x += xDif;
-						d.x -= 1;
-						quad.point.x += 2;
-						console.log("TEST");
-						col = false;
+				var x = node.x - quad.point.x,
+						y = node.y - quad.point.y,
+						xSpacing = (quad.point.width + node.width) / 2,
+						ySpacing = (quad.point.height + node.height) / 2,
+						absX = Math.abs(x),
+						absY = Math.abs(y),
+						l,
+						lx,
+						ly;
+
+				if (absX < xSpacing && absY < ySpacing) {
+					l = Math.sqrt(x * x + y * y);
+
+					lx = (absX - xSpacing) / l;
+					ly = (absY - ySpacing) / l;
+
+					// the one that's barely within the bounds probably triggered the collision
+					if (Math.abs(lx) > Math.abs(ly)) {
+						lx = 0;
+					} else {
+						ly = 0;
 					}
 
-					if ( (d.x - d.textWidth / 2) > (quad.point.x + quad.point.textWidth / 2) &&
-							(d.x + d.textWidth / 2) < (quad.point.x - quad.point.textWidth / 2)) {
-						var xDif = (d.x + d.textWidth / 2) - (quad.point.x - quad.point.textWidth / 2) * alpha;
-						console.log(d.x + " " + quad.point.x + " " + xDif);
-						//d.x -= xDif / 2;
-						//quad.point.x += xDif;
-						d.x += 1;
-						quad.point.x -= 2;
-						col = false;
-					}
+					node.x -= x *= lx;
+					node.y -= y *= ly;
+					quad.point.x += x;
+					quad.point.y += y;
 
-					/*
-					var x = d.x - quad.point.x,
-							y = d.y - quad.point.y,
-							l = Math.sqrt(x * x + y * y),
-							r = d.x;
-					if (l < r) {
-						l = (l - r) / l * alpha;
-						d.x -= x *= l;
-						d.y -= y *= l;
-						quad.point.x += x;
-						quad.point.y += y;
-					}
-					*/
+					updated = true;
 				}
-				return col;
-			});
+			}
+			return updated;
 		};
+	}
+
+	function tryOverlapRemoval() {
+		for(var i = 0; i < collisionRemovalTimes; i++) {
+			var q = d3.geom.quadtree(nodes),
+					j = 3,
+					n = nodes.length;
+
+			while (++j < n) {
+				q.visit(collide(nodes[j]));
+			}
+		}
+	}
+
+	function onEnd(){
+		tryOverlapRemoval();
+		drawOriginalPositionLink();
+		markOverlapping();
+	}
+
+	// Not working correctly
+	function markOverlapping() {
+		for (var i = 4; i < nodes.length; i++) {
+			if(hasOverlap(nodes[i], nodes)) {
+				nodes[i].rectContainer.classed("overlap", true);
+			}
+		}
 	}
 
 	function drawOriginalPositionLink() {
@@ -263,9 +322,11 @@
 
 
 	function getObjects(numberOfDocuments) {
-		var text = "What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply. The question we ask today is not whether our government is too big or too small, but whether it works - whether it helps families find jobs at a decent wage, care they can afford, a retirement that is dignified. Where the answer is yes, we intend to move forward. Where the answer is no, programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely, reform bad habits, and do our business in the light of day - because only then can we restore the vital trust between a people and their government.	Nor is the question before us whether the market is a force for good or ill. Its power to generate wealth and expand freedom is unmatched, but this crisis has reminded us that without a watchful eye, the market can spin out of control - and that a nation cannot prosper long when it favors only the prosperous. The success of our economy has always depended not just on the size of our Gross Domestic Product, but on the reach of our prosperity; on the ability to extend opportunity to every willing heart - not out of charity, but because it is the surest route to our common good.";
+		var text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply. The question we ask today is not whether our government is too big or too small, but whether it works - whether it helps families find jobs at a decent wage, care they can afford, a retirement that is dignified. Where the answer is yes, we intend to move forward. Where the answer is no, programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely, reform bad habits, and do our business in the light of day - because only then can we restore the vital trust between a people and their government.	Nor is the question before us whether the market is a force for good or ill. Its power to generate wealth and expand freedom is unmatched, but this crisis has reminded us that without a watchful eye, the market can spin out of control - and that a nation cannot prosper long when it favors only the prosperous. The success of our economy has always depended not just on the size of our Gross Domestic Product, but on the reach of our prosperity; on the ability to extend opportunity to every willing heart - not out of charity, but because it is the surest route to our common good.";
 
 		var tokenArray = text.split(" ");
+
+		console.log(tokenArray.length + " words.");
 
 		var te = [];
 
@@ -316,11 +377,13 @@
 
 		tokenArray.forEach(function(entry) {
 			var distr = getRandomDistribution(4);
-
+			//var height = Math.floor(Math.random() * 30 + 12);
+			var height = 12;
 			objects.push({
 				text: entry,
-				textWidth: widthText(entry),
-				size: 12,
+				size: height,
+				width: widthText(entry),
+				height: height,
 				end1: distr[0],
 				end2: distr[1],
 				end3: distr[2],
@@ -414,7 +477,6 @@
 						.text(text),
 				w = document.getElementById("width-test").offsetWidth;
 		d.remove();
-		console.log(w);
 		return w;
 	}
 
