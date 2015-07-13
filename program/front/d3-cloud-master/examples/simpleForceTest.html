@@ -185,18 +185,133 @@
 		});
 	}
 
+	var bounds = {
+		x0: 0,
+		y0: 0,
+		x1: width,
+		y2: height
+	};
+
+	function isInBounds(node, boundingArea) {
+		return node.x >= boundingArea.x0 && node.y >= boundingArea.y0;
+	}
+
+	function hasCollision(node, area) {
+		return node.x < area.x + area.width &&
+				node.x + node.width > area.x &&
+				node.y < area.y + area.height &&
+				node.height + node.y > area.y;
+	}
+
+	function moveToTopLeft() {
+		var uncheckedNodes = boundsSortedNodes(nodes.slice(4, nodes.length));
+		var checkedNodes = [];
+		var restKnoten = [].concat(uncheckedNodes);
+		//uncheckedNodes = uncheckedNodes.slice(0, 1);
+
+		uncheckedNodes.forEach(function(currentNode) {
+			// Remove this node from other nodes
+			restKnoten = restKnoten.splice(1, restKnoten.length);
+
+			var movable = isInBounds(currentNode, bounds);
+
+			while(movable) {
+				var failMove = 0;
+
+				currentNode.x = currentNode.x - 2;
+
+				if(!isInBounds(currentNode, bounds) || testOverlap(currentNode, checkedNodes)) {
+					currentNode.x = currentNode.x + 2;
+					failMove++;
+				}
+
+				currentNode.y = currentNode.y - 2;
+
+				if(!isInBounds(currentNode, bounds) || testOverlap(currentNode, checkedNodes)) {
+					currentNode.y = currentNode.y + 2;
+					failMove++;
+				}
+
+				if (failMove === 2) {
+					movable = false;
+				}
+			}
+
+			checkedNodes.push(currentNode);
+			node.select(function(d){if(d.id === currentNode.id) { return this}}).transition()
+					.duration(750)
+					.delay(200 * checkedNodes.length)
+					.attr("transform", function(d) {
+						return "translate(" + [d.x, d.y] + ")";
+					})
+		});
+
+		// Moving the nodes flawlessy
+		/*
+		node.transition()
+				.duration(750)
+				.attr("transform", function(d) {
+			return "translate(" + [d.x, d.y] + ")";
+		});
+		*/
+	}
+
+	function boundsSortedNodes(nodesToSort) {
+		var unsortedArray = [].concat(nodesToSort);
+
+		// Sorting x,y pref of x => a.x - b.x || a.y - b.y
+
+		unsortedArray.sort(function(a, b) {
+			return Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2)) - Math.sqrt(Math.pow(b.x, 2) + Math.pow(b.y, 2));
+		});
+
+		return unsortedArray;
+	}
+
+	function printDistance(array){
+		var positions = [];
+
+		array.forEach(function(element) {
+			positions.push("[" + Math.round(Math.sqrt(Math.pow(element.x, 2) + Math.pow(element.y, 2))) + "]");
+		});
+
+		console.log(positions.toString());
+	}
+
+	function printXY(array) {
+		var positions = [];
+		array.forEach(function(element) {
+			positions.push("[" + element.x + "," + element.y + "]");
+		});
+
+		console.log(positions.toString());
+	}
+
+	function testOverlap(testNode, testArrayNodes) {
+		for(var i = 0; i < testArrayNodes.length; i++) {
+			if (testNode === testArrayNodes[i]) {
+				continue;
+			}
+
+			if(hasCollision(testNode, testArrayNodes[i])) {
+				console.log(testNode.x + " " + testNode.y + " || " + testArrayNodes[i].x + " " + testArrayNodes[i].y);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	function hasOverlap(node, nodes) {
 		var overlap = false;
 
 		nodes.forEach(function(checkNode){
 			if (checkNode && (checkNode !== node)) {
 
-				var x = node.x - checkNode.x,
-						y = node.y - checkNode.y,
-						xSpacing = (checkNode.width + node.width) / 2,
+				var xSpacing = (checkNode.width + node.width) / 2,
 						ySpacing = (checkNode.height + node.height) / 2,
-						absX = Math.abs(x),
-						absY = Math.abs(y);
+						absX = Math.abs(node.x - checkNode.x),
+						absY = Math.abs(node.y - checkNode.y);
 
 				if (absX < xSpacing && absY < ySpacing) {
 					overlap = true;
@@ -262,15 +377,15 @@
 	}
 
 	function onEnd(){
-		tryOverlapRemoval();
+		//tryOverlapRemoval();
+		moveToTopLeft();
 		drawOriginalPositionLink();
 		markOverlapping();
 	}
 
-	// Not working correctly
 	function markOverlapping() {
 		for (var i = 4; i < nodes.length; i++) {
-			if(hasOverlap(nodes[i], nodes)) {
+			if(testOverlap(nodes[i], nodes)) {
 				nodes[i].rectContainer.classed("overlap", true);
 			}
 		}
@@ -324,6 +439,8 @@
 	function getObjects(numberOfDocuments) {
 		var text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply. The question we ask today is not whether our government is too big or too small, but whether it works - whether it helps families find jobs at a decent wage, care they can afford, a retirement that is dignified. Where the answer is yes, we intend to move forward. Where the answer is no, programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely, reform bad habits, and do our business in the light of day - because only then can we restore the vital trust between a people and their government.	Nor is the question before us whether the market is a force for good or ill. Its power to generate wealth and expand freedom is unmatched, but this crisis has reminded us that without a watchful eye, the market can spin out of control - and that a nation cannot prosper long when it favors only the prosperous. The success of our economy has always depended not just on the size of our Gross Domestic Product, but on the reach of our prosperity; on the ability to extend opportunity to every willing heart - not out of charity, but because it is the surest route to our common good.";
 
+		var text = "Kleiner Test Text um die Wörter zu verschieben in gewünschte Richtung";
+		//var text = "Overlap Test";
 		var tokenArray = text.split(" ");
 
 		console.log(tokenArray.length + " words.");
