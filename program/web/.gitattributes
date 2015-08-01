@@ -1,0 +1,6 @@
+* text=auto !eol
+/.jshintignore -text
+/.jshintrc -text
+/package.json -text
+resources/neo4jVis.png -text
+resources/visExample.pptx -text

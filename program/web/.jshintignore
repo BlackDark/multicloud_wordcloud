@@ -1,0 +1,4 @@
+deploy
+Gruntfile.js
+node_modules/**
+src/js/lib/**
