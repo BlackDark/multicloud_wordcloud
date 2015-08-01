@@ -11,10 +11,9 @@
 		}
 
 		.node {
-			cursor: move;
-			fill: #ccc;
-			stroke: #000;
+			stroke: #fff;
 			stroke-width: 1.5px;
+			cursor: move;
 		}
 
 		.node.fixed {
@@ -49,13 +48,13 @@
 <body>
 <script src="d3/d3.js"></script>
 <script src="cola/cola.v3.min.js"></script>
-<script>(function () {
-
+<script>
 	var drawWords = false;
 	var drawLinks = false;
 	var showOriginalPos = true;
-	var reduceLinkStrength = false;
+	var reduceLinkStrength = true;
 	var variableCharge = true;
+	var forceActive = true;
 	var collisionRemovalTimes = 200;
 
 	var fill = d3.scale.category20();
@@ -110,8 +109,14 @@
 
 	force.nodes(nodes)
 				.links(links)
-				.on("end", onEnd)
-				.start();
+				.on("end", onEnd);
+
+	if(forceActive) {
+		force.start();
+	} else {
+		force.start();
+		force.alpha(0.01);
+	}
 
 	if (drawLinks) {
 		link = link.data(links)
@@ -124,6 +129,7 @@
 
 	node.append("title")
 			.text(function(d) {
+				return d.width;
 				return "End1: " + d.end1
 						+ " End2: " + d.end2
 						+ " End3: " + d.end3
@@ -133,26 +139,26 @@
 
 	node.each(function(current) {
 		if (drawWords) {
-			d3.select(this).append("text")
+			current.contentContainer = d3.select(this).append("text")
 					.style("font-family", "Impact")
 					.style("fill", function(d, i) { return fill(i); })
-					.attr("text-anchor", "middle")
+					//.attr("text-anchor", "middle")
 					.style("font-size", function(d) {
-						var size = Math.floor(Math.random() * 15 + 12);
-						return size + "px"; })
+						return d.size + "px"; })
 					.text(function(d) {
 						return d.text;
-					})
-					.on("dblclick", dblclick)
-					.call(drag);
+					});
+					current.contentContainer.on("dblclick", dblclick);
 		} else {
 			current.rectContainer = d3.select(this).append("rect")
+					.classed("node", true)
 					.attr("width", function (d) {
 						return d.width
 					})
 					.attr("height", function (d) {
 						return d.size
 					});
+			current.contentContainer = current.rectContainer;
 		}
 	});
 
@@ -172,6 +178,7 @@
 					});
 		}
 
+		/*
 		var q = d3.geom.quadtree(nodes),
 				i = 3,
 				n = nodes.length;
@@ -179,6 +186,7 @@
 		while (++i < n) {
 			q.visit(collide(nodes[i]));
 		}
+		*/
 
 		node.attr("transform", function(d) {
 			return "translate(" + [d.x, d.y] + ")";
@@ -240,7 +248,7 @@
 			checkedNodes.push(currentNode);
 			node.select(function(d){if(d.id === currentNode.id) { return this}}).transition()
 					.duration(750)
-					.delay(200 * checkedNodes.length)
+					.delay(10 * checkedNodes.length)
 					.attr("transform", function(d) {
 						return "translate(" + [d.x, d.y] + ")";
 					})
@@ -294,7 +302,6 @@
 			}
 
 			if(hasCollision(testNode, testArrayNodes[i])) {
-				console.log(testNode.x + " " + testNode.y + " || " + testArrayNodes[i].x + " " + testArrayNodes[i].y);
 				return true;
 			}
 		}
@@ -376,11 +383,38 @@
 		}
 	}
 
+	function applyColaJS() {
+		var colaForce = cola.d3adaptor()
+				.avoidOverlaps(true)
+				.size([width, height]);
+
+		colaForce.nodes(nodes)
+				.links(links);
+
+		colaForce.start();
+
+		nodes.forEach(function(element) {
+			element.contentContainer.call(colaForce.drag);
+		});
+
+		colaForce.on("tick", function () {
+			link.attr("x1", function (d) { return d.source.x; })
+					.attr("y1", function (d) { return d.source.y; })
+					.attr("x2", function (d) { return d.target.x; })
+					.attr("y2", function (d) { return d.target.y; });
+
+			node.attr("transform", function(d) {
+				return "translate(" + [d.x - d.width / 2, d.y - d.height / 2] + ")";
+			});
+		});
+	}
+
 	function onEnd(){
 		//tryOverlapRemoval();
-		moveToTopLeft();
-		drawOriginalPositionLink();
-		markOverlapping();
+		//moveToTopLeft();
+		//drawOriginalPositionLink();
+		//markOverlapping();
+		applyColaJS();
 	}
 
 	function markOverlapping() {
@@ -437,9 +471,10 @@
 
 
 	function getObjects(numberOfDocuments) {
-		var text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply. The question we ask today is not whether our government is too big or too small, but whether it works - whether it helps families find jobs at a decent wage, care they can afford, a retirement that is dignified. Where the answer is yes, we intend to move forward. Where the answer is no, programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely, reform bad habits, and do our business in the light of day - because only then can we restore the vital trust between a people and their government.	Nor is the question before us whether the market is a force for good or ill. Its power to generate wealth and expand freedom is unmatched, but this crisis has reminded us that without a watchful eye, the market can spin out of control - and that a nation cannot prosper long when it favors only the prosperous. The success of our economy has always depended not just on the size of our Gross Domestic Product, but on the reach of our prosperity; on the ability to extend opportunity to every willing heart - not out of charity, but because it is the surest route to our common good.";
+		//var text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply. The question we ask today is not whether our government is too big or too small, but whether it works - whether it helps families find jobs at a decent wage, care they can afford, a retirement that is dignified. Where the answer is yes, we intend to move forward. Where the answer is no, programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely, reform bad habits, and do our business in the light of day - because only then can we restore the vital trust between a people and their government.	Nor is the question before us whether the market is a force for good or ill. Its power to generate wealth and expand freedom is unmatched, but this crisis has reminded us that without a watchful eye, the market can spin out of control - and that a nation cannot prosper long when it favors only the prosperous. The success of our economy has always depended not just on the size of our Gross Domestic Product, but on the reach of our prosperity; on the ability to extend opportunity to every willing heart - not out of charity, but because it is the surest route to our common good.";
 
-		var text = "Kleiner Test Text um die Wörter zu verschieben in gewünschte Richtung";
+		var text = "Ungefähr 100 Wörter simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when";
+		//var text = "Kleiner Test Text um die Wörter zu verschieben in gewünschte Richtung";
 		//var text = "Overlap Test";
 		var tokenArray = text.split(" ");
 
@@ -494,12 +529,12 @@
 
 		tokenArray.forEach(function(entry) {
 			var distr = getRandomDistribution(4);
-			//var height = Math.floor(Math.random() * 30 + 12);
-			var height = 12;
+			var height = Math.floor(Math.random() * 30 + 12);
+			//var height = 12;
 			objects.push({
 				text: entry,
 				size: height,
-				width: widthText(entry),
+				width: widthText(entry, undefined, height),
 				height: height,
 				end1: distr[0],
 				end2: distr[1],
@@ -581,7 +616,7 @@
 		return newLinks;
 	}
 
-	function widthText(text, textStyle) {
+	function widthText(text, textStyle, size) {
 		// Set a default value
 		if (!textStyle) {
 			textStyle = "text";
@@ -591,10 +626,10 @@
 						.append("div")
 						.attr("class", textStyle)
 						.attr("id", "width-test") // tag this element to identify it
+						.style("font-size", size + "px")
 						.text(text),
 				w = document.getElementById("width-test").offsetWidth;
 		d.remove();
 		return w;
 	}
-
-})();</script>
+</script>
