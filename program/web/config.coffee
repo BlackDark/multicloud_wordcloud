@@ -5,10 +5,8 @@ exports.config =
   #buildPath: ''
 
   plugins:
-    ESbabel:
-      whitelist: ["arrowFunctions"]
-      format:
-        semicolons: false
+    babel:
+      ignore: [/(vendor|bower_components)/]
 
     jshint:
       pattern: /^app\/.*\.js$/
@@ -24,13 +22,9 @@ exports.config =
       defaultExtension: 'js'
       joinTo:
         'javascripts/app.js': /^app/
-        'javascripts/vendor.js': /^vendor/
+        'javascripts/vendor.js': /^(vendor|bower_components)/
         'test/javascripts/test.js': /^test(\/|\\)(?!vendor)/
         'test/javascripts/test-vendor.js': /^test(\/|\\)(?=vendor)/
-      order:
-        before: [
-          'node_modules/d3/d3.js'
-        ]
 
     stylesheets:
       defaultExtension: 'styl'
