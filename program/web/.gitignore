@@ -63,3 +63,4 @@
 src/js/lib
 /target
 /tmp
+/bower_components
