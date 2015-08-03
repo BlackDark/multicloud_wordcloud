@@ -1,0 +1,9 @@
+{
+  "name": "multi-document-wordcloud",
+  "version": "0.0.1",
+  "private": true,
+  "main": "public/javascripts/app.js",
+  "dependencies": {
+    "d3": "~3.5.6"
+  }
+}

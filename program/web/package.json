@@ -1,12 +1,11 @@
 {
-  "author": "Your Name",
-  "name": "package-name",
-  "description": "Package description",
+  "author": "Eduard Marbach",
+  "name": "multi-document-wordcloud",
+  "description": "Visualization for multiple documents via word cloud.",
   "version": "0.0.1",
-  "homepage": "",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/BlackDark/bachelor_wordcloud.git"
   },
   "engines": {
     "node": "~0.6.10 || 0.8 || 0.9"
@@ -18,10 +17,9 @@
   "dependencies": {
     "auto-reload-brunch": "1.4.0",
     "babel-brunch": "^5.1.2",
-    "babel-core": "^5.6.20",
+    "bower": "^1.4.1",
     "clean-css-brunch": ">= 1.0 < 1.5",
     "coffee-script-brunch": ">= 1.0 < 1.5",
-    "cola": "^0.1.7",
     "core-js": "^0.9.18",
     "css-brunch": ">= 1.0 < 1.5",
     "es6-module-transpiler-brunch": "0.0.6",
@@ -32,7 +30,6 @@
     "uglify-js-brunch": ">= 1.0 < 1.5"
   },
   "devDependencies": {
-    "d3": "3.5.5",
     "chai": "1.2.0",
     "sinon": "1.4.2",
     "sinon-chai": "2.1.2"
