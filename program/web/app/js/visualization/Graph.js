@@ -74,7 +74,7 @@ export default class Graph {
 		//this._moveToTopLeftCorner();
 		//this._drawOriginalPositionLink();
 		//this._markOverlapping();
-		//applyColaJS();
+		this._applyColaJSLayout();
 	}
 
 	_moveToTopLeftCorner() {
@@ -153,40 +153,37 @@ export default class Graph {
 	}
 
 	_applyColaJSLayout() {
-		//TODO
-		/*
-		 var colaForce = cola.d3adaptor()
-		 .avoidOverlaps(true)
-		 .size([width, height]);
+		var colaForce = cola.d3adaptor()
+			.avoidOverlaps(true)
+			.size([this._width, this._height]);
 
-		 colaForce.nodes(nodes)
-		 .links(links);
+		colaForce.nodes(this._textNodes)
+			.links(this._links);
 
-		 colaForce.start();
+		colaForce.start();
 
-		 nodes.forEach(function (element) {
-		 element.contentContainer.call(colaForce.drag);
-		 });
+		this._textNodes.forEach(function (element) {
+			element._container.call(colaForce.drag);
+		});
 
-		 colaForce.on("tick", function () {
-		 link.attr("x1", function (d) {
-		 return d.source.x;
-		 })
-		 .attr("y1", function (d) {
-		 return d.source.y;
-		 })
-		 .attr("x2", function (d) {
-		 return d.target.x;
-		 })
-		 .attr("y2", function (d) {
-		 return d.target.y;
-		 });
+		colaForce.on("tick", function () {
+			this._linkElements.attr("x1", function (d) {
+				return d.source.x;
+			})
+				.attr("y1", function (d) {
+					return d.source.y;
+				})
+				.attr("x2", function (d) {
+					return d.target.x;
+				})
+				.attr("y2", function (d) {
+					return d.target.y;
+				});
 
-		 node.attr("transform", function (d) {
-		 return "translate(" + [d.x - d.width / 2, d.y - d.height / 2] + ")";
-		 });
-		 });
-		 */
+			this._nodeElements.attr("transform", function (d) {
+				return "translate(" + [d.x - d.width / 2, d.y - d.height / 2] + ")";
+			});
+		}.bind(this));
 	}
 
 	_drawOriginalPositionLink() {
@@ -262,14 +259,14 @@ function tickForD3Force(link, node) {
 		}
 
 		/* TODO Collision detection removed
-		var q = d3.geom.quadtree(this._textNodes),
-			i = 3,
-			n = this._textNodes.length;
+		 var q = d3.geom.quadtree(this._textNodes),
+		 i = 3,
+		 n = this._textNodes.length;
 
-		while (++i < n) {
-			q.visit(CollisionModule.collide(this._textNodes[i]));
-		}
-		*/
+		 while (++i < n) {
+		 q.visit(CollisionModule.collide(this._textNodes[i]));
+		 }
+		 */
 
 
 		node.attr("transform", function (d) {
