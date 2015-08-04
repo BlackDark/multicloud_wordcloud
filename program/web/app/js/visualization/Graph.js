@@ -84,6 +84,7 @@ export default class Graph {
 		//this._moveToTopLeftCorner();
 		//this._drawOriginalPositionLink();
 		//this._markOverlapping();
+
 		this._applyColaJSLayout();
 	}
 
@@ -167,33 +168,107 @@ export default class Graph {
 			.avoidOverlaps(true)
 			.size([this._width, this._height]);
 
-		colaForce.nodes(this._textNodes)
-			.links(this._links);
+		let constraintsArray = [];
+		let offsetArray = [];
 
-		colaForce.start();
+		for(let i = 1; i < this._textNodes.length; i++) {
+			constraintsArray.push({
+				"axis": "x",
+				"left": this._endPointsNodes[0].id,
+				"right": i + this._endPointsNodes.length,
+				"gap": 5,
+				"equality": false
+			});
+
+			constraintsArray.push({
+				"axis": "x",
+				"right": this._endPointsNodes[1].id,
+				"left": i + this._endPointsNodes.length,
+				"gap": 5,
+				"equality": false
+			});
+
+			/*
+			constraintsArray.push({
+				"axis": "y",
+				"left": this._endPointsNodes[2].id,
+				"right": i + this._endPointsNodes.length,
+				"gap": 100
+			});
+
+			constraintsArray.push({
+				"axis": "y",
+				"right": this._endPointsNodes[0].id,
+				"left": i + this._endPointsNodes.length,
+				"gap": 100
+			});
+			*/
+		}
+
+		let constrainTest = [];
+
+		for(let i = 0; i < this._textNodes.length; i++) {
+			constrainTest.push(
+				{"axis": "x", "left": i, "right": 4 + i, "gap": 100, "equality": false});
+		}
+
+		colaForce.constraints(constraintsArray);
+
+		colaForce.nodes(this._endPointsNodes.concat(this._textNodes));
+
+		//colaForce.start();
+
+		d3.select("body").append("button")
+			.text("Restart colaForce")
+		.on("click", function() {
+				console.log(colaForce.nodes());
+				colaForce.start(10,10,10);
+			}.bind(this));
+
+		d3.select("body").append("button")
+			.text("Try circle")
+			.on("click", function() {
+				colaForce.links(this._getLinksForColaForce.call(this));
+				colaForce.start();
+			}.bind(this));
+
+		d3.select("body").append("button")
+			.text("Try distances")
+			.on("click", function() {
+				colaForce.links(this._links);
+				colaForce.linkDistance(function(link) {
+					return this._getLinkDistanceColaForce(link);
+				}.bind(this));
+				colaForce.start(10,10,10);
+			}.bind(this));
+
+		d3.select("body").append("button")
+			.text("Fire")
+			.on("click", function() {
+				this._textNodes.forEach(function(element) {
+					element.x += Math.random() * 8 - 4;
+					element.y += Math.random() * 8 - 4;
+				});
+				colaForce.start();
+			}.bind(this));
 
 		this._textNodes.forEach(function (element) {
 			element._container.call(colaForce.drag);
 		});
 
 		colaForce.on("tick", function () {
-			this._linkElements.attr("x1", function (d) {
-				return d.source.x;
-			})
-				.attr("y1", function (d) {
-					return d.source.y;
-				})
-				.attr("x2", function (d) {
-					return d.target.x;
-				})
-				.attr("y2", function (d) {
-					return d.target.y;
+			if(this.config.drawLinksColaForce) {
+				this._linkElements.selectAll("path").attr("d", function(link){
+					return linkPathFunction([link.source, link.target]);
 				});
+			}
 
 			this._nodeElements.attr("transform", function (d) {
 				return "translate(" + [d.x - d.width / 2, d.y - d.height / 2] + ")";
 			});
 		}.bind(this));
+
+		colaForce.on("end", this._markOverlapping.bind(this));
 	}
 
 	_drawOriginalPositionLink() {
