@@ -4,14 +4,14 @@ import SampleDataGenerator from "js/visualization/util/SampleDataGenerator";
 
 var graphContainerSelector = "#graph";
 var selectedGraph = d3.select(graphContainerSelector);
-var width = selectedGraph.property("offsetWidth");
+var width = selectedGraph.property("offsetWidth") - 500;
 var height = selectedGraph.property("offsetHeight");
 var graph = new GraphVisualization(graphContainerSelector);
 graph.resize(width, height);
 
 console.log([width, height]);
 
-var generator = new SampleDataGenerator(4, 100, width, height);
+var generator = new SampleDataGenerator(4, 50, width, height);
 generator.generateObjects();
 var data = Parser.parse({
 	endpoints: generator.endPoints,
