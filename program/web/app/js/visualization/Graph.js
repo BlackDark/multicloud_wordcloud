@@ -11,6 +11,7 @@ export default class Graph {
 		this._linkContainer = this._container.append("g");
 		this._originalPositionLinkContainer = this._container.append("g");
 		this._nodeContainer = this._container.append("g");
+		this._endPointContainer = this._container.append("g");
 
 		this._force = new ForceLayout(this);
 	}
@@ -59,6 +60,15 @@ export default class Graph {
 		this._linkElements.enter().append("g").classed("link", true)
 			.each(function (link) {
 				return link.draw(d3.select(this));
+			});
+
+		this._endPointElements = this._endPointContainer.selectAll(".endpoint")
+			.data(this._endPointsNodes, d => d.id);
+			this._endPointElements.exit().remove();
+
+		this._endPointElements.enter().append("g").classed("endpoint", true)
+			.each(function (node) {
+				node.draw(d3.select(this));
 			});
 	}
 
