@@ -10,8 +10,6 @@ export default class EndPointElement extends BaseElement {
 
 		container.append("circle")
 			.classed("endpoint", true)
-			.attr("r", 10)
-			.attr("cx", this.x)
-			.attr("cy", this.y);
+			.attr("r", 10);
 	}
 }

@@ -69,6 +69,7 @@ export default class Graph {
 		this._endPointElements.enter().append("g").classed("endpoint", true)
 			.each(function (node) {
 				node.draw(d3.select(this));
+				node._container.attr("transform", "translate(" + [node.x, node.y] + ")");
 			});
 	}
 
@@ -84,7 +85,6 @@ export default class Graph {
 		//this._moveToTopLeftCorner();
 		//this._drawOriginalPositionLink();
 		//this._markOverlapping();
-
 		this._applyColaJSLayout();
 	}
 
