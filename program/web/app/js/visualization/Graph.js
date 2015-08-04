@@ -80,7 +80,7 @@ export default class Graph {
 		this._force.changeCharge(chargeForD3Force());
 		this._force.onEnd(this._d3EndFunction.bind(this));
 
-		this._endPointElements.call(DragBehaviour.create(this));
+		this._endPointElements.call(DragBehaviour.create(this, this._force));
 		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
 	}
 
@@ -168,9 +168,13 @@ export default class Graph {
 	}
 
 	_applyColaJSLayout() {
+		this._removeD3States();
+
 		var colaForce = cola.d3adaptor()
 			.avoidOverlaps(true)
 			.size([this._width, this._height]);
+
+		this._endPointElements.call(DragBehaviour.create(this, colaForce));
 
 		let constraintsArray = [];
 		let offsetArray = [];
@@ -272,7 +276,7 @@ export default class Graph {
 			});
 		}.bind(this));
 
-		colaForce.on("end", this._markOverlapping.bind(this));
+		//colaForce.on("end", this._markOverlapping.bind(this));
 	}
 
 	_drawOriginalPositionLink() {
@@ -325,6 +329,10 @@ export default class Graph {
 		var number = 20 / link.strength;
 		console.log(number);
 		return number;
+	}
+
+	_removeD3States() {
+		this._endPointElements.each(element => element._container.on(".drag", null));
 	}
 }
 

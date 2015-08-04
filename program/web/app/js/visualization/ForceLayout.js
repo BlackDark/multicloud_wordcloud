@@ -8,6 +8,10 @@ export default class ForceLayout {
 		this._force.start();
 	}
 
+	resume() {
+		this._force.resume();
+	}
+
 	nodes(nodes) {
 		this._force.nodes(nodes);
 	}
