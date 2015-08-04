@@ -7,4 +7,69 @@ export default class BaseElement {
 	draw(container) {
 		this._container = container;
 	}
+
+	addMouseListener(type, method) {
+		this._container.on(type, method.bind(this));
+	}
+
+	removeMouseListener(type) {
+		this._container.on(type, null);
+	}
+
+	addDefaultMouseListener() {
+		this.addMouseListener(BaseElement.onMouseDownType, this.onMouseDown);
+	}
+
+	onMouseOver() {
+	}
+
+	onMouseOut() {
+	}
+
+	onMouseUp() {
+		this.removeMouseListener(BaseElement.onMouseMove);
+		this.removeMouseListener(BaseElement.onMouseUp);
+	}
+
+	onMouseDown() {
+		this.addMouseListener(BaseElement.onMouseUpType, this.onMouseUp);
+		this.addMouseListener(BaseElement.onMouseMoveType, this.onMouseMove);
+		d3.event.preventDefault();
+	}
+
+	// Not working
+	onMouseMove() {
+		var pos = d3.mouse(this._container.node());
+		this._container.attr("transform", "translate(" + [this.x, this.y] + ")");
+	}
+
+	static get onMouseDownType() {
+		return "mousedown";
+	}
+
+	static get onMouseUpType() {
+		return "mouseup";
+	}
+
+	static get onMouseMoveType() {
+		return "mousemove";
+	}
+
+	static get onMouseOverType() {
+		return "mouseover";
+	}
+
+	static get onMouseOutType() {
+		return "mouseout";
+	}
+
+	hover (hovering) {
+		// Implement in subclasses!
+	}
+
+	static addToolTip(elementSelection, tooltip) {
+		if (tooltip) {
+			elementSelection.append("title").text(tooltip);
+		}
+	}
 }
