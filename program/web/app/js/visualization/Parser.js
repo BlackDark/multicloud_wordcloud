@@ -1,12 +1,13 @@
 import BaseElement from "js/visualization/elements/BaseElement";
 import RectElement from "js/visualization/elements/RectElement";
+import EndPointElement from "js/visualization/elements/EndPointElement";
 import NormalLink from "js/visualization/elements/edge/NormalLink";
 
 function mapEndPoints(rawEndPoints) {
 	var nodes = [];
 
 	rawEndPoints.forEach(function (element) {
-		let currentEndpoint = new BaseElement(element.id);
+		let currentEndpoint = new EndPointElement(element.id);
 		currentEndpoint.x = element.x;
 		currentEndpoint.y = element.y;
 		currentEndpoint.fixed = element.fixed;
@@ -66,6 +67,8 @@ export default class Parser {
 		var endPoints = mapEndPoints(data.endpoints || []);
 		var textObjects = mapTextObjects(data.textObjects || []);
 		var links = mapLinks(data.links || []);
+
+		replaceIdsWithReferences(endPoints.concat(textObjects), links);
 
 		return {
 			endPoints: endPoints,
