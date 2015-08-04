@@ -73,7 +73,7 @@ export default class Graph {
 	}
 
 	_configureGraph() {
-		this._force.tick(tickForD3Force.call(this, undefined, this._nodeElements));
+		this._force.tick(tickForD3Force.call(this, this._linkElements, this._nodeElements));
 		this._force.changeLinkStrength(linkstrengthForD3Force());
 		this._force.changeCharge(chargeForD3Force());
 		this._force.onEnd(this._d3EndFunction.bind(this));
@@ -237,6 +237,16 @@ export default class Graph {
 			}
 		}.bind(this));
 	}
+
+	_getLinksForColaForce() {
+		return this._links;
+	}
+
+	_getLinkDistanceColaForce(link) {
+		var number = 20 / link.strength;
+		console.log(number);
+		return number;
+	}
 }
 
 function boundsSortedNodes(nodesToSort) {
@@ -253,19 +263,10 @@ function boundsSortedNodes(nodesToSort) {
 
 function tickForD3Force(link, node) {
 	return function () {
-		if (link) {
-			link.attr("x1", function (d) {
-				return d.source.x;
-			})
-				.attr("y1", function (d) {
-					return d.source.y;
-				})
-				.attr("x2", function (d) {
-					return d.target.x;
-				})
-				.attr("y2", function (d) {
-					return d.target.y;
-				});
+		if (this.config.drawLinksD3Force) {
+			link.selectAll("path").attr("d", function(link){
+				return linkPathFunction([link.source, link.target]);
+			});
 		}
 
 		/* TODO Collision detection removed
@@ -283,6 +284,19 @@ function tickForD3Force(link, node) {
 			return "translate(" + [d.x, d.y] + ")";
 		});
 	}.bind(this);
+}
+
+function linkPathFunction(arrayOfNodes) {
+
+	let lineFunction = d3.svg.line()
+		.x(function (d) {
+			return d.x;
+		})
+		.y(function (d) {
+			return d.y;
+		});
+
+	return lineFunction(arrayOfNodes);
 }
 
 function linkstrengthForD3Force() {
