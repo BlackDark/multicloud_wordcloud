@@ -7,5 +7,7 @@ export default class NormalLink extends BaseElement{
 
 	draw(container) {
 		super.draw(container);
+
+		container.append("path");
 	}
 }

@@ -10,6 +10,7 @@ export default class RectElement extends BaseElement {
 
 		container.append("rect")
 			.classed("node", true)
+			.classed("rectTest", true)
 			.attr("width", function (d) {
 				return d.width
 			})
