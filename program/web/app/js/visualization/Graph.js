@@ -2,6 +2,7 @@ import ForceLayout from "./ForceLayout";
 import SampleDataGenerator from "js/visualization/util/SampleDataGenerator";
 import CollisionModule from "js/visualization/CollisionModule";
 import DebugConfig from "js/visualization/DebugConfig";
+import DragBehaviour from "js/visualization/DragBehaviour";
 
 export default class Graph {
 	constructor(containerSelector) {
@@ -78,6 +79,9 @@ export default class Graph {
 		this._force.changeLinkStrength(linkstrengthForD3Force());
 		this._force.changeCharge(chargeForD3Force());
 		this._force.onEnd(this._d3EndFunction.bind(this));
+
+		this._endPointElements.call(DragBehaviour.create(this));
+		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
 	}
 
 	_d3EndFunction() {
