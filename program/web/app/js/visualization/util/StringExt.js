@@ -2,7 +2,7 @@ export default class StringExt {
 	static widthText(text, textStyle, size) {
 		// Set a default value
 		if (!textStyle) {
-			textStyle = "text";
+			textStyle = "textForWidth";
 		}
 
 		var d = d3.select("body")

@@ -45,7 +45,12 @@
 	fill: white;
 }
 
-.text {
+.word-text {
+	dominant-baseline: hanging;
+	pointer-events: none;
+}
+
+.textForWidth {
 	text-anchor: middle;
 	dominant-baseline: central;
 
