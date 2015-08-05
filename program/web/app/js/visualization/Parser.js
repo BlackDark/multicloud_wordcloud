@@ -1,5 +1,6 @@
 import BaseElement from "js/visualization/elements/BaseElement";
 import RectElement from "js/visualization/elements/RectElement";
+import WordElement from "js/visualization/elements/WordElement";
 import EndPointElement from "js/visualization/elements/EndPointElement";
 import NormalLink from "js/visualization/elements/edge/NormalLink";
 
@@ -22,7 +23,7 @@ function mapTextObjects(rawTextObjects) {
 	var nodes = [];
 
 	rawTextObjects.forEach(function (element) {
-		let currentTextObject = new RectElement(element.id);
+		let currentTextObject = new WordElement(element.id);
 		currentTextObject.text = element.text;
 		currentTextObject.size = element.size;
 		currentTextObject.width = element.width;
