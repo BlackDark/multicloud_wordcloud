@@ -80,7 +80,10 @@ export default class Graph {
 		this._force.changeCharge(chargeForD3Force());
 		this._force.onEnd(this._d3EndFunction.bind(this));
 
-		this._endPointElements.call(DragBehaviour.create(this, this._force));
+		this._endPointElements.call(function() {
+			let dragging = new DragBehaviour(this, this._force);
+			return dragging.dragBehaviour
+		}.bind(this)());
 		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
 	}
 
@@ -174,7 +177,11 @@ export default class Graph {
 			.avoidOverlaps(true)
 			.size([this._width, this._height]);
 
-		this._endPointElements.call(DragBehaviour.create(this, colaForce));
+		this._endPointElements.call(function() {
+			let dragging = new DragBehaviour(this, colaForce);
+			dragging.changeDragFunction(dragging.getMoveNodesBoxWise(this._endPointsNodes));
+			return dragging.dragBehaviour
+		}.bind(this)());
 
 		let constraintsArray = [];
 		let offsetArray = [];
@@ -184,7 +191,7 @@ export default class Graph {
 				"axis": "x",
 				"left": this._endPointsNodes[0].id,
 				"right": i + this._endPointsNodes.length,
-				"gap": 5,
+				"gap": 100,
 				"equality": false
 			});
 
