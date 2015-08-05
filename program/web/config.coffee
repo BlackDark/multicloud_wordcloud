@@ -29,7 +29,7 @@ exports.config =
     stylesheets:
       defaultExtension: 'styl'
       joinTo:
-        'stylesheets/app.css': /^(app|vendor)/
+        'stylesheets/app.css': /^(app|vendor|bower_components)/
         'test/stylesheets/test.css': /^test/
       order:
         before: ['vendor/styles/normalize.css']

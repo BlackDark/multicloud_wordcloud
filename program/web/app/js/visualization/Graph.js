@@ -226,21 +226,24 @@ export default class Graph {
 
 		//colaForce.start();
 
-		d3.select("body").append("button")
+		d3.select("#forbutton").append("button")
+			.attr("class", "ui button")
 			.text("Restart colaForce")
 		.on("click", function() {
 				console.log(colaForce.nodes());
 				colaForce.start(10,10,10);
 			}.bind(this));
 
-		d3.select("body").append("button")
+		d3.select("#forbutton").append("button")
+			.attr("class", "ui button")
 			.text("Try circle")
 			.on("click", function() {
 				colaForce.links(this._getLinksForColaForce.call(this));
 				colaForce.start();
 			}.bind(this));
 
-		d3.select("body").append("button")
+		d3.select("#forbutton").append("button")
+			.attr("class", "ui button")
 			.text("Try distances")
 			.on("click", function() {
 				colaForce.links(this._links);
@@ -250,7 +253,8 @@ export default class Graph {
 				colaForce.start(10,10,10);
 			}.bind(this));
 
-		d3.select("body").append("button")
+		d3.select("#forbutton").append("button")
+			.attr("class", "ui button")
 			.text("Fire")
 			.on("click", function() {
 				this._textNodes.forEach(function(element) {

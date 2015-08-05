@@ -25,6 +25,7 @@
     "es6-module-transpiler-brunch": "0.0.6",
     "javascript-brunch": ">= 1.0 < 1.5",
     "jshint-brunch": "^1.8.0",
+    "less-brunch": "^1.8.1",
     "polyfill": "^0.1.0",
     "sass-brunch": "1.4.2",
     "uglify-js-brunch": ">= 1.0 < 1.5"
