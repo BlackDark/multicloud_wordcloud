@@ -22,4 +22,29 @@ export default class DebugConfig {
 		return this._applyBorderConstraints;
 	}
 
+	static addD3ButtonHeader() {
+		d3.select("#forbutton").append("h2")
+			.attr("class", "ui header")
+			.text("D3");
+	}
+
+	static addButtonForD3(graph, functionForClick, text) {
+		d3.select("#forbutton").append("button")
+			.attr("class", "ui button")
+			.text(text)
+			.on("click", functionForClick.bind(graph));
+	}
+
+	static addColaButtonHeader() {
+		d3.select("#forbutton").append("h2")
+			.attr("class", "ui header")
+			.text("Cola.js");
+	}
+
+	static addButtonForCola(graph, functionForClick, text) {
+		d3.select("#forbutton").append("button")
+			.attr("class", "ui button")
+			.text(text)
+			.on("click", functionForClick.bind(graph));
+	}
 }

@@ -91,6 +91,43 @@ export default class Graph {
 			return dragging.dragBehaviour
 		}.bind(this)());
 		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
+		this._addD3Buttons();
+	}
+
+	_addD3Buttons() {
+		DebugConfig.addD3ButtonHeader();
+		DebugConfig.addButtonForD3(this, this._moveToTopLeftCorner, "Move top left");
+		DebugConfig.addButtonForD3(this, this._prepareRectShape, "Try rectangular shape");
+		DebugConfig.addButtonForD3(this, this._applyColaJSLayout, "Apply Cola.js");
+	}
+
+	_addColaButtons() {
+		DebugConfig.addColaButtonHeader();
+		DebugConfig.addButtonForD3(this, function() {
+			console.log(this._colaForce.nodes());
+			this._colaForce.start(10,10,10);
+		}, "Restart (?)");
+
+		DebugConfig.addButtonForD3(this, function() {
+			this._colaForce.links(this._getLinksForColaForce.call(this));
+			this._colaForce.start();
+		}.bind(this), "Try circle");
+
+		DebugConfig.addButtonForD3(this, function() {
+			this._colaForce.links(this._links);
+			this._colaForce.linkDistance(function(link) {
+				return this._getLinkDistanceColaForce(link);
+			}.bind(this));
+			this._colaForce.start(10,10,10);
+		}.bind(this), "Use distances");
+
+		DebugConfig.addButtonForD3(this, function() {
+			this._textNodes.forEach(function(element) {
+				element.x += Math.random() * 8 - 4;
+				element.y += Math.random() * 8 - 4;
+			});
+			this._colaForce.start();
+		}.bind(this), "Fire");
 	}
 
 	_d3EndFunction() {
@@ -98,7 +135,7 @@ export default class Graph {
 		//this._moveToTopLeftCorner();
 		//this._drawOriginalPositionLink();
 		//this._markOverlapping();
-		this._applyColaJSLayout();
+		//this._applyColaJSLayout();
 	}
 
 	_moveToTopLeftCorner() {
@@ -179,9 +216,13 @@ export default class Graph {
 	_applyColaJSLayout() {
 		this._removeD3States();
 
+		this._addColaButtons();
+
 		var colaForce = cola.d3adaptor()
 			.avoidOverlaps(true)
 			.size([this._width, this._height]);
+
+		this._colaForce = colaForce;
 
 		this._endPointElements.call(function() {
 			let dragging = new DragBehaviour(this, colaForce);
@@ -238,44 +279,6 @@ export default class Graph {
 		colaForce.nodes(this._endPointsNodes.concat(this._textNodes));
 
 		//colaForce.start();
-
-		d3.select("#forbutton").append("button")
-			.attr("class", "ui button")
-			.text("Restart colaForce")
-		.on("click", function() {
-				console.log(colaForce.nodes());
-				colaForce.start(10,10,10);
-			}.bind(this));
-
-		d3.select("#forbutton").append("button")
-			.attr("class", "ui button")
-			.text("Try circle")
-			.on("click", function() {
-				colaForce.links(this._getLinksForColaForce.call(this));
-				colaForce.start();
-			}.bind(this));
-
-		d3.select("#forbutton").append("button")
-			.attr("class", "ui button")
-			.text("Try distances")
-			.on("click", function() {
-				colaForce.links(this._links);
-				colaForce.linkDistance(function(link) {
-					return this._getLinkDistanceColaForce(link);
-				}.bind(this));
-				colaForce.start(10,10,10);
-			}.bind(this));
-
-		d3.select("#forbutton").append("button")
-			.attr("class", "ui button")
-			.text("Fire")
-			.on("click", function() {
-				this._textNodes.forEach(function(element) {
-					element.x += Math.random() * 8 - 4;
-					element.y += Math.random() * 8 - 4;
-				});
-				colaForce.start();
-			}.bind(this));
 
 		this._textNodes.forEach(function (element) {
 			element._container.call(colaForce.drag);
