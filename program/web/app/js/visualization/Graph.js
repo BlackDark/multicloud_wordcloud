@@ -4,6 +4,12 @@ import CollisionModule from "js/visualization/CollisionModule";
 import DebugConfig from "js/visualization/DebugConfig";
 import DragBehaviour from "js/visualization/DragBehaviour";
 
+// Shapes
+import BaseShape from "js/visualization/shape/BaseShape";
+import ShapeRect from "js/visualization/shape/ShapeRectangular";
+
+import NodeSorter from "js/visualization/NodeSorter";
+
 export default class Graph {
 	constructor(containerSelector) {
 		this.config = new DebugConfig();
@@ -344,6 +350,39 @@ export default class Graph {
 
 	_removeD3States() {
 		this._endPointElements.each(element => element._container.on(".drag", null));
+	}
+
+	_prepareRectShape() {
+		let shape = new ShapeRect();
+		let nodeFinder = new NodeSorter(this._textNodes, this._endPointsNodes);
+
+		// Place 10 nodes for each endpoints
+		this._endPointsNodes.forEach(node => {
+			for(let i = 0; i < 10; i++) {
+				let textNode = nodeFinder.getNodeForEndPoints(node);
+
+				if (textNode === undefined) {
+					continue;
+				}
+
+				if(shape.placeNearEndPoints(node, textNode)) {
+					nodeFinder.placeNode(textNode);
+				} else {
+					nodeFinder.skipNode(textNode);
+				}
+			}
+		});
+
+		// Try placing all other existing nodes
+		while (nodeFinder.hasNodes()) {
+			let textNode = nodeFinder.getNextNode();
+
+			if(shape.placeNearEndPoints(node, textNode)) {
+				nodeFinder.placeNode(textNode);
+			} else {
+				nodeFinder.skipNode(textNode);
+			}
+		}
 	}
 }
 
