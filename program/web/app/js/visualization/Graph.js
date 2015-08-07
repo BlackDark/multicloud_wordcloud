@@ -294,15 +294,15 @@ export default class Graph {
 		for (var i = 0; i < this._textNodes.length; i++) {
 			var currentNode = this._textNodes[i];
 
-			var positionX = this._endPointsNodes[0].x * currentNode.end1 +
-				this._endPointsNodes[1].x * currentNode.end2 +
-				this._endPointsNodes[2].x * currentNode.end3 +
-				this._endPointsNodes[3].x * currentNode.end4;
+			var positionX = 0;
+			this._endPointsNodes.forEach(function(d, i) {
+				positionX += d.x * currentNode.endPointConnections[i];
+			});
 
-			var positionY = this._endPointsNodes[0].y * currentNode.end1 +
-				this._endPointsNodes[1].y * currentNode.end2 +
-				this._endPointsNodes[2].y * currentNode.end3 +
-				this._endPointsNodes[3].y * currentNode.end4;
+			var positionY = 0;
+				this._endPointsNodes.forEach(function(d, i) {
+					positionY += d.y * currentNode.endPointConnections[i];
+				});
 
 			this._originalPositionLinkContainer.append("g")
 				.datum(currentNode)

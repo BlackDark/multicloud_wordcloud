@@ -92,18 +92,17 @@ export default class SampleDataGenerator {
 			let distr = SampleDataGenerator.getRandomDistribution(4);
 			let height = Math.floor(Math.random() * 30 + 12);
 			//var height = 12;
-			objects.push({
+			var object = {
 				text: entry,
 				size: height,
 				width: StringExt.widthText(entry, undefined, height),
 				height: height,
-				end1: distr[0],
-				end2: distr[1],
-				end3: distr[2],
-				end4: distr[3],
+				endPointConnections: [],
 				id: +index
-			});
+			};
+			object.endPointConnections = distr;
 
+			objects.push(object);
 			index++;
 		});
 
@@ -117,32 +116,13 @@ export default class SampleDataGenerator {
 		for (var i = number; i < nodes.length; i++) {
 			var currentNode = nodes[i];
 
-			newLinks.push({
-				id: index++,
-				source: currentNode.id,
-				target: 0,
-				strength: currentNode.end1
-			});
-
-			newLinks.push({
-				id: index++,
-				source: currentNode.id,
-				target: 1,
-				strength: currentNode.end2
-			});
-
-			newLinks.push({
-				id: index++,
-				source: currentNode.id,
-				target: 2,
-				strength: currentNode.end3
-			});
-
-			newLinks.push({
-				id: index++,
-				source: currentNode.id,
-				target: 3,
-				strength: currentNode.end4
+			currentNode.endPointConnections.forEach(function (strength, i) {
+				newLinks.push({
+					id: index++,
+					source: currentNode.id,
+					target: i,
+					strength: strength
+				});
 			});
 		}
 

@@ -28,10 +28,7 @@ function mapTextObjects(rawTextObjects) {
 		currentTextObject.size = element.size;
 		currentTextObject.width = element.width;
 		currentTextObject.height = element.height;
-		currentTextObject.end1 = element.end1;
-		currentTextObject.end2 = element.end2;
-		currentTextObject.end3 = element.end3;
-		currentTextObject.end4 = element.end4;
+		currentTextObject.endPointConnections = element.endPointConnections;
 
 		nodes.push(currentTextObject);
 	});
