@@ -26,39 +26,19 @@ export default class ShapeRectangular extends BaseShape {
 	}
 
 	placeNearEndPoints(endpoint, element) {
-		let distanceObjectsArray = this._calculatePixelDistanceOrder(endpoint);
+		let distanceArray = this._endpointToPixelDistances.get(endpoint);
 
-		for(let pixelPoint of distanceObjectsArray) {
+		if(distanceArray === undefined) {
+			throw "Distance array should exists for endpoint: " + endpoint;
+		}
+
+		for(let pixelPoint of distanceArray) {
 			if (this._place(pixelPoint, element)) {
 				return true;
 			}
 		}
 
 		return false;
-	}
-
-	// Returns an array sorted in distance of the elements to the endpoint.
-	_calculatePixelDistanceOrder(endPoint) {
-		let distanceAndElement = [];
-
-		for (let yIndex = 0; yIndex< this._height; yIndex++) {
-			for (let xIndex = 0; xIndex < this._width; xIndex++) {
-				let dx = endPoint.x - xIndex;
-				let dy = endPoint.y - yIndex;
-
-				distanceAndElement.push({
-					"distance": Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)),
-					"x": xIndex,
-					"y": yIndex
-				});
-			}
-		}
-
-		distanceAndElement.sort(function(a,b) {
-			return a.distance - b.distance;
-		});
-
-		return distanceAndElement;
 	}
 
 	// Depending on parameters multi-dimensional arrays are created.
