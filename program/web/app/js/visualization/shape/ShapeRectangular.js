@@ -41,20 +41,6 @@ export default class ShapeRectangular extends BaseShape {
 		return false;
 	}
 
-	// Depending on parameters multi-dimensional arrays are created.
-	// Eq. (3) creates [0,0,0] and (3,2) creates [ [0,0], [0,0], [0,0]] etc.
-	_createArray(length) {
-		let arr = new Array(length || 0),
-			i = length;
-
-		if (arguments.length > 1) {
-			let args = Array.prototype.slice.call(arguments, 1);
-			while (i--) arr[length - 1 - i] = this._createArray.apply(this, args);
-		}
-
-		return arr;
-	}
-
 	_place(coord, element) {
 		// Look if enough free space
 		for (let yIndex = coord.y; yIndex < coord.y + element.height; yIndex++) {
