@@ -5,6 +5,15 @@ export default class BaseShape {
 		this._height = height;
 		this._width = width;
 		this._endpoints = endpoints;
+		this._wordStorage = [];
+		this._center = {
+			"x": this._width / 2,
+			"y": this._height / 2
+		};
+	}
+
+	get storedWords() {
+		return this._wordStorage;
 	}
 
 	inBounds(element) {
@@ -15,10 +24,5 @@ export default class BaseShape {
 	placeNearEndPoints(endpoint, element) {
 
 		return false;
-	}
-
-	getEndPoints() {
-
-		return null;
 	}
 }

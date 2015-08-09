@@ -6,16 +6,6 @@ export default class ShapeRectangular extends BaseShape {
 
 		this._field = this._createField();
 		this._initializeFieldValues();
-		this._center = {
-			"x": this._width / 2,
-			"y": this._height / 2
-		};
-
-		this._wordStorage = [];
-	}
-
-	get storedWords() {
-		return this._wordStorage;
 	}
 
 	_createField() {
