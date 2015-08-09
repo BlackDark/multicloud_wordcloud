@@ -1,4 +1,4 @@
-export default class ForceLayout {
+export default class D3ForceLayout {
 	constructor(graph) {
 		this.relatedGraph = graph;
 		this._force = d3.layout.force();

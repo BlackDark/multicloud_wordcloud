@@ -1,4 +1,6 @@
-import ForceLayout from "./ForceLayout";
+import ForceLayout from "js/visualization/layouts/D3ForceLayout";
+import ColaLayout from "js/visualization/layouts/ColaJSForceLayout";
+
 import SampleDataGenerator from "js/visualization/util/SampleDataGenerator";
 import CollisionModule from "js/visualization/CollisionModule";
 import DebugConfig from "js/visualization/DebugConfig";
@@ -215,76 +217,23 @@ export default class Graph {
 
 	_applyColaJSLayout() {
 		this._removeD3States();
-
 		this._addColaButtons();
 
-		var colaForce = cola.d3adaptor()
-			.avoidOverlaps(true)
-			.size([this._width, this._height]);
-
-		this._colaForce = colaForce;
+		this._colaForce = new ColaLayout(this);
 
 		this._endPointElements.call(function() {
-			let dragging = new DragBehaviour(this, colaForce);
+			let dragging = new DragBehaviour(this, this._colaForce);
 			dragging.changeDragFunction(dragging.getMoveNodesBoxWise(this._endPointsNodes));
 			return dragging.dragBehaviour
 		}.bind(this)());
 
-		let constraintsArray = [];
-		let offsetArray = [];
-
-		for(let i = 1; i < this._textNodes.length; i++) {
-			constraintsArray.push({
-				"axis": "x",
-				"left": this._endPointsNodes[0].id,
-				"right": i + this._endPointsNodes.length,
-				"gap": 100,
-				"equality": false
-			});
-
-			constraintsArray.push({
-				"axis": "x",
-				"right": this._endPointsNodes[1].id,
-				"left": i + this._endPointsNodes.length,
-				"gap": 5,
-				"equality": false
-			});
-
-			/*
-			constraintsArray.push({
-				"axis": "y",
-				"left": this._endPointsNodes[2].id,
-				"right": i + this._endPointsNodes.length,
-				"gap": 100
-			});
-
-			constraintsArray.push({
-				"axis": "y",
-				"right": this._endPointsNodes[0].id,
-				"left": i + this._endPointsNodes.length,
-				"gap": 100
-			});
-			*/
-		}
-
-		let constrainTest = [];
-
-		for(let i = 0; i < this._textNodes.length; i++) {
-			constrainTest.push(
-				{"axis": "x", "left": i, "right": 4 + i, "gap": 100, "equality": false});
-		}
-
-		colaForce.constraints(constraintsArray);
-
-		colaForce.nodes(this._endPointsNodes.concat(this._textNodes));
-
-		//colaForce.start();
+		this._colaForce.nodes(this._endPointsNodes.concat(this._textNodes));
 
 		this._textNodes.forEach(function (element) {
-			element._container.call(colaForce.drag);
-		});
+			element._container.call(this._colaForce.layoutObject.drag);
+		}.bind(this));
 
-		colaForce.on("tick", function () {
+		this._colaForce.tick(function () {
 			if(this.config.drawLinksColaForce) {
 				this._linkElements.selectAll("path").attr("d", function(link){
 					return linkPathFunction([link.source, link.target]);
