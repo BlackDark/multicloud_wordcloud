@@ -356,7 +356,7 @@ export default class Graph {
 	}
 
 	_prepareRectShape() {
-		let shape = new ShapeRect();
+		let shape = new ShapeRect(this._height, this._width, this._endPointsNodes);
 		let nodeFinder = new NodeSorter(this._textNodes, this._endPointsNodes);
 
 		// Place 10 nodes for each endpoints
@@ -378,14 +378,39 @@ export default class Graph {
 
 		// Try placing all other existing nodes
 		while (nodeFinder.hasNodes()) {
-			let textNode = nodeFinder.getNextNode();
+			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
 
-			if(shape.placeNearEndPoints(node, textNode)) {
-				nodeFinder.placeNode(textNode);
+			if(shape.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
+				nodeFinder.placeNode(nodeAndEndPoint.node);
 			} else {
-				nodeFinder.skipNode(textNode);
+				nodeFinder.skipNode(nodeAndEndPoint.node);
 			}
 		}
+
+		console.log("TEHEEE");
+
+		let newWordsConstruct = shape.storedWords;
+		let newWords = [];
+
+		newWordsConstruct.forEach(element => newWords.push(element.element));
+
+		let skipped = this._textNodes.filter(function(item) {
+			return newWords.indexOf(item) === -1;
+		});
+
+		skipped.forEach(element => element._container.remove());
+
+
+		newWordsConstruct.forEach(function(element) {
+			element.element.x = element.x;
+			element.element.y = element.y;
+
+			element.element._container.transition()
+				.duration(750)
+				.attr("transform", function (d) {
+					return "translate(" + [d.x, d.y] + ")";
+				})
+		});
 	}
 }
 
