@@ -1,8 +1,10 @@
 
 
 export default class BaseShape {
-	constructor() {
-
+	constructor(height, width, endpoints) {
+		this._height = height;
+		this._width = width;
+		this._endpoints = endpoints;
 	}
 
 	inBounds(element) {
