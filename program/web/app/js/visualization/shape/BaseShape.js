@@ -1,7 +1,7 @@
 
 
+const methodNotImplemented = "METHOD IS NOT IMPLEMENTED!";
 export default class BaseShape {
-	const methodNotImplemented = "METHOD IS NOT IMPLEMENTED!";
 
 	constructor(height, width, endpoints) {
 		this._height = height;
@@ -26,11 +26,11 @@ export default class BaseShape {
 	}
 
 	get freeInitialSpace() {
-		throw BaseShape.methodNotImplemented;
+		throw methodNotImplemented;
 	}
 
 	placeNearEndPoints(endpoint, element) {
-		throw BaseShape.methodNotImplemented;
+		throw methodNotImplemented;
 	}
 
 	_calculatePixelDistances() {

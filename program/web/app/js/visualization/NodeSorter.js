@@ -10,6 +10,14 @@ export default class NodeSorter {
 		this._sortingNodes();
 	}
 
+	get placedNodes() {
+		return this._placedNodes;
+	}
+
+	get skippedNodes() {
+		return this._skippedNodes;
+	}
+
 	hasNodes() {
 		for(let key of this._endToNode.keys()) {
 			if(this._endToNode.get(key).length !== 0) {

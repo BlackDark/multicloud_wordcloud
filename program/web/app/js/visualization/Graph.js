@@ -99,8 +99,8 @@ export default class Graph {
 	_addD3Buttons() {
 		DebugConfig.addD3ButtonHeader();
 		DebugConfig.addButtonForD3(this, this._moveToTopLeftCorner, "Move top left");
-		DebugConfig.addButtonForD3(this, this._prepareRectShape, "Try rectangular shape");
-		DebugConfig.addButtonForD3(this, this._prepareCircleShape, "Try circle shape");
+		DebugConfig.addButtonForD3(this, this._changeShape.bind(this, ShapeRect, null), "Try rectangular shape");
+		DebugConfig.addButtonForD3(this, this._changeShape.bind(this, ShapeCircle, null), "Try circle shape");
 		DebugConfig.addButtonForD3(this, this._applyColaJSLayout, "Apply Cola.js");
 	}
 
@@ -304,137 +304,43 @@ export default class Graph {
 		this._endPointElements.each(element => element._container.on(".drag", null));
 	}
 
+	// Applying a shape to the wordcloud.
 	_changeShape(baseShape, parameters) {
-
-	}
-
-	_prepareRectShape() {
 		this._force.stop();
-		let availableSpace = this._width * this._height;
-
-		while(availableSpace > getUsedSpace(this._textNodes)) {
-			this._textNodes.forEach(textNode => textNode.incrementSize());
-		}
-
-		this._textNodes.forEach(textNode => textNode.decrementSize());
-
-
-		let shape = new ShapeRect(this._height, this._width, this._endPointsNodes);
+		let shapeObject = new baseShape(this._height, this._width, this._endPointsNodes);
 		let nodeFinder = new NodeSorter(this._textNodes, this._endPointsNodes);
 
-		// Place 10 nodes for each endpoints
-		this._endPointsNodes.forEach(node => {
-			for(let i = 0; i < 10; i++) {
-				let textNode = nodeFinder.getNodeForEndPoints(node);
+		this._processShapeParameters(shapeObject, nodeFinder, parameters);
 
-				if (textNode === undefined) {
-					continue;
-				}
-
-				if(shape.placeNearEndPoints(node, textNode)) {
-					nodeFinder.placeNode(textNode);
-				} else {
-					nodeFinder.skipNode(textNode);
-				}
-			}
-		});
-
-		// Try placing all other existing nodes
+		// While nodes exists try placing them
 		while (nodeFinder.hasNodes()) {
 			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
 
-			if(shape.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
+			if (shapeObject.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
 				nodeFinder.placeNode(nodeAndEndPoint.node);
 			} else {
 				nodeFinder.skipNode(nodeAndEndPoint.node);
 			}
 		}
 
-		let newWordsConstruct = shape.storedWords;
-		let newWords = [];
+		// Remove skipped nodes
+		nodeFinder.skippedNodes.forEach(element => element._container.remove());
+		console.log("Skipped nodes: " + nodeFinder.skippedNodes.length);
 
-		newWordsConstruct.forEach(element => newWords.push(element.element));
+		shapeObject.storedWords.forEach(function(objectStore) {
+			objectStore.element.x = objectStore.x;
+			objectStore.element.y = objectStore.y;
 
-		let skipped = this._textNodes.filter(function(item) {
-			return newWords.indexOf(item) === -1;
-		});
-
-		skipped.forEach(element => element._container.remove());
-
-
-		newWordsConstruct.forEach(function(element) {
-			element.element.x = element.x;
-			element.element.y = element.y;
-
-			element.element._container.transition()
+			objectStore.element._container.transition()
 				.duration(750)
 				.attr("transform", function (d) {
 					return "translate(" + [d.x, d.y] + ")";
 				})
 		});
-
-		function getUsedSpace(elements) {
-			var space = 0;
-			elements.forEach(element => space += element.height * element.width);
-
-			return space;
-		}
 	}
 
-	_prepareCircleShape() {
-		let shape = new ShapeCircle(this._height, this._width, this._endPointsNodes);
-		let nodeFinder = new NodeSorter(this._textNodes, this._endPointsNodes);
-
-		// Place 10 nodes for each endpoints
-		this._endPointsNodes.forEach(node => {
-			for(let i = 0; i < 10; i++) {
-				let textNode = nodeFinder.getNodeForEndPoints(node);
-
-				if (textNode === undefined) {
-					continue;
-				}
-
-				if(shape.placeNearEndPoints(node, textNode)) {
-					nodeFinder.placeNode(textNode);
-				} else {
-					nodeFinder.skipNode(textNode);
-				}
-			}
-		});
-
-		// Try placing all other existing nodes
-		while (nodeFinder.hasNodes()) {
-			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
-
-			if(shape.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
-				nodeFinder.placeNode(nodeAndEndPoint.node);
-			} else {
-				nodeFinder.skipNode(nodeAndEndPoint.node);
-			}
-		}
-
-		let newWordsConstruct = shape.storedWords;
-		let newWords = [];
-
-		newWordsConstruct.forEach(element => newWords.push(element.element));
-
-		let skipped = this._textNodes.filter(function(item) {
-			return newWords.indexOf(item) === -1;
-		});
-
-		skipped.forEach(element => element._container.remove());
-
-
-		newWordsConstruct.forEach(function(element) {
-			element.element.x = element.x;
-			element.element.y = element.y;
-
-			element.element._container.transition()
-				.duration(750)
-				.attr("transform", function (d) {
-					return "translate(" + [d.x, d.y] + ")";
-				})
-		});
+	_processShapeParameters(shapeObject, nodeFinder, parameters) {
+		// TODO
 	}
 }
 
