@@ -1,8 +1,8 @@
-
+import TimingHelper from "js/visualization/util/TimingHelper";
+import GeneratorUtil from "js/visualization/util/GeneratorUtil";
 
 const methodNotImplemented = "METHOD IS NOT IMPLEMENTED!";
 export default class BaseShape {
-
 	constructor(height, width, endpoints) {
 		this._height = height;
 		this._width = width;
@@ -12,21 +12,36 @@ export default class BaseShape {
 			"x": this._width / 2,
 			"y": this._height / 2
 		};
+	}
 
-		this._endpointToPixelDistances = new Map();
-		let starttime=(new Date()).getTime();
-		this._calculatePixelDistances();
-		let endtime=(new Date()).getTime();
-		let dif = endtime - starttime;
-		console.log("Distance calculation took: " + dif + " ms.");
+	get freeInitialSpace() {
+		// TODO
+		throw methodNotImplemented;
+	}
+
+	_initializeFieldValues() {
+		throw methodNotImplemented;
 	}
 
 	get storedWords() {
 		return this._wordStorage;
 	}
 
-	get freeInitialSpace() {
-		throw methodNotImplemented;
+	get possiblePixelsArray() {
+		return this._possiblePixels;
+	}
+
+	initialize() {
+		this._field = GeneratorUtil._createArray(this._width, this._height);
+		this._possiblePixels = [];
+		this._initializeFieldValues();
+
+		this._endpointToPixelDistances = new Map();
+
+		let timing = new TimingHelper("Calculating distances: ");
+		timing.startRecording();
+		this._calculatePixelDistances();
+		timing.endRecording();
 	}
 
 	placeNearEndPoints(endpoint, element) {
@@ -55,18 +70,16 @@ export default class BaseShape {
 	_calculatePixelDistanceOrder(endPoint) {
 		let distanceAndElement = [];
 
-		for (let yIndex = 0; yIndex< this._height; yIndex++) {
-			for (let xIndex = 0; xIndex < this._width; xIndex++) {
-				let dx = endPoint.x - xIndex;
-				let dy = endPoint.y - yIndex;
+		this._possiblePixels.forEach(currentCoord => {
+			let dx = endPoint.x - currentCoord.x;
+			let dy = endPoint.y - currentCoord.y;
 
-				distanceAndElement.push({
-					"distance": Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)),
-					"x": xIndex,
-					"y": yIndex
-				});
-			}
-		}
+			distanceAndElement.push({
+				"distance": Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)),
+				"x": currentCoord.x,
+				"y": currentCoord.y
+			});
+		});
 
 		distanceAndElement.sort(function(a,b) {
 			return a.distance - b.distance;
@@ -89,6 +102,7 @@ export default class BaseShape {
 		for (let yIndex = coord.y; yIndex < coord.y + element.height; yIndex++) {
 			for (let xIndex = coord.x; xIndex < coord.x + element.width; xIndex++) {
 				this._field[xIndex][yIndex] = true;
+				this._removeUsedPixel(xIndex, yIndex);
 			}
 		}
 
@@ -98,5 +112,16 @@ export default class BaseShape {
 			"element": element
 		});
 		return true;
+	}
+
+	_removeUsedPixel(x, y) {
+		for(let currentArray of this._endpointToPixelDistances.entries()) {
+			for(let i = 0; i < currentArray.length; i++) {
+				if(currentArray[i].x === x && currentArray[i].y === y) {
+					currentArray.splice(i, 1);
+					break;
+				}
+			}
+		}
 	}
 }

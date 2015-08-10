@@ -6,6 +6,9 @@ import CollisionModule from "js/visualization/CollisionModule";
 import DebugConfig from "js/visualization/DebugConfig";
 import DragBehaviour from "js/visualization/DragBehaviour";
 
+// Utils
+import TimingHelper from "js/visualization/util/TimingHelper";
+
 // Shapes
 import BaseShape from "js/visualization/shape/BaseShape";
 import ShapeRect from "js/visualization/shape/ShapeRectangular";
@@ -308,10 +311,13 @@ export default class Graph {
 	_changeShape(baseShape, parameters) {
 		this._force.stop();
 		let shapeObject = new baseShape(this._height, this._width, this._endPointsNodes);
+		shapeObject.initialize();
 		let nodeFinder = new NodeSorter(this._textNodes, this._endPointsNodes);
 
 		this._processShapeParameters(shapeObject, nodeFinder, parameters);
 
+		let timing = new TimingHelper("Placing nodes took: ");
+		timing.startRecording();
 		// While nodes exists try placing them
 		while (nodeFinder.hasNodes()) {
 			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
@@ -322,6 +328,7 @@ export default class Graph {
 				nodeFinder.skipNode(nodeAndEndPoint.node);
 			}
 		}
+		timing.endRecording();
 
 		// Remove skipped nodes
 		nodeFinder.skippedNodes.forEach(element => element._container.remove());
