@@ -90,7 +90,7 @@ export default class SampleDataGenerator {
 
 		tokenArray.forEach(function (entry) {
 			let distr = SampleDataGenerator.getRandomDistribution(4);
-			let height = Math.floor(Math.random() * 30 + 12);
+			let height = Math.floor(Math.random() * 40 + 10);
 			//var height = 12;
 			var object = {
 				text: entry,

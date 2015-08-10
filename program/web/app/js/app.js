@@ -18,6 +18,7 @@ var data = Parser.parse({
 	textObjects: generator.textObjects,
 	links: generator.links
 });
+
 graph.data(data.endPoints, data.textObjects, data.links);
 
 graph.start();
