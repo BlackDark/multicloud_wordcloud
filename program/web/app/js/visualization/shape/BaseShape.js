@@ -1,6 +1,8 @@
 
 
 export default class BaseShape {
+	const methodNotImplemented = "METHOD IS NOT IMPLEMENTED!";
+
 	constructor(height, width, endpoints) {
 		this._height = height;
 		this._width = width;
@@ -23,14 +25,12 @@ export default class BaseShape {
 		return this._wordStorage;
 	}
 
-	inBounds(element) {
-
-		return false;
+	get freeInitialSpace() {
+		throw BaseShape.methodNotImplemented;
 	}
 
 	placeNearEndPoints(endpoint, element) {
-
-		return false;
+		throw BaseShape.methodNotImplemented;
 	}
 
 	_calculatePixelDistances() {
