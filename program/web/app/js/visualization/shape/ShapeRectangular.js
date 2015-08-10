@@ -8,6 +8,11 @@ export default class ShapeRectangular extends BaseShape {
 		this._initializeFieldValues();
 	}
 
+
+	get freeInitialSpace() {
+		return this._width * this._height;
+	}
+
 	_createField() {
 		let field = new Array(this._width);
 		for (let i = 0; i < this._width; i++) {

@@ -12,6 +12,10 @@ export default class D3ForceLayout {
 		this._force.resume();
 	}
 
+	stop() {
+		this._force.stop();
+	}
+
 	nodes(nodes) {
 		this._force.nodes(nodes);
 	}

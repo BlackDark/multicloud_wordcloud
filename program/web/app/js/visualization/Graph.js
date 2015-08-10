@@ -38,7 +38,6 @@ export default class Graph {
 		this._endPointsNodes = endPointsNodes;
 		this._textNodes = textNodes;
 		this._links = links;
-		console.log(endPointsNodes.concat(textNodes));
 		this._force.nodes(endPointsNodes.concat(textNodes));
 		this._force.links(links);
 	}
@@ -298,7 +297,6 @@ export default class Graph {
 
 	_getLinkDistanceColaForce(link) {
 		var number = 20 / link.strength;
-		console.log(number);
 		return number;
 	}
 
@@ -306,7 +304,21 @@ export default class Graph {
 		this._endPointElements.each(element => element._container.on(".drag", null));
 	}
 
+	_changeShape(baseShape, parameters) {
+
+	}
+
 	_prepareRectShape() {
+		this._force.stop();
+		let availableSpace = this._width * this._height;
+
+		while(availableSpace > getUsedSpace(this._textNodes)) {
+			this._textNodes.forEach(textNode => textNode.incrementSize());
+		}
+
+		this._textNodes.forEach(textNode => textNode.decrementSize());
+
+
 		let shape = new ShapeRect(this._height, this._width, this._endPointsNodes);
 		let nodeFinder = new NodeSorter(this._textNodes, this._endPointsNodes);
 
@@ -338,8 +350,6 @@ export default class Graph {
 			}
 		}
 
-		console.log("TEHEEE");
-
 		let newWordsConstruct = shape.storedWords;
 		let newWords = [];
 
@@ -362,6 +372,13 @@ export default class Graph {
 					return "translate(" + [d.x, d.y] + ")";
 				})
 		});
+
+		function getUsedSpace(elements) {
+			var space = 0;
+			elements.forEach(element => space += element.height * element.width);
+
+			return space;
+		}
 	}
 
 	_prepareCircleShape() {
