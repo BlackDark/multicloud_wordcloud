@@ -29,45 +29,4 @@ export default class ShapeRectangular extends BaseShape {
 			}
 		}
 	}
-
-	placeNearEndPoints(endpoint, element) {
-		let distanceArray = this._endpointToPixelDistances.get(endpoint);
-
-		if(distanceArray === undefined) {
-			throw "Distance array should exists for endpoint: " + endpoint;
-		}
-
-		for(let pixelPoint of distanceArray) {
-			if (this._place(pixelPoint, element)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	_place(coord, element) {
-		// Look if enough free space
-		for (let yIndex = coord.y; yIndex < coord.y + element.height; yIndex++) {
-			for (let xIndex = coord.x; xIndex < coord.x + element.width; xIndex++) {
-				if (this._width <= coord.x + element.width || this._height <= coord.y + element.height || this._field[xIndex][yIndex]) {
-					return false;
-				}
-			}
-		}
-
-		// Store word
-		for (let yIndex = coord.y; yIndex < coord.y + element.height; yIndex++) {
-			for (let xIndex = coord.x; xIndex < coord.x + element.width; xIndex++) {
-				this._field[xIndex][yIndex] = true;
-			}
-		}
-
-		this._wordStorage.push({
-			"x": coord.x,
-			"y": coord.y,
-			"element": element
-		});
-		return true;
-	}
 }
