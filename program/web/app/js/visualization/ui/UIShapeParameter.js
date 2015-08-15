@@ -97,7 +97,7 @@ export default class UIShapeParameter {
 		});
 		checkBoxArea.node().appendChild(checkFillSpace);
 
-		var checkFillWords = UIHelper.getCheckbox("Fill words", "fillsWords");
+		var checkFillWords = UIHelper.getCheckbox("Fill words", ShapeParameter.placeAllWordsPath, true);
 		this.configParameters.push({
 			"domInput": d3.select(checkFillWords).select("input").node()
 		});
