@@ -72,7 +72,7 @@ export default class UIShapeParameter {
 		});
 		this.groupDiv.node().appendChild(circle);
 
-		let ellipse = UIHelper.getRadioButton("shapeForm", false, "Elliptical", true);
+		let ellipse = UIHelper.getRadioButton("shapeForm", false, "Elliptical");
 		this.radioShapes.push({
 			"domObject": ellipse,
 			"shapeConstructor": EllipseConstructor
