@@ -48,7 +48,6 @@ export default class Graph {
 	resize(width, height) {
 		this._width = width;
 		this._height = height;
-		this._svg.attr("width", width).attr("height", height);
 		this._force.size([width, height]);
 	}
 

@@ -4,9 +4,9 @@ import SampleDataGenerator from "js/visualization/util/SampleDataGenerator";
 
 var graphContainerSelector = "#graph";
 var selectedGraph = d3.select(graphContainerSelector);
+var graph = new GraphVisualization(graphContainerSelector);
 var width = selectedGraph.property("offsetWidth");
 var height = selectedGraph.property("offsetHeight");
-var graph = new GraphVisualization(graphContainerSelector);
 graph.resize(width, height);
 
 console.log([width, height]);
