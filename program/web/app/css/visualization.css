@@ -51,6 +51,10 @@
 	fill: white;
 }
 
+.hidden {
+	visibility: hidden;
+}
+
 .word-text {
 	dominant-baseline: hanging;
 	pointer-events: none;

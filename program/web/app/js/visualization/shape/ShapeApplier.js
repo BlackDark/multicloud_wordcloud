@@ -33,12 +33,14 @@ export default class ShapeApplier {
 		timing.endRecording();
 
 		// Remove skipped nodes  TODO
-		nodeFinder.skippedNodes.forEach(element => element._container.remove());
+		nodeFinder.skippedNodes.forEach(element => element._container.classed("hidden", true));
 		console.log("Skipped nodes: " + nodeFinder.skippedNodes.length);
 
 		shapeObject.storedWords.forEach(function(objectStore) {
 			objectStore.element.x = objectStore.x;
 			objectStore.element.y = objectStore.y;
+
+			objectStore.element._container.classed("hidden", false);
 
 			objectStore.element._container.transition()
 				.duration(750)
