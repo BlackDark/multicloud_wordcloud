@@ -11,7 +11,7 @@ graph.resize(width, height);
 
 console.log([width, height]);
 
-var generator = new SampleDataGenerator(4, 50, width, height);
+var generator = new SampleDataGenerator(4, 200, width, height);
 generator.generateObjects();
 var data = Parser.parse({
 	endpoints: generator.endPoints,
