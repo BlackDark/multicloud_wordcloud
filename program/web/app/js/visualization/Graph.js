@@ -10,11 +10,11 @@ import DragBehaviour from "js/visualization/DragBehaviour";
 import TimingHelper from "js/visualization/util/TimingHelper";
 
 // Shapes
-import BaseShape from "js/visualization/shape/BaseShape";
-import ShapeRect from "js/visualization/shape/ShapeRectangular";
-import ShapeCircle from "js/visualization/shape/ShapeCircle";
+import UIShapeParameter from "js/visualization/ui/UIShapeParameter";
+import ShapeApplier from "js/visualization/shape/ShapeApplier";
 
-import NodeSorter from "js/visualization/NodeSorter";
+// UI
+import UIProgress from "js/visualization/ui/UIProgress";
 
 export default class Graph {
 	constructor(containerSelector) {
@@ -100,9 +100,12 @@ export default class Graph {
 
 	_addD3Buttons() {
 		DebugConfig.addD3ButtonHeader();
+		let uiLayoutParameter = new UIShapeParameter();
+		uiLayoutParameter.addToLayout(d3.select("#forbutton"));
+
 		DebugConfig.addButtonForD3(this, this._moveToTopLeftCorner, "Move top left");
-		DebugConfig.addButtonForD3(this, this._changeShape.bind(this, ShapeRect, null), "Try rectangular shape");
-		DebugConfig.addButtonForD3(this, this._changeShape.bind(this, ShapeCircle, null), "Try circle shape");
+		DebugConfig.addButtonForD3(this, this._applyLayout.bind(this, uiLayoutParameter), "Create layout");
+		//DebugConfig.addButtonForD3(this, this._applyLayout.bind(this, ShapeCircle, null), "Try circle shape");
 		DebugConfig.addButtonForD3(this, this._applyColaJSLayout, "Apply Cola.js");
 	}
 
@@ -307,46 +310,12 @@ export default class Graph {
 	}
 
 	// Applying a shape to the wordcloud.
-	_changeShape(baseShape, parameters) {
+	_applyLayout(uiShapeParameterObject) {
 		this._force.stop();
-		let shapeObject = new baseShape(this._height, this._width, this._endPointsNodes);
-		shapeObject.initialize();
-		let nodeFinder = new NodeSorter(this._textNodes, this._endPointsNodes);
 
-		this._processShapeParameters(shapeObject, nodeFinder, parameters);
-
-		let timing = new TimingHelper("Placing nodes took: ");
-		timing.startRecording();
-		// While nodes exists try placing them
-		while (nodeFinder.hasNodes()) {
-			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
-
-			if (shapeObject.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
-				nodeFinder.placeNode(nodeAndEndPoint.node);
-			} else {
-				nodeFinder.skipNode(nodeAndEndPoint.node);
-			}
-		}
-		timing.endRecording();
-
-		// Remove skipped nodes
-		nodeFinder.skippedNodes.forEach(element => element._container.remove());
-		console.log("Skipped nodes: " + nodeFinder.skippedNodes.length);
-
-		shapeObject.storedWords.forEach(function(objectStore) {
-			objectStore.element.x = objectStore.x;
-			objectStore.element.y = objectStore.y;
-
-			objectStore.element._container.transition()
-				.duration(750)
-				.attr("transform", function (d) {
-					return "translate(" + [d.x, d.y] + ")";
-				})
-		});
-	}
-
-	_processShapeParameters(shapeObject, nodeFinder, parameters) {
-		// TODO
+		let layoutApplier = new ShapeApplier(uiShapeParameterObject.parameterObject, this._textNodes, this._endPointsNodes);
+		//layoutApplier.registerProgressListener(new UIProgress(d3.select("#forbutton")));
+		layoutApplier.startShaping(this._height, this._width);
 	}
 }
 

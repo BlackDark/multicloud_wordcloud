@@ -10,6 +10,10 @@ export default class NodeSorter {
 		this._sortingNodes();
 	}
 
+	get processValue() {
+		return (this._skippedNodes.length + this._placedNodes.length) / this._nodes.length;
+	}
+
 	get placedNodes() {
 		return this._placedNodes;
 	}
