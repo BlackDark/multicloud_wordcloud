@@ -9,6 +9,7 @@ export default class ShapeApplier {
 		this._parameters = parameters;
 		this._textNodes = textNodes;
 		this._endPointNodes = endPointNodes;
+		this._drawAllWords = false;
 	}
 
 	registerProgressListener(progress) {
@@ -28,18 +29,7 @@ export default class ShapeApplier {
 
 		let timing = new TimingHelper("Placing nodes took: ");
 		timing.startRecording();
-
-		while (nodeFinder.hasNodes()) {
-			//this._reportProgress(nodeFinder.processValue * 100);
-			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
-
-			if (shapeObject.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
-				nodeFinder.placeNode(nodeAndEndPoint.node);
-			} else {
-				nodeFinder.skipNode(nodeAndEndPoint.node);
-			}
-		}
-
+		this._placingNodes(nodeFinder, shapeObject, this._drawAllWords);
 		timing.endRecording();
 
 		// Remove skipped nodes  TODO
@@ -58,10 +48,37 @@ export default class ShapeApplier {
 		});
 	}
 
+	_placingNodes(nodeFinder, shapeObject, drawAllWords) {
+		while (nodeFinder.hasNodes()) {
+			//this._reportProgress(nodeFinder.processValue * 100);
+			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
+
+			if (shapeObject.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
+				nodeFinder.placeNode(nodeAndEndPoint.node);
+			} else {
+				if(drawAllWords) {
+					this._processDrawAllWordsStep(shapeObject, nodeFinder);
+				} else {
+					nodeFinder.skipNode(nodeAndEndPoint.node);
+				}
+			}
+		}
+	}
+
 	_processShapeParameters(shapeObject, nodeFinder, parameters) {
 		if(parameters.fillSpace) {
 			this._fillShapeSpace(shapeObject, nodeFinder);
 		}
+
+		if(parameters.placeAllWords) {
+			this._drawAllWords = true;
+		}
+	}
+
+	_processDrawAllWordsStep(shapeObject, nodeFinder) {
+		this._textNodes.forEach(textNode => textNode.decrementSize());
+		shapeObject.resetPlacing();
+		nodeFinder.reset();
 	}
 
 	_fillShapeSpace(shapeObject, nodeFinder) {

@@ -35,6 +35,7 @@ export default class BaseShape {
 		this._field = GeneratorUtil._createArray(this._width, this._height);
 		this._possiblePixels = [];
 		this._initializeFieldValues();
+		this._originalField = this.copyField(this._field, GeneratorUtil._createArray(this._width, this._height));
 
 		this._endpointToPixelDistances = new Map();
 
@@ -42,16 +43,17 @@ export default class BaseShape {
 		timing.startRecording();
 		this._calculatePixelDistances();
 		timing.endRecording();
+		this._originalDistanceMap = this.copyMap(this._endpointToPixelDistances);
 	}
 
 	placeNearEndPoints(endpoint, element) {
 		let distanceArray = this._endpointToPixelDistances.get(endpoint);
 
-		if(distanceArray === undefined) {
+		if (distanceArray === undefined) {
 			throw "Distance array should exists for endpoint: " + endpoint;
 		}
 
-		for(let pixelPoint of distanceArray) {
+		for (let pixelPoint of distanceArray) {
 			if (this._place(pixelPoint, element)) {
 				return true;
 			}
@@ -61,7 +63,7 @@ export default class BaseShape {
 	}
 
 	_calculatePixelDistances() {
-		for(let current of this._endpoints) {
+		for (let current of this._endpoints) {
 			this._endpointToPixelDistances.set(current, this._calculatePixelDistanceOrder.call(this, current));
 		}
 	}
@@ -81,7 +83,7 @@ export default class BaseShape {
 			});
 		});
 
-		distanceAndElement.sort(function(a,b) {
+		distanceAndElement.sort(function (a, b) {
 			return a.distance - b.distance;
 		});
 
@@ -115,13 +117,40 @@ export default class BaseShape {
 	}
 
 	_removeUsedPixel(x, y) {
-		for(let currentArray of this._endpointToPixelDistances.entries()) {
-			for(let i = 0; i < currentArray.length; i++) {
-				if(currentArray[i].x === x && currentArray[i].y === y) {
+		for (let currentArray of this._endpointToPixelDistances.entries()) {
+			for (let i = 0; i < currentArray.length; i++) {
+				if (currentArray[i].x === x && currentArray[i].y === y) {
 					currentArray.splice(i, 1);
 					break;
 				}
 			}
 		}
+	}
+
+	resetPlacing() {
+		this._wordStorage.length = 0;
+		this._endpointToPixelDistances = this.copyMap(this._originalDistanceMap);
+		this._field = this.copyField(this._originalField, GeneratorUtil._createArray(this._width, this._height));
+	}
+
+	copyMap(oldMap) {
+		let newMap = new Map();
+
+		for (let [key, value] of oldMap) {
+			let copyArray = [].concat(value);
+			newMap.set(key, copyArray);
+		}
+
+		return newMap;
+	}
+
+	copyField(field, newField) {
+		for(let i = 0; i < field.length; i++) {
+			for(let j = 0; j < field[0].length; j++) {
+				newField[i][j] = field[i][j];
+			}
+		}
+
+		return newField;
 	}
 }

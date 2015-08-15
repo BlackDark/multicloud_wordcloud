@@ -22,6 +22,13 @@ export default class NodeSorter {
 		return this._skippedNodes;
 	}
 
+	reset() {
+		this._endToNode = this.copyMap(this._originalEndToNode);
+		this._placedNodes.length = 0;
+		this._skippedNodes.length = 0;
+		this._roundIndex = 0;
+	}
+
 	hasNodes() {
 		for(let key of this._endToNode.keys()) {
 			if(this._endToNode.get(key).length !== 0) {
@@ -76,6 +83,19 @@ export default class NodeSorter {
 		this._endPoints.forEach(node => {
 			this._endToNode.set(node, sortNodesToPoint(node, this._nodes));
 		});
+
+		this._originalEndToNode = this.copyMap(this._endToNode);
+	}
+
+	copyMap(oldMap) {
+		let newMap = new Map();
+
+		for (let [key, value] of oldMap) {
+			let copyArray = [].concat(value);
+			newMap.set(key, copyArray);
+		}
+
+		return newMap;
 	}
 }
 
