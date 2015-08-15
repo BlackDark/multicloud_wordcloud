@@ -28,7 +28,18 @@ export default class ShapeApplier {
 
 		let timing = new TimingHelper("Placing nodes took: ");
 		timing.startRecording();
-		this.extracted(nodeFinder, shapeObject);
+
+		while (nodeFinder.hasNodes()) {
+			//this._reportProgress(nodeFinder.processValue * 100);
+			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
+
+			if (shapeObject.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
+				nodeFinder.placeNode(nodeAndEndPoint.node);
+			} else {
+				nodeFinder.skipNode(nodeAndEndPoint.node);
+			}
+		}
+
 		timing.endRecording();
 
 		// Remove skipped nodes  TODO
@@ -45,25 +56,6 @@ export default class ShapeApplier {
 					return "translate(" + [d.x, d.y] + ")";
 				})
 		});
-	}
-
-	extracted(nodeFinder, shapeObject) {
-		// While nodes exists try placing them
-		while (nodeFinder.hasNodes()) {
-			//this._reportProgress(nodeFinder.processValue * 100);
-			setTimeout(this.extracted.bind(this, nodeFinder, shapeObject), 1);
-			let nodeAndEndPoint = nodeFinder.getNextNodeAndEndPoint();
-
-			if (shapeObject.placeNearEndPoints(nodeAndEndPoint.endPoint, nodeAndEndPoint.node)) {
-				nodeFinder.placeNode(nodeAndEndPoint.node);
-			} else {
-				nodeFinder.skipNode(nodeAndEndPoint.node);
-			}
-		}
-	}
-
-	_extractedLoopForPlacingNodes() {
-
 	}
 
 	_processShapeParameters(shapeObject, nodeFinder, parameters) {
