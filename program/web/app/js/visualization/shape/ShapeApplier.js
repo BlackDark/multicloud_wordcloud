@@ -83,12 +83,16 @@ export default class ShapeApplier {
 
 	_fillShapeSpace(shapeObject, nodeFinder) {
 		let availableSpace = shapeObject._width * shapeObject._height;
+		let changedSize = false;
 
 		while(availableSpace > getUsedSpace(this._textNodes)) {
+			changedSize = true;
 			this._textNodes.forEach(textNode => textNode.incrementSize());
 		}
 
-		this._textNodes.forEach(textNode => textNode.decrementSize());
+		if(changedSize) {
+			this._textNodes.forEach(textNode => textNode.decrementSize());
+		}
 
 		function getUsedSpace(elements) {
 			var space = 0;
