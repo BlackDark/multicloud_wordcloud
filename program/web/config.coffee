@@ -3,9 +3,6 @@ exports.config =
 
   # Application build path.  Default is public
   #buildPath: ''
-
-  paths:
-    public: "./"
     
   plugins:
     babel:
