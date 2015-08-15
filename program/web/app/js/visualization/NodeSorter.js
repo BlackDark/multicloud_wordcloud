@@ -1,4 +1,5 @@
 
+import GeneratorUtil from "js/visualization/util/GeneratorUtil";
 
 export default class NodeSorter {
 	constructor(nodes, endPoints) {
@@ -23,7 +24,7 @@ export default class NodeSorter {
 	}
 
 	reset() {
-		this._endToNode = this.copyMap(this._originalEndToNode);
+		this._endToNode = GeneratorUtil.copyMapObjectToArray(this._originalEndToNode);
 		this._placedNodes.length = 0;
 		this._skippedNodes.length = 0;
 		this._roundIndex = 0;
@@ -84,18 +85,7 @@ export default class NodeSorter {
 			this._endToNode.set(node, sortNodesToPoint(node, this._nodes));
 		});
 
-		this._originalEndToNode = this.copyMap(this._endToNode);
-	}
-
-	copyMap(oldMap) {
-		let newMap = new Map();
-
-		for (let [key, value] of oldMap) {
-			let copyArray = [].concat(value);
-			newMap.set(key, copyArray);
-		}
-
-		return newMap;
+		this._originalEndToNode = GeneratorUtil.copyMapObjectToArray(this._endToNode);
 	}
 }
 

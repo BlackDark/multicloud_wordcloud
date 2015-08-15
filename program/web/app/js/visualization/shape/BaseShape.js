@@ -35,7 +35,7 @@ export default class BaseShape {
 		this._field = GeneratorUtil._createArray(this._width, this._height);
 		this._possiblePixels = [];
 		this._initializeFieldValues();
-		this._originalField = this.copyField(this._field, GeneratorUtil._createArray(this._width, this._height));
+		this._originalField = GeneratorUtil.copyField(this._field);
 
 		this._endpointToPixelDistances = new Map();
 
@@ -43,7 +43,7 @@ export default class BaseShape {
 		timing.startRecording();
 		this._calculatePixelDistances();
 		timing.endRecording();
-		this._originalDistanceMap = this.copyMap(this._endpointToPixelDistances);
+		this._originalDistanceMap = GeneratorUtil.copyMapObjectToArray(this._endpointToPixelDistances);
 	}
 
 	placeNearEndPoints(endpoint, element) {
@@ -129,28 +129,7 @@ export default class BaseShape {
 
 	resetPlacing() {
 		this._wordStorage.length = 0;
-		this._endpointToPixelDistances = this.copyMap(this._originalDistanceMap);
-		this._field = this.copyField(this._originalField, GeneratorUtil._createArray(this._width, this._height));
-	}
-
-	copyMap(oldMap) {
-		let newMap = new Map();
-
-		for (let [key, value] of oldMap) {
-			let copyArray = [].concat(value);
-			newMap.set(key, copyArray);
-		}
-
-		return newMap;
-	}
-
-	copyField(field, newField) {
-		for(let i = 0; i < field.length; i++) {
-			for(let j = 0; j < field[0].length; j++) {
-				newField[i][j] = field[i][j];
-			}
-		}
-
-		return newField;
+		this._endpointToPixelDistances = GeneratorUtil.copyMapObjectToArray(this._originalDistanceMap);
+		this._field = GeneratorUtil.copyField(this._originalField);
 	}
 }

@@ -15,4 +15,27 @@ export default class GeneratorUtil {
 
 		return arr;
 	}
+
+	static copyMapObjectToArray(oldMap) {
+		let newMap = new Map();
+
+		for (let [key, value] of oldMap) {
+			let copyArray = [].concat(value);
+			newMap.set(key, copyArray);
+		}
+
+		return newMap;
+	}
+
+	static copyField(field) {
+		let newField = GeneratorUtil._createArray(field.length, field[0].length);
+
+		for(let i = 0; i < field.length; i++) {
+			for(let j = 0; j < field[0].length; j++) {
+				newField[i][j] = field[i][j];
+			}
+		}
+
+		return newField;
+	}
 }
