@@ -15,6 +15,7 @@
     "auto-reload-brunch": "^1.8.0",
     "babel-brunch": "^5.1.2",
     "bower": "^1.4.1",
+    "brunch": "^1.8.5",
     "clean-css-brunch": "^1.7.2",
     "coffee-script-brunch": "^1.8.2",
     "core-js": "^1.0.1",
