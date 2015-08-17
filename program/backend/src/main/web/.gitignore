@@ -64,3 +64,4 @@ srcjslib/
 target/
 tmp/
 bower_components/
+/node/
