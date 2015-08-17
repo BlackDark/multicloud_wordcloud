@@ -30,39 +30,71 @@
 
 </head>
 <body>
-<nav class="ui fixed menu inverted navbar">
-	<a href="" class="brand item">Project Name</a>
-	<a href="" class="active item">Home</a>
-	<a href="" class="item">Features</a>
-	<a href="" class="item">Contact</a>
-</nav>
-<!-- end nav -->
 
-<div class="ui padded two column grid">
-	<div class="twelve wide column panel">
-		<h1 class="ui header">Semantic UI starter template</h1>
+<div class="ui top attached tabular menu">
+	<a class="item active" data-tab="upload">Upload</a>
+	<a class="item" data-tab="visualization">Visualization</a>
+	<a class="item" data-tab="third">TODO</a>
+</div>
 
-		<p>Use this document as a way to quickly start any new project.</p>
+<div class="ui bottom attached tab segment active" data-tab="upload">
 
-		<p>All you get is this text and a mostly barebones HTML document.</p>
-
-		<div class="ui segment" id="graph">
-			<!--
-			<div class="ui top attached progress" data-percent="74">
-				<div class="bar" style="transition-duration: 300ms; width: 74%;"></div>
-			</div>
-			-->
-			<div class="ui dimmer">
-				<div class="ui loader"></div>
-			</div>
-		</div>
-
+	<div class="ui segment">
+		<form id="filesForm" name="files" enctype="multipart/form-data">
+			<input id="filesInput" type='file' name='file' multiple>
+		</form>
+		<input type="number" value="ZAAAhL" title="Läuft" id="progressId"/>
+		<button class="ui button" id="checkFinish">Check finished...</button>
+		<button class="ui button" id="printResult">Log result</button>
+		<button class="ui button" id="submitUpload">Submit</button>
 	</div>
-	<div class="four wide column panel" id="forbutton">
+	<table class="ui celled table" id="uploadTable">
+		<thead>
+		<tr>
+			<th>Files</th>
+			<th>Id</th>
+		</tr>
+		</thead>
+		<tbody id="uploadTableBody">>
+		</tbody>
+	</table>
+
+
+</div>
+
+<div class="ui bottom attached tab segment" data-tab="visualization">
+	<div class="ui padded two column grid">
+		<div class="twelve wide column panel">
+			<h1 class="ui header">Multidocument WordCloud Visualization</h1>
+
+			<p>Still in its early development progress. Basic visualization of the intersections done
+				mostly. Other stuff is coming!</p>
+
+			<div class="ui segment" id="graph">
+				<!--
+				<div class="ui top attached progress" data-percent="74">
+					<div class="bar" style="transition-duration: 300ms; width: 74%;"></div>
+				</div>
+				-->
+				<div class="ui dimmer">
+					<div class="ui loader"></div>
+				</div>
+			</div>
+
+		</div>
+		<div class="four wide column panel" id="forbutton">
+		</div>
 	</div>
 </div>
+
+<div class="ui bottom attached tab segment" data-tab="third">
+	Nothing to show here yet. Just a dummy tab.
+</div>
+
 <script src="javascripts/vendor.js"></script>
 <script src="javascripts/app.js"></script>
-<script>var tt = require("js/app");</script>
+<!-- Needed for loading the first necessary general scripts. -->
+<script>require("js/global-ui/UIGeneral");</script>
+<script>require("js/upload/UIUploading");</script>
 </body>
 </html>
