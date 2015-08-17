@@ -63,6 +63,7 @@ public class MergeDocument extends Document {
 		List<NodeElement> sortedList = new ArrayList<>(mapping.values());
 		sortedList.sort((o1, o2) -> o2.getFreq() - o1.getFreq());
 
-		return sortedList.subList(0, count);
+		int endIndex = count > sortedList.size() ? sortedList.size() : count;
+		return sortedList.subList(0, endIndex);
 	}
 }
