@@ -61,18 +61,15 @@ public class FileUploadController {
 	 * Upload multiple file using Spring Controller
 	 */
 	@RequestMapping(value = "/uploadMulti", method = RequestMethod.POST)
-	public @ResponseBody Integer uploadMultipleFileHandler(@RequestParam("name") String[] names,
-	                                 @RequestParam("file") MultipartFile[] files) {
-		if (files.length != names.length)
-			return -1;
-
-		String message = "";
+	public @ResponseBody Integer uploadMultipleFileHandler(@RequestParam("file") MultipartFile[] files) {
+		if (files.length == 0) {
+			return -3;
+		}
 
 		List<File> createdFiles = new ArrayList<>();
 
 		for (int i = 0; i < files.length; i++) {
 			MultipartFile file = files[i];
-			String name = names[i];
 			try {
 				byte[] bytes = file.getBytes();
 
@@ -84,16 +81,13 @@ public class FileUploadController {
 
 				// Create the file on server
 				File serverFile = new File(dir.getAbsolutePath()
-						+ File.separator + name);
+						+ File.separator + file.getOriginalFilename());
 				BufferedOutputStream stream = new BufferedOutputStream(
 						new FileOutputStream(serverFile));
 				stream.write(bytes);
 				stream.close();
 
 				createdFiles.add(serverFile);
-
-				message = message + "You successfully uploaded file=" + name
-						+ "<br />";
 			} catch (Exception e) {
 				return -2;
 			}
