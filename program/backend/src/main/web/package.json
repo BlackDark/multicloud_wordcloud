@@ -8,6 +8,7 @@
     "url": "https://github.com/BlackDark/bachelor_wordcloud.git"
   },
   "scripts": {
+    "postinstall": "bower install && brunch build",
     "start": "brunch watch --server",
     "test": "brunch test"
   },
