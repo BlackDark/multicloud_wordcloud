@@ -6,7 +6,14 @@ $(document).ready(function(){
 
 				// Load visualization scripts first on tab opening
 				if(tabName === "visualization") {
-					require("js/app");
+					var test = require("js/app");
+					//test.executeSample();
+					$.ajax({
+						url: "/upload/" + 0 + "/result",
+						success: function(data) {
+							test.execute(data);
+						}
+					});
 				}
 			}
 		});
