@@ -87,3 +87,5 @@ Desktop.ini
 ## build directories
 /src/main/webapp/*
 !/src/main/webapp/WEB-INF/
+
+/src/main/resources/public/

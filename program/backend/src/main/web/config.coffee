@@ -5,7 +5,7 @@ exports.config =
   #buildPath: ''
 
   paths:
-    public: "../../../static"
+    public: "../resources/public"
     
   plugins:
     babel:
