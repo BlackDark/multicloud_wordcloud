@@ -48,7 +48,7 @@ public class Datastore {
 	protected void recursivelyCreateFolders() {
 		File folder = new File(location);
 
-		if(!folder.mkdirs()) {
+		if(!folder.exists() && !folder.mkdirs()) {
 			throw new IllegalStateException("Couldn't create the necessary directories!");
 		}
 	}
