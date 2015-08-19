@@ -1,10 +1,25 @@
-import GraphVisualization from "./visualization/Graph";
-import Parser from "js/visualization/Parser";
-import SampleDataGenerator from "js/visualization/util/SampleDataGenerator";
-import ResponseParser from "js/visualization/ResponseParser";
+import GraphVisualization from "./Graph";
+import Parser from "./Parser";
+import SampleDataGenerator from "./util/SampleDataGenerator";
+import ResponseParser from "./ResponseParser";
 
-export default class app {
-	static executeSample() {
+export default class VisualzationInitializer {
+	constructor() {
+		this._currentGraph = undefined;
+		this._graphSelector = "#graph";
+		this._controllsSelector = "#forbutton";
+	}
+
+	get currentGraph() {
+		return this._currentGraph;
+	}
+
+	cleanVisualization() {
+		$(this._graphSelector).empty();
+		$(this._controllsSelector).empty();
+	}
+
+	executeSample() {
 		var graphContainerSelector = "#graph";
 		var selectedGraph = d3.select(graphContainerSelector);
 		var graph = new GraphVisualization(graphContainerSelector);
@@ -24,10 +39,11 @@ export default class app {
 
 		graph.data(data.endPoints, data.textObjects, data.links);
 
+		this._currentGraph = graph;
 		graph.start();
 	}
 
-	static execute(responseData) {
+	execute(responseData) {
 		var graphContainerSelector = "#graph";
 		var selectedGraph = d3.select(graphContainerSelector);
 		var graph = new GraphVisualization(graphContainerSelector);
@@ -41,6 +57,7 @@ export default class app {
 		console.log(data);
 		graph.data(data.endPoints, data.textObjects, data.links);
 
+		this._currentGraph = graph;
 		graph.start();
 	}
 }
