@@ -11,6 +11,8 @@ import de.marbach.bachelor.model.Document;
 import de.marbach.bachelor.model.MergeDocument;
 import de.marbach.bachelor.model.NodeElement;
 import de.marbach.bachelor.response.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,10 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -33,35 +32,14 @@ public class FileUploadController {
 	private int index = 0;
 	private Datastore datastore = new Datastore();
 
-	@RequestMapping(value = "/upload", method = RequestMethod.GET)
-	public @ResponseBody String provideUploadInfo() {
-		return "You can upload documents here.";
-	}
-
-	@RequestMapping(value="/upload", method=RequestMethod.POST)
-	public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file){
-		if (!file.isEmpty()) {
-			try {
-				byte[] bytes = file.getBytes();
-				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(datastore.getLocation().resolve(file.getOriginalFilename()))));
-				stream.write(bytes);
-				stream.close();
-				return "You successfully uploaded " + file.getOriginalFilename() + "!";
-			} catch (Exception e) {
-				return "You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage();
-			}
-		} else {
-			return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";
-		}
-	}
-
 	/**
 	 * Upload multiple file using Spring Controller
 	 */
 	@RequestMapping(value = "/uploadMulti", method = RequestMethod.POST)
-	public @ResponseBody Integer uploadMultipleFileHandler(@RequestParam("file") MultipartFile[] files) {
-		if (files.length == 0) {
-			return -3;
+	public @ResponseBody
+	ResponseEntity<Integer> uploadMultipleFileHandler(@RequestParam("file") MultipartFile[] files) {
+		if (files == null || files.length == 0) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
 		List<File> createdFiles = new ArrayList<>();
@@ -71,14 +49,17 @@ public class FileUploadController {
 			try {
 				byte[] bytes = file.getBytes();
 
-				File serverFile = new File(datastore.getLocation().resolve(file.getOriginalFilename()));
+				String fileName = file.getOriginalFilename().isEmpty() ? UUID.randomUUID().toString() : file.getOriginalFilename();
+
+				File serverFile = new File(datastore.getLocation().resolve(fileName));
 				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
 				stream.write(bytes);
 				stream.close();
 
 				createdFiles.add(serverFile);
 			} catch (Exception e) {
-				return -2;
+				e.printStackTrace();
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 
@@ -88,18 +69,36 @@ public class FileUploadController {
 
 		thread.run();
 
-		return index - 1;
+		return new ResponseEntity<>(index - 1, HttpStatus.PROCESSING);
 	}
 
-	@RequestMapping(value="/upload/{uploadId}/progress", method=RequestMethod.GET)
-	public @ResponseBody boolean getProgress(@PathVariable Integer uploadId){
-		return idToModule.get(uploadId).isFinished();
+	@RequestMapping(value = "/upload/{uploadId}/progress", method = RequestMethod.GET)
+	public
+	@ResponseBody
+	ResponseEntity<Boolean> getProgress(@PathVariable Integer uploadId) {
+		if (uploadId == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		if (!idToModule.containsKey(uploadId)) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		return new ResponseEntity<>(idToModule.get(uploadId).isFinished(), HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/upload/{uploadId}/result", method = RequestMethod.GET)
+	public
+	@ResponseBody
+	ResponseEntity<ResponseWordStorage> getProcessedContent(@PathVariable Integer uploadId) {
+		if (uploadId == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 
-	@RequestMapping(value="/upload/{uploadId}/result", method=RequestMethod.GET)
-	public @ResponseBody
-	ResponseWordStorage getProcessedContent(@PathVariable Integer uploadId){
+		if (!idToModule.containsKey(uploadId)) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
 		List<Document> documents = idToModule.get(uploadId).getDocuments();
 		MergeDocument mergedDocument = idToModule.get(uploadId).getMergedDocument();
 
@@ -115,12 +114,13 @@ public class FileUploadController {
 			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), new ArrayList<>(nodeElement.getAffinityToDocument().values())));
 		}
 
-		return new ResponseWordStorage(new ResponseInformation("Test"), endNodes, textNodes);
+		return new ResponseEntity<>(new ResponseWordStorage(new ResponseInformation("Test"), endNodes, textNodes), HttpStatus.OK);
 	}
 
-
-	@RequestMapping(value="/upload/availableResources", method=RequestMethod.GET)
-	public @ResponseBody List<ResponseFinishedDocuments> getAllProcessed(){
+	@RequestMapping(value = "/upload/availableResources", method = RequestMethod.GET)
+	public
+	@ResponseBody
+	List<ResponseFinishedDocuments> getAllProcessed() {
 		List<ResponseFinishedDocuments> documentsList = new ArrayList<>();
 
 		for (Map.Entry<Integer, AnalysisModule> entry : idToModule.entrySet()) {
