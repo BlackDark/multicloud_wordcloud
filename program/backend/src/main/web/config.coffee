@@ -20,6 +20,12 @@ exports.config =
         jQuery: true
       warnOnly: true
 
+    assetsmanager: {
+      copyTo: {
+        '/themes/' : ['bower_components/semantic/dist/themes/*']
+      }
+    }
+
   files:
     javascripts:
       defaultExtension: 'js'
