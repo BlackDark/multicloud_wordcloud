@@ -89,3 +89,4 @@ Desktop.ini
 !/src/main/webapp/WEB-INF/
 
 /src/main/resources/public/
+/gate_home/
