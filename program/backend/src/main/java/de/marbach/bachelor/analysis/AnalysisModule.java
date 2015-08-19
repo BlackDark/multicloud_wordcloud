@@ -8,9 +8,6 @@ package de.marbach.bachelor.analysis;
 import de.marbach.bachelor.model.Document;
 import de.marbach.bachelor.model.MergeDocument;
 import de.marbach.bachelor.model.NodeElement;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,14 +20,13 @@ import java.util.stream.Collectors;
 /**
  *
  */
-@Component
-@Scope(WebApplicationContext.SCOPE_SESSION)
 public class AnalysisModule {
 
 	private List<File> files;
 	private List<Document> documents;
 	private MergeDocument mergedDocument;
 	private boolean isFinished;
+	private List<String> fileNames;
 
 	public AnalysisModule() {
 		documents = new ArrayList<>();
@@ -47,6 +43,10 @@ public class AnalysisModule {
 		analysisModule.processFiles(Arrays.asList(file1, file2, file3, file4));
 	}
 
+	public List<String> getFileNames() {
+		return fileNames;
+	}
+
 	public List<File> getFiles() {
 		return files;
 	}
@@ -61,6 +61,7 @@ public class AnalysisModule {
 
 	public void processFiles(List<File> files) {
 		LuceneModule module = new LuceneModule();
+		this.files = files;
 
 		for (File file : files) {
 			Map<String, Integer> mapping = null;
@@ -74,7 +75,15 @@ public class AnalysisModule {
 
 		mergedDocument = new MergeDocument(documents);
 
+		finishProcess();
+	}
+
+	private void finishProcess() {
 		isFinished = true;
+
+		fileNames = new ArrayList<>();
+		files.forEach(file -> fileNames.add(file.getName()));
+		files.forEach(File::delete);
 	}
 
 	protected Document generateDocument(Map<String, Integer> mapping) {

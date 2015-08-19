@@ -118,4 +118,16 @@ public class FileUploadController {
 		return new ResponseWordStorage(new ResponseInformation("Test"), endNodes, textNodes);
 	}
 
+
+	@RequestMapping(value="/upload/availableResources", method=RequestMethod.GET)
+	public @ResponseBody List<ResponseFinishedDocuments> getAllProcessed(){
+		List<ResponseFinishedDocuments> documentsList = new ArrayList<>();
+
+		for (Map.Entry<Integer, AnalysisModule> entry : idToModule.entrySet()) {
+			documentsList.add(new ResponseFinishedDocuments(entry.getValue().getFileNames(), entry.getKey()));
+		}
+
+		return documentsList;
+	}
+
 }
