@@ -2,7 +2,7 @@ $(document).ready(function () {
 	$("#checkFinish").click(function () {
 		var id = +$("#progressId").prop("value");
 		$.ajax({
-			url: "/upload/" + id + "/progress",
+			url: "upload/" + id + "/progress",
 			success: function(data) {
 				console.log(data);
 			}
@@ -13,7 +13,7 @@ $(document).ready(function () {
 		var id = +$("#progressId").prop("value");
 
 		$.ajax({
-			url: "/upload/" + id + "/result",
+			url: "upload/" + id + "/result",
 			success: function(data) {
 				console.log(data);
 			}
@@ -26,7 +26,7 @@ $(document).ready(function () {
 		console.log(data);
 
 		$.ajax({
-			url: '/uploadMulti',
+			url: 'uploadMulti',
 			type: 'post',
 			dataType: 'json',
 			contentType: false,

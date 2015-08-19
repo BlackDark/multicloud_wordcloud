@@ -9,7 +9,7 @@ $(document).ready(function(){
 					var test = require("js/app");
 					//test.executeSample();
 					$.ajax({
-						url: "/upload/" + 0 + "/result",
+						url: "upload/" + 0 + "/result",
 						success: function(data) {
 							test.execute(data);
 						}
