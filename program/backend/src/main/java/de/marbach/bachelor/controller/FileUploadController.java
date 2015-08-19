@@ -6,14 +6,11 @@
 package de.marbach.bachelor.controller;
 
 import de.marbach.bachelor.analysis.AnalysisModule;
+import de.marbach.bachelor.model.Datastore;
 import de.marbach.bachelor.model.Document;
 import de.marbach.bachelor.model.MergeDocument;
 import de.marbach.bachelor.model.NodeElement;
-import de.marbach.bachelor.response.ResponseEndNode;
-import de.marbach.bachelor.response.ResponseInformation;
-import de.marbach.bachelor.response.ResponseTextNode;
-import de.marbach.bachelor.response.ResponseWordStorage;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.marbach.bachelor.response.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,8 +29,9 @@ import java.util.Map;
 @Controller
 public class FileUploadController {
 
-	private Map<Integer, AnalysisModule> map = new HashMap<>();
+	private Map<Integer, AnalysisModule> idToModule = new HashMap<>();
 	private int index = 0;
+	private Datastore datastore = new Datastore();
 
 	@RequestMapping(value = "/upload", method = RequestMethod.GET)
 	public @ResponseBody String provideUploadInfo() {
@@ -45,7 +43,7 @@ public class FileUploadController {
 		if (!file.isEmpty()) {
 			try {
 				byte[] bytes = file.getBytes();
-				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(file.getOriginalFilename())));
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(datastore.getLocation().resolve(file.getOriginalFilename()))));
 				stream.write(bytes);
 				stream.close();
 				return "You successfully uploaded " + file.getOriginalFilename() + "!";
@@ -73,17 +71,8 @@ public class FileUploadController {
 			try {
 				byte[] bytes = file.getBytes();
 
-				// Creating the directory to store file
-				String rootPath = System.getProperty("user.dir");
-				File dir = new File(rootPath + File.separator + "tmpFiles");
-				if (!dir.exists())
-					dir.mkdirs();
-
-				// Create the file on server
-				File serverFile = new File(dir.getAbsolutePath()
-						+ File.separator + file.getOriginalFilename());
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(serverFile));
+				File serverFile = new File(datastore.getLocation().resolve(file.getOriginalFilename()));
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
 				stream.write(bytes);
 				stream.close();
 
@@ -94,7 +83,7 @@ public class FileUploadController {
 		}
 
 		AnalysisModule module = new AnalysisModule();
-		map.put(index++, module);
+		idToModule.put(index++, module);
 		Runnable thread = () -> module.processFiles(createdFiles);
 
 		thread.run();
@@ -104,15 +93,15 @@ public class FileUploadController {
 
 	@RequestMapping(value="/upload/{uploadId}/progress", method=RequestMethod.GET)
 	public @ResponseBody boolean getProgress(@PathVariable Integer uploadId){
-		return map.get(uploadId).isFinished();
+		return idToModule.get(uploadId).isFinished();
 	}
 
 
 	@RequestMapping(value="/upload/{uploadId}/result", method=RequestMethod.GET)
 	public @ResponseBody
 	ResponseWordStorage getProcessedContent(@PathVariable Integer uploadId){
-		List<Document> documents = map.get(uploadId).getDocuments();
-		MergeDocument mergedDocument = map.get(uploadId).getMergedDocument();
+		List<Document> documents = idToModule.get(uploadId).getDocuments();
+		MergeDocument mergedDocument = idToModule.get(uploadId).getMergedDocument();
 
 
 		List<ResponseEndNode> endNodes = new ArrayList<>();
