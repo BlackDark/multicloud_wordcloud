@@ -1,12 +1,33 @@
+
+const FILE_EXTENSIONS = '.txt';
+const MAX_SIZE = 1024; // KB
+const FILE_TYPE_ERROR_MESSAGE = 'Currenlty only following file types are allowed:<br/> <strong>' + FILE_EXTENSIONS + '</strong>';
+const FILE_SIZE_ERROR_MESSAGE = 'Currently only the following max size of all files together is allowed：<br/> <strong>' + MAX_SIZE + '</strong> KB.';
+
 export default class UIUploading {
 	constructor() {
-		this.fileExtentionRange = '.txt';
-		this.MAX_SIZE = 1024; // KB
 		this.displayedElements = 0;
 		this.selectedId = undefined;
 
 		this._applyListeners();
 		this._initPolling();
+	}
+
+	static getInputFileLabel(name, dataValue) {
+		return "<div class='ui label' data-value='" + dataValue + "'><i class='file text icon'></i>" + name + "</div>";
+	}
+
+	static getInputTableFileLabel(name) {
+		return "<div class='ui label'>   <i class='file text icon'></i>" + name + "</div>";
+	}
+
+	_getModalDiv(message) {
+		let modal = document.createElement('div');
+		$(modal).addClass('ui').addClass('modal');
+		$(modal).append("	<i class='close icon'></i> 	<div class='header'> 	</div> </div>  <div class='ui modal' id='wrongFileSize'> 	<i class='close icon'></i> 	<div class='header'> 	</div>");
+
+		$(modal).find('div.header').append(message);
+		return $(modal);
 	}
 
 	get selectedRow() {
@@ -22,14 +43,18 @@ export default class UIUploading {
 			let fileNames = that._checkInput(fileList, that);
 
 			if(fileNames === false) {
-				$('#attachmentName').removeAttr('name');
+				let fileInput = $('#attachmentName');
+				fileInput.replaceWith(fileInput = fileInput.clone(true));
 				$('#submitUpload').attr('disabled', true);
-				$('#_attachmentName').val("");
+				$('#fileLabelDiv').empty();
 				return;
 			}
 
 			$('#submitUpload').removeAttr('disabled');
-			$('#_attachmentName').val(fileNames.join(" - "));
+			let fileLabels = "";
+			fileNames.forEach(name => fileLabels = fileLabels.concat(UIUploading.getInputFileLabel(name, name)));
+			$('#fileLabelDiv').empty();
+			$('#fileLabelDiv').append(fileLabels);
 		});
 
 		$("#checkFinish").click(function () {
@@ -66,18 +91,8 @@ export default class UIUploading {
 				processData: false,
 				data: data,
 				success: function (data) {
-					var tr = d3.select("#uploadTableBody").append("tr");
-					var fileNames = "";
-					var files = $('#filesInput').prop("files");
-
-					for (var i = 0; i < files.length; i++) {
-						var file = files.item(i);
-						fileNames = fileNames.concat(" | " + file.name);
-					}
-
-					tr.append("td").text(fileNames);
-					tr.append("td").text(data);
-					console.log(data);
+					$('#fileLabelDiv').empty();
+					that._pollOnceForResources();
 				}
 			});
 		});
@@ -97,18 +112,18 @@ export default class UIUploading {
 
 			var postfix = file.name.substr(file.name.lastIndexOf('.'));
 
-			if (that.fileExtentionRange.indexOf(postfix.toLowerCase()) > -1) {
+			if (FILE_EXTENSIONS.indexOf(postfix.toLowerCase()) > -1) {
 
 			} else {
-				alert('file type：<br/> <strong>' + that.fileExtentionRange + '</strong>');
+				that._getModalDiv(FILE_TYPE_ERROR_MESSAGE).modal('show');
 				return false;
 			}
 
 			fileNames.push(file.name);
 		}
 
-		if (size > 1024 * that.MAX_SIZE) {
-			alert('max size：<strong>' + that.MAX_SIZE + '</strong> MB.');
+		if (size > 1024 * MAX_SIZE) {
+			that._getModalDiv(FILE_SIZE_ERROR_MESSAGE).modal('show');
 			return false;
 		}
 
@@ -134,6 +149,36 @@ export default class UIUploading {
 		})();
 	}
 
+	_pollOnceForResources() {
+		let that = this;
+
+		$.ajax({
+			url: "upload/availableResources",
+			type: "GET",
+			success: function (data) {
+				that.displayedElements = that._updateResourceTable(data, that.displayedElements);
+			},
+			dataType: "json"
+		});
+	}
+
+	_addTableRow(fileNames, id, isFinished) {
+		var tr = d3.select("#uploadTableBody").append("tr");
+
+		let label = "";
+		fileNames.forEach(name => label = label.concat(UIUploading.getInputTableFileLabel(name)));
+		tr.append("td").html(label);
+		tr.append("td").attr("class", "center aligned").attr("id", "dataId").html(id);
+
+		console.log(isFinished);
+
+		if(isFinished) {
+			tr.append("td").attr("class", "center aligned").html("<i class='check circle icon green'></i>");
+		} else {
+			tr.append("td").attr("class", "center aligned").html("<i class='remove circle icon red'></i>");
+		}
+	}
+
 	_updateResourceTable(jsonData, displayedElements) {
 		var that = this;
 
@@ -154,14 +199,12 @@ export default class UIUploading {
 		tableBody.selectAll("*").remove();
 
 		for (var i = 0; i < jsonData.length; i++) {
-			var tr = tableBody.append("tr");
-			tr.append("td").text(jsonData[i].fileNames.join(" - "));
-			tr.append("td").text(jsonData[i].id);
+			that._addTableRow(jsonData[i].fileNames, jsonData[i].id, jsonData[i].isFinished);
 		}
 
 
 		$('#uploadTableBody').find('tr').click(function () {
-			var newId = +$(this).find('td').last().text();
+			var newId = +$(this).find('td#dataId').text();
 
 			if (that.selectedId === newId) {
 				return;

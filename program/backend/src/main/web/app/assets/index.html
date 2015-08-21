@@ -31,100 +31,110 @@
 </head>
 <body>
 
-<div class="ui top attached tabular menu">
-	<a class="item active" data-tab="upload">Upload</a>
-	<a class="item" data-tab="visualization">Visualization</a>
-	<a class="item" data-tab="third">TODO</a>
-</div>
+<div class="ui container">
+	<h1 class="ui header">Multidocument WordCloud Visualization</h1>
 
-<div class="ui bottom attached tab segment active" data-tab="upload">
-
-	<div class="ui huge fluid action input">
-		<input type="text" id="_attachmentName" readonly placeholder="File names...">
-
-		<label for="attachmentName" class="ui huge icon button btn-file">
-			<i class="attach icon"></i>
-		</label>
-
-		<form id="filesForm" name="files" enctype="multipart/form-data">
-			<input id="attachmentName" name="file" style="display: none" type="file" multiple>
-		</form>
-
-		<button class="ui huge teal right labeled icon button" id="submitUpload" disabled>
-			<i class="upload icon"></i>
-			Upload
-		</button>
+	<div class="ui top attached tabular menu">
+		<a class="item active" data-tab="upload">Upload</a>
+		<a class="item" data-tab="visualization">Visualization</a>
+		<a class="item" data-tab="third">TODO</a>
 	</div>
 
-	<!--
-	<div class="ui segment">
-		<form id="filesForm" name="files" enctype="multipart/form-data">
-			<input class="ui button" id="filesInput" type='file' name='file' multiple>
-		</form>
-		<input type="number" value="ZAAAhL" title="Läuft" id="progressId"/>
-		<button class="ui button" id="checkFinish">Check finished...</button>
-		<button class="ui button" id="printResult">Log result</button>
-		<button class="ui button" id="submitUpload">Submit</button>
-	</div>
-	-->
+	<div class="ui bottom attached tab segment active" data-tab="upload">
+		<h3 class="ui header">Please select at least 2 files with the <i class="attach icon"></i> icon.
+			Then upload the files.
+		</h3>
 
-	<div class="ui divider"></div>
+		<div class="ui fluid action input">
 
-	<div class="ui container">
-		<div id="uploadResourceEmpty" class="ui icon message">
-			<i class="info icon"></i>
-			No uploaded resources found
+			<div class="ui dropdown fluid selection multiple" id="fileLabelDiv" style="cursor: auto;overflow-y:auto;white-space:nowrap;">
+			</div>
+
+			<label for="attachmentName" class="ui huge icon button btn-file">
+				<i class="attach icon"></i>
+			</label>
+
+			<form id="filesForm" name="files" enctype="multipart/form-data">
+				<input id="attachmentName" name="file" style="display: none" type="file" multiple>
+			</form>
+
+			<button class="ui huge teal right labeled icon button" id="submitUpload" disabled>
+				<i class="upload icon"></i>
+				Upload
+			</button>
 		</div>
 
-		<div id="uploaedResource" class="ui segment hidden">
-			<table class="ui celled table" id="uploadTable">
-				<thead>
-				<tr>
-					<th>Files</th>
-					<th>Id</th>
-				</tr>
-				</thead>
-				<tbody id="uploadTableBody">
-				</tbody>
-			</table>
+		<!--
+		<div class="ui segment">
+			<form id="filesForm" name="files" enctype="multipart/form-data">
+				<input class="ui button" id="filesInput" type='file' name='file' multiple>
+			</form>
+			<input type="number" value="ZAAAhL" title="Läuft" id="progressId"/>
+			<button class="ui button" id="checkFinish">Check finished...</button>
+			<button class="ui button" id="printResult">Log result</button>
+			<button class="ui button" id="submitUpload">Submit</button>
 		</div>
+		-->
 
-	</div>
+		<div class="ui divider"></div>
 
-
-</div>
-
-<div class="ui bottom attached tab segment" data-tab="visualization">
-	<div class="ui padded two column grid">
-		<div class="twelve wide column panel">
-			<h1 class="ui header">Multidocument WordCloud Visualization</h1>
-
-			<p>Still in its early development progress. Basic visualization of the intersections done
-				mostly. Other stuff is coming!</p>
-
-			<div id="visualizationNotReady" class="ui icon message">
+		<div class="ui container">
+			<div id="uploadResourceEmpty" class="ui icon message">
 				<i class="info icon"></i>
-				No data uploaded or selected for visualization!
+				No uploaded resources found
 			</div>
 
-			<div id="visualizationEmpty" class="ui icon message hidden">
-				<i class="info icon"></i>
-				The processed visualization contains no data! Or no intersections exists!
-			</div>
-
-			<div class="ui segment hidden" id="graph">
+			<div id="uploaedResource" class="ui container hidden">
+				<h3 class="ui header">Please select the desired file set! Then open tab visualization.</h3>
+				<table class="ui celled table" id="uploadTable">
+					<thead>
+					<tr>
+						<th>Files</th>
+						<th>Id</th>
+						<th>Finished</th>
+					</tr>
+					</thead>
+					<tbody id="uploadTableBody">
+					</tbody>
+				</table>
 			</div>
 
 		</div>
-		<div class="four wide column panel" id="forbutton">
+
+
+	</div>
+
+	<div class="ui bottom attached tab segment" data-tab="visualization">
+		<div class="ui padded two column grid">
+			<div class="twelve wide column panel">
+				<p>Still in its early development progress. Basic visualization of the intersections done
+					mostly. Other stuff is coming!</p>
+
+				<div id="visualizationNotReady" class="ui icon message">
+					<i class="info icon"></i>
+					No data uploaded or selected for visualization!
+				</div>
+
+				<div id="visualizationEmpty" class="ui icon message hidden">
+					<i class="info icon"></i>
+					The processed visualization contains no data! Or no intersections exists!
+				</div>
+
+				<div class="ui segment hidden" id="graph">
+				</div>
+
+			</div>
+			<div class="four wide column panel" id="forbutton">
+			</div>
 		</div>
 	</div>
-</div>
 
-<div class="ui bottom attached tab segment" data-tab="third">
-	Nothing to show here yet. Just a dummy tab.
-</div>
+	<div class="ui bottom attached tab segment" data-tab="third">
+		Nothing to show here yet. Just a dummy tab.
+	</div>
 
+</div>
+<!-- Script injection --------------------------------------------------------------------------------->
 <script src="javascripts/vendor.js"></script>
 <script src="javascripts/app.js"></script>
 <!-- Needed for loading the first necessary general scripts. -->
