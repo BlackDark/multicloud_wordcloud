@@ -12,7 +12,6 @@ import de.marbach.bachelor.model.MergeDocument;
 import de.marbach.bachelor.model.NodeElement;
 import de.marbach.bachelor.response.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -32,14 +32,26 @@ public class FileUploadController {
 	private int index = 0;
 	private Datastore datastore = new Datastore();
 
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Parameter not correct")
+	@ExceptionHandler(IllegalArgumentException.class)
+	public void parameterException(Exception e) {
+		System.out.println("--- Parameter exception: " + e.getMessage());
+	}
+
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "No module found for id")
+	@ExceptionHandler(IllegalAccessError.class)
+	public void noModuleFound(Exception e) {
+		System.out.println("--- No module found for requested id: " + e.getMessage());
+	}
+
 	/**
 	 * Upload multiple file using Spring Controller
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/uploadMulti", method = RequestMethod.POST)
-	public @ResponseBody
-	ResponseEntity<Integer> uploadMultipleFileHandler(@RequestParam("file") MultipartFile[] files) {
+	public Integer uploadMultipleFileHandler(@RequestParam("file") MultipartFile[] files) throws IOException {
 		if (files == null || files.length == 0) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new IllegalArgumentException();
 		}
 
 		List<File> createdFiles = new ArrayList<>();
@@ -59,7 +71,7 @@ public class FileUploadController {
 				createdFiles.add(serverFile);
 			} catch (Exception e) {
 				e.printStackTrace();
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+				throw new IOException();
 			}
 		}
 
@@ -69,39 +81,38 @@ public class FileUploadController {
 
 		thread.run();
 
-		return new ResponseEntity<>(index - 1, HttpStatus.PROCESSING);
+		return index - 1;
 	}
 
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/upload/{uploadId}/progress", method = RequestMethod.GET)
-	public
-	@ResponseBody
-	ResponseEntity<Boolean> getProgress(@PathVariable Integer uploadId) {
+	public Boolean getProgress(@PathVariable Integer uploadId) {
 		if (uploadId == null) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new IllegalArgumentException("Upload ID is null");
 		}
 
 		if (!idToModule.containsKey(uploadId)) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			throw new IllegalAccessError(uploadId.toString());
 		}
 
-		return new ResponseEntity<>(idToModule.get(uploadId).isFinished(), HttpStatus.OK);
+		return idToModule.get(uploadId).isFinished();
 	}
 
-	@RequestMapping(value = "/upload/{uploadId}/result", method = RequestMethod.GET)
-	public
 	@ResponseBody
-	ResponseEntity<ResponseWordStorage> getProcessedContent(@PathVariable Integer uploadId) {
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/upload/{uploadId}/result", method = RequestMethod.GET)
+	public ResponseWordStorage getProcessedContent(@PathVariable Integer uploadId) {
 		if (uploadId == null) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			throw new IllegalArgumentException("Upload ID is null");
 		}
 
 		if (!idToModule.containsKey(uploadId)) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			throw new IllegalAccessError(uploadId.toString());
 		}
 
 		List<Document> documents = idToModule.get(uploadId).getDocuments();
 		MergeDocument mergedDocument = idToModule.get(uploadId).getMergedDocument();
-
 
 		List<ResponseEndNode> endNodes = new ArrayList<>();
 		List<ResponseTextNode> textNodes = new ArrayList<>();
@@ -114,17 +125,17 @@ public class FileUploadController {
 			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), new ArrayList<>(nodeElement.getAffinityToDocument().values())));
 		}
 
-		return new ResponseEntity<>(new ResponseWordStorage(new ResponseInformation("Test"), endNodes, textNodes), HttpStatus.OK);
+		return new ResponseWordStorage(new ResponseInformation("Test"), endNodes, textNodes);
 	}
 
-	@RequestMapping(value = "/upload/availableResources", method = RequestMethod.GET)
-	public
 	@ResponseBody
-	List<ResponseFinishedDocuments> getAllProcessed() {
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/upload/availableResources", method = RequestMethod.GET)
+	public List<ResponseFinishedDocuments> getAllProcessed() {
 		List<ResponseFinishedDocuments> documentsList = new ArrayList<>();
 
 		for (Map.Entry<Integer, AnalysisModule> entry : idToModule.entrySet()) {
-			documentsList.add(new ResponseFinishedDocuments(entry.getValue().getFileNames(), entry.getKey()));
+			documentsList.add(new ResponseFinishedDocuments(entry.getValue().getFileNames(), entry.getKey(), entry.getValue().isFinished()));
 		}
 
 		return documentsList;
