@@ -1,11 +1,12 @@
 
-// Shapes
-import RectConstructor from "../../visualization/shape/ShapeRectangular";
-import CircleConstructor from "../../visualization/shape/ShapeCircle";
-import EllipseConstructor from "../../visualization/shape/ShapeEllipse";
+import UIHelper from "./UIHelper";
 
-import ShapeParameter from "../../visualization/shape/ShapeParameters";
-import UIHelper from "../../visualization/ui/UIHelper";
+// Shapes
+import RectConstructor from "../../../visualization/shape/ShapeRectangular";
+import CircleConstructor from "../../../visualization/shape/ShapeCircle";
+import EllipseConstructor from "../../../visualization/shape/ShapeEllipse";
+
+import ShapeParameter from "../../../visualization/shape/ShapeParameters";
 
 export default class UIShapeParameter {
 	constructor() {

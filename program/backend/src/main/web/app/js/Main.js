@@ -1,4 +1,4 @@
-import UIMultiCloud from "ui/UIMultiCloud";
+import UIMultiCloud from "./ui/UIMultiCloud";
 import Visualization from "./visualization/VisualzationInitializer";
 
 export default class Main {

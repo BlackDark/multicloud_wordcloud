@@ -1,5 +1,6 @@
-import UIGeneral from "global-ui/UIGeneral";
-import UIUploading from "upload/UIUploading";
+import UIGeneral from "./global-ui/UIGeneral";
+import UIUploading from "./upload/UIUploading";
+import UIVisualization from "./visualization/UIVisualization";
 
 export default class UIMultiCloud {
 	constructor(visualizationInitializer) {
@@ -11,6 +12,7 @@ export default class UIMultiCloud {
 	_init() {
 		let uiGeneral = new UIGeneral();
 		let uiUploading = new UIUploading();
+		//let uiVisualization = new UIVisualization($('#visualizationContainer'));
 
 		uiGeneral.registerUploading(uiUploading);
 		uiGeneral.registerVisualizationObject(this._visualization);
