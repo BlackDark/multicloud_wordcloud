@@ -44,3 +44,8 @@ exports.config =
         after: ['vendor/styles/helpers.css']
 
   minify: no
+  
+  overrides:
+   test:
+     paths:
+       public: "../../../static/"
