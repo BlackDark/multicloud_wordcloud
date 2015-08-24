@@ -6,6 +6,6 @@
   "dependencies": {
     "d3": "~3.5.6",
     "jquery": "~2.1.4",
-    "semantic": "git://github.com/linkvt/Semantic-UI.git#master"
+    "semantic": "https://github.com/BlackDark/semantic-ui-test.git"
   }
 }

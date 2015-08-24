@@ -23,6 +23,8 @@ exports.config =
     assetsmanager: {
       copyTo: {
         '/themes/' : ['bower_components/semantic/dist/themes/*']
+        # For local testing needed
+        '/stylesheets/themes/' : ['bower_components/semantic/dist/themes/*']
       }
     }
 
