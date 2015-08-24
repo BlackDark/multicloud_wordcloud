@@ -17,6 +17,7 @@ public class Datastore {
 
 	private static final String MULTICLOUD_DIR = ".multicloud";
 	private static final String TMP_FILE_STORE = "tmpFiles";
+	private static final String MICROSOFT_AZURE_VARIABLE_HOME = "HOME";
 
 	private String homeDir = System.getProperty("user.home");
 	private URI location;
@@ -46,11 +47,33 @@ public class Datastore {
 	}
 
 	protected void recursivelyCreateFolders() {
+		URI azureUri = getAzureUri();
+
+		if(azureUri != null) {
+			setLocation(azureUri);
+		}
+
 		File folder = new File(location);
+
 
 		if(!folder.exists() && !folder.mkdirs()) {
 			throw new IllegalStateException("Couldn't create the necessary directories!");
 		}
+	}
+
+	/**
+	 * Work around for Microsoft Azure web apps
+	 * @return A compatible azure uri which has write access.
+	 */
+	private URI getAzureUri() {
+		String azureHome = System.getenv(MICROSOFT_AZURE_VARIABLE_HOME);
+
+		if(azureHome == null) {
+			return null;
+		}
+
+		Path tmpDirectory = Paths.get(azureHome).resolve(MULTICLOUD_DIR).resolve(TMP_FILE_STORE);
+		return tmpDirectory.toUri();
 	}
 
 	/**
