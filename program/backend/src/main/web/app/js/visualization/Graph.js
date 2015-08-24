@@ -10,11 +10,8 @@ import DragBehaviour from "js/visualization/DragBehaviour";
 import TimingHelper from "js/visualization/util/TimingHelper";
 
 // Shapes
-import UIShapeParameter from "js/visualization/ui/UIShapeParameter";
+import UIShapeParameter from "../ui/visualization/shape/UIShapeParameter";
 import ShapeApplier from "js/visualization/shape/ShapeApplier";
-
-// UI
-import UIProgress from "js/visualization/ui/UIProgress";
 
 export default class Graph {
 	constructor(containerSelector) {
@@ -250,8 +247,6 @@ export default class Graph {
 				return "translate(" + [d.x - d.width / 2, d.y - d.height / 2] + ")";
 			});
 		}.bind(this));
-
-		//colaForce.on("end", this._markOverlapping.bind(this));
 	}
 
 	_drawOriginalPositionLink() {

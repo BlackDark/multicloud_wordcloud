@@ -1,11 +1,11 @@
 
 // Shapes
-import RectConstructor from "js/visualization/shape/ShapeRectangular";
-import CircleConstructor from "js/visualization/shape/ShapeCircle";
-import EllipseConstructor from "js/visualization/shape/ShapeEllipse";
+import RectConstructor from "../../visualization/shape/ShapeRectangular";
+import CircleConstructor from "../../visualization/shape/ShapeCircle";
+import EllipseConstructor from "../../visualization/shape/ShapeEllipse";
 
-import ShapeParameter from "js/visualization/shape/ShapeParameters";
-import UIHelper from "js/visualization/ui/UIHelper";
+import ShapeParameter from "../../visualization/shape/ShapeParameters";
+import UIHelper from "../../visualization/ui/UIHelper";
 
 export default class UIShapeParameter {
 	constructor() {
