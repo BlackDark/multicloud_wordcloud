@@ -92,14 +92,9 @@ export default class Graph {
 			return dragging.dragBehaviour
 		}.bind(this)());
 		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
-		this._addD3Buttons();
 	}
 
 	_addD3Buttons() {
-		DebugConfig.addD3ButtonHeader();
-		let uiLayoutParameter = new UIShapeParameter();
-		uiLayoutParameter.addToLayout(d3.select("#forbutton"));
-
 		DebugConfig.addButtonForD3(this, this._moveToTopLeftCorner, "Move top left");
 		DebugConfig.addButtonForD3(this, this._applyLayout.bind(this, uiLayoutParameter), "Create layout");
 		//DebugConfig.addButtonForD3(this, this._applyLayout.bind(this, ShapeCircle, null), "Try circle shape");
