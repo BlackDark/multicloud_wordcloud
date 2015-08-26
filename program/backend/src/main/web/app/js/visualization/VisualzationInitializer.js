@@ -16,7 +16,6 @@ export default class VisualzationInitializer {
 
 	cleanVisualization() {
 		$(this._graphSelector).empty();
-		$(this._controllsSelector).empty();
 	}
 
 	executeSample() {
