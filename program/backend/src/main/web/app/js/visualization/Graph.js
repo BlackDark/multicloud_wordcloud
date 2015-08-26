@@ -10,7 +10,6 @@ import DragBehaviour from "js/visualization/DragBehaviour";
 import TimingHelper from "js/visualization/util/TimingHelper";
 
 // Shapes
-import UIShapeParameter from "../ui/visualization/shape/UIShapeParameter";
 import ShapeApplier from "js/visualization/shape/ShapeApplier";
 
 export default class Graph {
@@ -92,42 +91,6 @@ export default class Graph {
 			return dragging.dragBehaviour
 		}.bind(this)());
 		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
-	}
-
-	_addD3Buttons() {
-		DebugConfig.addButtonForD3(this, this._moveToTopLeftCorner, "Move top left");
-		DebugConfig.addButtonForD3(this, this._applyLayout.bind(this, uiLayoutParameter), "Create layout");
-		//DebugConfig.addButtonForD3(this, this._applyLayout.bind(this, ShapeCircle, null), "Try circle shape");
-		DebugConfig.addButtonForD3(this, this._applyColaJSLayout, "Apply Cola.js");
-	}
-
-	_addColaButtons() {
-		DebugConfig.addColaButtonHeader();
-		DebugConfig.addButtonForD3(this, function() {
-			console.log(this._colaForce.nodes());
-			this._colaForce.start(10,10,10);
-		}, "Restart (?)");
-
-		DebugConfig.addButtonForD3(this, function() {
-			this._colaForce.links(this._getLinksForColaForce.call(this));
-			this._colaForce.start();
-		}.bind(this), "Try circle");
-
-		DebugConfig.addButtonForD3(this, function() {
-			this._colaForce.links(this._links);
-			this._colaForce.linkDistance(function(link) {
-				return this._getLinkDistanceColaForce(link);
-			}.bind(this));
-			this._colaForce.start(10,10,10);
-		}.bind(this), "Use distances");
-
-		DebugConfig.addButtonForD3(this, function() {
-			this._textNodes.forEach(function(element) {
-				element.x += Math.random() * 8 - 4;
-				element.y += Math.random() * 8 - 4;
-			});
-			this._colaForce.start();
-		}.bind(this), "Fire");
 	}
 
 	_d3EndFunction() {
