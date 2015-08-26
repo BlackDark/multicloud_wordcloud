@@ -52,7 +52,9 @@ function parseTextNodes(rawData, startIndex) {
 		let currentTextObject = new WordElement(index);
 		currentTextObject.text = element.text;
 
+		currentTextObject.frequency = element.frequency;
 		currentTextObject.size = 8 + Math.sqrt(element.frequency) * 5;
+		currentTextObject.originalSize = currentTextObject.size;
 		currentTextObject.height = currentTextObject.size;
 		currentTextObject.width = StringExt.widthText(element.text, undefined, currentTextObject.size);
 
