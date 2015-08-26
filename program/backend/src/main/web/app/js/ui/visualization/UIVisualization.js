@@ -12,7 +12,7 @@ export default class UIVisualization {
 	}
 
 	_drawLayout() {
-		let font = new UIFontManipulation(this._controlSelector);
+		let font = new UIFontManipulation(this._controlSelector, this._graphObject);
 		let shape = new UIShape(this._controlSelector, this._graphObject);
 	}
 

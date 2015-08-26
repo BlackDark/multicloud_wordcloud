@@ -1,8 +1,19 @@
 
+import * as FontScaleEnum from "./FontScaleEnum";
+
 export default class GeneralParameters {
 	constructor() {
 		this._maximalFontSize = 32;
 		this._minimalFontSize = 8;
+		this._scaleFormat = FontScaleEnum.DEFAULT;
+	}
+
+	get scaleFormat() {
+		return this._scaleFormat;
+	}
+
+	set scaleFormat(scaleFormat) {
+		this._scaleFormat = scaleFormat;
 	}
 
 	get maximalFontSize() {
@@ -27,5 +38,9 @@ export default class GeneralParameters {
 
 	static get minimalFontSizePath() {
 		return "minimalFontSize";
+	}
+
+	static get scaleFormatPath() {
+		return "scaleFormat";
 	}
 }

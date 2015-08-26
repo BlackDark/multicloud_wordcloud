@@ -12,6 +12,8 @@ import TimingHelper from "js/visualization/util/TimingHelper";
 // Shapes
 import ShapeApplier from "js/visualization/shape/ShapeApplier";
 
+import FontScaler from "./font/FontScaler";
+
 export default class Graph {
 	constructor(containerSelector) {
 		this.config = new DebugConfig();
@@ -91,6 +93,21 @@ export default class Graph {
 			return dragging.dragBehaviour
 		}.bind(this)());
 		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
+
+		let min = undefined;
+		let max = undefined;
+
+		this._textNodes.forEach(node => {
+			if (min === undefined || min > node.frequency) {
+				min = node.frequency;
+			}
+
+			if (max === undefined || max < node.frequency) {
+				max = node.frequency;
+			}
+		});
+
+		this._fontScaler = new FontScaler(this._textNodes, min, max);
 	}
 
 	_d3EndFunction() {
@@ -99,6 +116,10 @@ export default class Graph {
 		//this._drawOriginalPositionLink();
 		//this._markOverlapping();
 		//this._applyColaJSLayout();
+	}
+
+	applyFontScaling(parameterObject) {
+		this._fontScaler.changeScaling.call(this._fontScaler, parameterObject);
 	}
 
 	_moveToTopLeftCorner() {
