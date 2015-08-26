@@ -13,10 +13,17 @@ export default class UIVisualization {
 
 	_drawLayout() {
 		let font = new UIFontManipulation(this._controlSelector);
-		let shape = new UIShape(this._controlSelector);
+		let shape = new UIShape(this._controlSelector, this._graphObject);
 	}
 
 	_generateSelectors() {
 		this._controlSelector = this._topContainer.find('#forbutton');
+	}
+
+	resize() {
+		let width = this._topContainer.find('#graph').width();
+		let height = this._topContainer.find('#graph').height();
+
+		this._graphObject.resize(width, height);
 	}
 }

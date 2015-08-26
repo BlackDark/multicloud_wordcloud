@@ -59,6 +59,15 @@ export default class VisualzationInitializer {
 		this._currentGraph = graph;
 		graph.start();
 	}
+
+	resize(width, height) {
+		d3.select(this._graphSelector).property("offsetWidth", width).property("offsetHeight", height);
+
+		if(this._currentGraph) {
+			this._currentGraph.resize(width, height);
+			this._currentGraph._force.resume();
+		}
+	}
 }
 
 //Parser.parse("data/ExampleData.csv", data => { graph.data(data).start(); });

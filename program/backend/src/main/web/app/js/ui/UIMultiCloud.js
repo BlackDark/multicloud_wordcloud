@@ -16,5 +16,6 @@ export default class UIMultiCloud {
 
 		uiGeneral.registerUploading(uiUploading);
 		uiGeneral.registerVisualizationObject(this._visualization);
+		uiGeneral.registerResizeElement(uiVisualization);
 	}
 }
