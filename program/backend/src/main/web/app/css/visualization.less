@@ -1,75 +1,73 @@
 .graph {
-	font-family: sans-serif;
-	font-size: 12px;
+  font-family: sans-serif;
+  font-size: 12px;
 
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	left: 0;
-	top: 0;
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
-.node rect{
-	stroke: #fff;
-	stroke-width: 1.5px;
-	cursor: move;
+.node rect {
+  stroke: #fff;
+  stroke-width: 1.5px;
+  cursor: move;
 }
 
 .endpoint circle {
-	stroke: #fff;
-	stroke-width: 1.5px;
-	cursor: move;
-	fill: blue;
+  stroke: #fff;
+  stroke-width: 1.5px;
+  cursor: move;
+  fill: blue;
 }
 
 .node.overlap rect {
-	fill: red;
+  fill: red;
 }
 
 .node .container.hovered {
-	fill: #f00;
-	cursor: pointer;
+  fill: #f00;
+  cursor: pointer;
 }
 
 .rectTest {
-	margin: 5px;
-	padding: 5px 5px 5px 5px;
+  margin: 5px;
+  padding: 5px 5px 5px 5px;
 }
 
 .link path {
-	stroke: black;
-	stroke-width: 2px;
+  stroke: black;
+  stroke-width: 2px;
 }
 
 .link .originalPosition {
-	stroke: black;
-	stroke-width: 2px;
+  stroke: black;
+  stroke-width: 2px;
 
 }
 
 .label .container {
-	fill: white;
+  fill: white;
 }
 
 .hidden {
-	visibility: hidden;
+  visibility: hidden;
 }
 
 .word-text {
-	dominant-baseline: hanging;
-	pointer-events: none;
+  dominant-baseline: hanging;
+  pointer-events: none;
 }
 
 .textForWidth {
-	text-anchor: middle;
-	dominant-baseline: central;
+  text-anchor: middle;
+  dominant-baseline: central;
 
-	pointer-events: none;
+  pointer-events: none;
 }
 
 #width-test {
-	position: absolute;
-	float: left;
-	white-space: nowrap;
-	visibility: hidden;
+  position: absolute;
+  float: left;
+  white-space: nowrap;
+  visibility: hidden;
 }

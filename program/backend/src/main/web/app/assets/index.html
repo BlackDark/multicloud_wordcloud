@@ -107,22 +107,32 @@
 	<div class="ui bottom attached tab segment" data-tab="visualization">
 		<div class="ui padded two column grid" id="visualizationContainer">
 			<div class="twelve wide column panel">
-				<p>Still in its early development progress. Basic visualization of the intersections done
-					mostly. Other stuff is coming!</p>
+				<div class="ui items">
+					<div class="item">
+						<div class="ui fluid icon yellow message">
+							<i class="info icon"></i>
+							Still in its early development progress. Basic visualization of the intersections done
+							mostly. Other stuff is coming!
+						</div>
+					</div>
 
-				<div id="visualizationNotReady" class="ui icon message">
-					<i class="info icon"></i>
-					No data uploaded or selected for visualization!
+					<div class="item">
+						<div id="visualizationNotReady" class="ui icon message">
+							<i class="info icon"></i>
+							No data uploaded or selected for visualization!
+						</div>
+
+						<div id="visualizationEmpty" class="ui icon message hidden">
+							<i class="info icon"></i>
+							The processed visualization contains no data! Or no intersections exists!
+						</div>
+					</div>
+
+					<div class="item">
+						<div class="ui fitted container hidden" id="graph">
+						</div>
+					</div>
 				</div>
-
-				<div id="visualizationEmpty" class="ui icon message hidden">
-					<i class="info icon"></i>
-					The processed visualization contains no data! Or no intersections exists!
-				</div>
-
-				<div class="ui segment hidden" id="graph">
-				</div>
-
 			</div>
 			<div class="four wide column panel" id="forbutton">
 				<h1 class="ui header">Controls</h1>
