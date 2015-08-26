@@ -42,6 +42,34 @@ export default class UIHelper {
 		return buttonElement;
 	}
 
+	static getButtonTest(text, objectToCallFrom, pathArray, argArray) {
+		let buttonElement = document.createElement("button");
+		let selectedButton = d3.select(buttonElement);
+		let object = objectToCallFrom;
+
+		selectedButton.attr("class", "ui button")
+			.text(text)
+			.on("click", function() {
+				let currentObject = object;
+				for(let i = 0; i < pathArray.length; i++) {
+					console.log("Path: " + pathArray[i], " Args: " + argArray[i]);
+
+					if(argArray[i] !== undefined) {
+						currentObject = currentObject[pathArray[i]].call(currentObject, argArray[i]);
+					} else {
+						currentObject = currentObject[pathArray[i]];
+					}
+
+					if(currentObject === undefined) {
+						console.warn("Path for button is undefined.")
+						return;
+					}
+				}
+			});
+
+		return buttonElement;
+	}
+
 	static getCheckbox(text, name, disabled, checked) {
 		let element = document.createElement("div");
 		let fieldElement = d3.select(element).attr("class", "field");
