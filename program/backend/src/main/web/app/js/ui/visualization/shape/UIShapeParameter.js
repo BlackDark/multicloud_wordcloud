@@ -9,14 +9,16 @@ import EllipseConstructor from "../../../visualization/shape/ShapeEllipse";
 import ShapeParameter from "../../../visualization/shape/ShapeParameters";
 
 export default class UIShapeParameter {
-	constructor() {
+	constructor(containerQuerySelector, graphObject) {
+		this._topContainer = containerQuerySelector;
+		this._topContainerD3Selector = d3.select(this._topContainer[0]);
+		this._container = this._topContainerD3Selector.append("div").attr("class", "ui segment");
+		this._graphObject = graphObject;
 
+		this.addToLayout();
 	}
 
-	addToLayout(container) {
-		this.mainContainer = container.append("div");
-		this.mainContainer.attr("class", "ui segment");
-
+	addToLayout() {
 		this._addShapeForm();
 		this._addFillingConfiguration();
 	}
@@ -47,7 +49,7 @@ export default class UIShapeParameter {
 	}
 
 	_addShapeForm() {
-		this.shapeDiv = this.mainContainer.append("div").attr("class", "ui container");
+		this.shapeDiv = this._container.append("div").attr("class", "ui container");
 
 		this.shapeDiv.append("h2")
 			.attr("class", "ui medium header")
@@ -82,7 +84,7 @@ export default class UIShapeParameter {
 	}
 
 	_addFillingConfiguration() {
-		this.fillingConfigDiv = this.mainContainer.append("div").attr("class", "ui padded container");
+		this.fillingConfigDiv = this._container.append("div").attr("class", "ui padded container");
 
 		this.fillingConfigDiv.append("h2")
 			.attr("class", "ui medium header")

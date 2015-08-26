@@ -1,8 +1,10 @@
 import UIFontManipulation from "./general/UIFontManipulation";
+import UIShape from "./shape/UIShapeParameter";
 
 export default class UIVisualization {
-	constructor(container) {
+	constructor(container, graphObject) {
 		this._topContainer = container;
+		this._graphObject = graphObject;
 
 		console.log("UI VISUALIZATION");
 		this._generateSelectors();
@@ -10,10 +12,11 @@ export default class UIVisualization {
 	}
 
 	_drawLayout() {
-		let font = new UIFontManipulation(this._controlSelector)
+		let font = new UIFontManipulation(this._controlSelector);
+		let shape = new UIShape(this._controlSelector);
 	}
 
 	_generateSelectors() {
-		this._controlSelector = $('#forbutton');
+		this._controlSelector = this._topContainer.find('#forbutton');
 	}
 }

@@ -12,7 +12,7 @@ export default class UIMultiCloud {
 	_init() {
 		let uiGeneral = new UIGeneral();
 		let uiUploading = new UIUploading();
-		//let uiVisualization = new UIVisualization($('#visualizationContainer'));
+		let uiVisualization = new UIVisualization($('#visualizationContainer'), this._visualization);
 
 		uiGeneral.registerUploading(uiUploading);
 		uiGeneral.registerVisualizationObject(this._visualization);

@@ -67,4 +67,35 @@ export default class UIHelper {
 
 		return element;
 	}
+
+	static getInput(text, name, disabled, defaultValue, placeHolder, inputType) {
+		let createdElement = document.createElement("div");
+		let gridElement = d3.select(createdElement).attr("class", "ui padded grid container multicloud-input-parameter");
+
+		let inputElement = gridElement.append("div").attr("class", "ui input fitted five wide column test");
+		let labelElement = gridElement.append("div").attr("class", "ui label ten wide column multiCloud-inputNumberLabel");
+
+		if (disabled) {
+			inputElement.classed("disabled", true);
+		}
+
+		let input = inputElement.append("input")
+			.classed("multiCloud-inputNumber", true)
+			.attr("type", inputType)
+			.attr("name", name)
+			.attr("placeholder", placeHolder);
+
+		if (defaultValue) {
+			input.property('value', defaultValue);
+		}
+
+		labelElement
+			.text(text);
+
+		return createdElement;
+	}
+
+	static getInputNumber(text, name, disabled, defaultValue, placeHolder) {
+		return UIHelper.getInput(...arguments, "number");
+	}
 }
