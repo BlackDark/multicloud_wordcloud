@@ -21,6 +21,7 @@ export default class UIShapeParameter {
 	addToLayout() {
 		this._addShapeForm();
 		this._addFillingConfiguration();
+		this._addButtons();
 	}
 
 	get parameterObject() {
@@ -111,5 +112,12 @@ export default class UIShapeParameter {
 		this.configParameters.forEach(element => {
 			parameter[element.domInput.name] = element.domInput.checked;
 		})
+	}
+
+	_addButtons() {
+		let buttonContainer = this._container.append("div").attr("class", "ui container");
+		let button = UIHelper.getButtonTest("Apply layout", this._graphObject, ["currentGraph", "_applyLayout"], [undefined, this]);
+
+		buttonContainer.node().appendChild(button);
 	}
 }
