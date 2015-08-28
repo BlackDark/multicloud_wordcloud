@@ -2,6 +2,7 @@ import BaseElement from "js/visualization/elements/BaseElement";
 import StringExt from "js/visualization/util/StringExt";
 
 const color = d3.scale.category10();
+const emDivisor = 11;
 
 export default class WordElement extends BaseElement{
 	constructor(id) {
@@ -10,12 +11,12 @@ export default class WordElement extends BaseElement{
 
 	changeSize(newSize) {
 		this.size = newSize;
-		this.height = newSize;
-		this.width = StringExt.widthText(this.text, null, this.size);
-
 		this._container.select("text")
 			.style("font-size", function(d) {
-				return d.size + "px"; });
+				return d.size / emDivisor + "em"; });
+		let rect = this._container.select("text").node().getBoundingClientRect();
+		this.height = rect.height;
+		this.width = rect.width;
 	}
 
 	incrementSize() {
@@ -38,9 +39,8 @@ export default class WordElement extends BaseElement{
 				return color(index);
 			})
 			.style("opacity", d => d.endPointConnections[index])
-			//.attr("text-anchor", "middle")
 			.style("font-size", function(d) {
-				return d.size + "px"; })
+				return d.size / emDivisor + "em"; })
 			.text(function(d) {
 				return d.text;
 			});
