@@ -61,11 +61,8 @@ export default class VisualzationInitializer {
 	}
 
 	resize(width, height) {
-		d3.select(this._graphSelector).property("offsetWidth", width).property("offsetHeight", height);
-
 		if(this._currentGraph) {
 			this._currentGraph.resize(width, height);
-			this._currentGraph._force.resume();
 		}
 	}
 }
