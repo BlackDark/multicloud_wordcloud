@@ -14,13 +14,15 @@ export default class WordElement extends BaseElement{
 		this._container.select("text")
 			.style("font-size", function(d) {
 				return d.size / emDivisor + "em"; });
-		let rect = this._container.select("text").node().getBoundingClientRect();
-		this.height = rect.height;
-		this.width = rect.width;
+		setDimensions(this);
 	}
 
 	incrementSize() {
 		this.changeSize(this.size + 1);
+	}
+
+	decrementSize() {
+		this.changeSize(this.size - 1);
 	}
 
 	draw(container) {
@@ -41,14 +43,18 @@ export default class WordElement extends BaseElement{
 				return d.text;
 			});
 
+		setDimensions(this);
+
 		$(container.node()).find("text").tooltipsy({
 			alignTo: 'cursor',
 			offset: [10, 10],
 			content: this.text + "<br>" + "Width: " + Math.round(this.width) + "<br>" + "Height: " + Math.round(this.height)
 		});
 	}
+}
 
-	decrementSize() {
-		this.changeSize(this.size - 1);
-	}
+function setDimensions(object) {
+	let rect = object._container.select("text").node().getBoundingClientRect();
+	object.height = rect.height;
+	object.width = rect.width;
 }
