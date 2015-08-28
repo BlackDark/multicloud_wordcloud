@@ -23,10 +23,6 @@ export default class WordElement extends BaseElement{
 		this.changeSize(this.size + 1);
 	}
 
-	decrementSize() {
-		this.changeSize(this.size - 1);
-	}
-
 	draw(container) {
 		super.draw(container);
 
@@ -44,5 +40,15 @@ export default class WordElement extends BaseElement{
 			.text(function(d) {
 				return d.text;
 			});
+
+		$(container.node()).find("text").tooltipsy({
+			alignTo: 'cursor',
+			offset: [10, 10],
+			content: this.text + "<br>" + "Width: " + Math.round(this.width) + "<br>" + "Height: " + Math.round(this.height)
+		});
+	}
+
+	decrementSize() {
+		this.changeSize(this.size - 1);
 	}
 }

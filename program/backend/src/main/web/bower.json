@@ -6,6 +6,7 @@
   "dependencies": {
     "d3": "~3.5.6",
     "jquery": "~2.1.4",
-    "semantic": "https://github.com/BlackDark/semantic-ui-test.git"
+    "semantic": "https://github.com/BlackDark/semantic-ui-test.git",
+    "tooltipsy": "*"
   }
 }
