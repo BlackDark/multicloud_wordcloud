@@ -90,6 +90,46 @@ export default class BaseShape {
 		return distanceAndElement;
 	}
 
+	_checkPlacing(topLeftPoint, element) {
+		// Look if enough free space
+		for (let yIndex = topLeftPoint.y; yIndex < topLeftPoint.y + element.height; yIndex++) {
+			for (let xIndex = topLeftPoint.x; xIndex < topLeftPoint.x + element.width; xIndex++) {
+				if (this._width <= topLeftPoint.x + element.width || this._height <= topLeftPoint.y + element.height || this._field[xIndex][yIndex]) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	removePixelsFor(element) {
+		this._wordStorage.forEach(storeObject => {
+			if(storeObject.element === element) {
+				this._setFieldValueFor(storeObject, false);
+			}
+		})
+	}
+
+	setPixelsFor(element) {
+		this._wordStorage.forEach(storeObject => {
+			if(storeObject.element === element) {
+				storeObject.x = element.x;
+				storeObject.y = element.y;
+				this._setFieldValueFor(storeObject, true);
+			}
+		})
+	}
+
+	_setFieldValueFor(storeObject, booleanValue) {
+		let element = storeObject.element;
+		for (let yIndex = storeObject.y; yIndex < storeObject.y + element.height; yIndex++) {
+			for (let xIndex = storeObject.x; xIndex < storeObject.x + element.width; xIndex++) {
+				this._field[xIndex][yIndex] = booleanValue;
+			}
+		}
+	}
+
 	_place(coord, element) {
 		// Look if enough free space
 		for (let yIndex = coord.y; yIndex < coord.y + element.height; yIndex++) {

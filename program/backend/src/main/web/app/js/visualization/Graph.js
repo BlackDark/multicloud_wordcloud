@@ -288,8 +288,13 @@ export default class Graph {
 		this._force.stop();
 
 		let layoutApplier = new ShapeApplier(uiShapeParameterObject.parameterObject, this._textNodes, this._endPointsNodes);
+		this._currentLayout = layoutApplier;
 		//layoutApplier.registerProgressListener(new UIProgress(d3.select("#forbutton")));
 		layoutApplier.startShaping(this._height, this._width);
+	}
+
+	_testCentration() {
+		this._currentLayout._shiftMiddle();
 	}
 }
 

@@ -117,7 +117,9 @@ export default class UIShapeParameter {
 	_addButtons() {
 		let buttonContainer = this._container.append("div").attr("class", "ui container");
 		let button = UIHelper.getButtonTest("Apply layout", this._graphObject, ["currentGraph", "_applyLayout"], [undefined, this]);
+		let buttonCentration = UIHelper.getButtonTest("Centrate...", this._graphObject, ["currentGraph", "_testCentration"], [undefined, ""]);
 
 		buttonContainer.node().appendChild(button);
+		buttonContainer.node().appendChild(buttonCentration);
 	}
 }
