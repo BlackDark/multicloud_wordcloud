@@ -36,8 +36,11 @@ export default class UIHelper {
 		let selectedButton = d3.select(buttonElement);
 
 		selectedButton.attr("class", "ui button")
-		.text(text)
-		.on("click", clickFunction.bind(caller));
+		.text(text);
+
+		if(clickFunction !== undefined && caller !== undefined) {
+			selectedButton.on("click", clickFunction.bind(caller));
+		}
 
 		return buttonElement;
 	}
@@ -68,6 +71,19 @@ export default class UIHelper {
 			});
 
 		return buttonElement;
+	}
+
+	static getButtonGroup(buttonArrayDOM, activeIndex) {
+		let buttonGroupDiv = document.createElement("div");
+		let selectedDiv = d3.select(buttonGroupDiv).attr("class", "ui fluid buttons");
+		buttonArrayDOM.forEach(element => selectedDiv.node().appendChild(element));
+
+		if(activeIndex !== undefined) {
+			let activeButtonDOM = selectedDiv.selectAll("button")[0][activeIndex];
+			d3.select(activeButtonDOM).classed("active", true);
+		}
+
+		return buttonGroupDiv;
 	}
 
 	static getCheckbox(text, name, disabled, checked) {
