@@ -119,10 +119,6 @@ export default class UIHelper {
 		let inputElement = gridElement.append("div").attr("class", "ui input fitted five wide column test");
 		let labelElement = gridElement.append("div").attr("class", "ui label ten wide column multiCloud-inputNumberLabel");
 
-		if (disabled) {
-			inputElement.classed("disabled", true);
-		}
-
 		let input = inputElement.append("input")
 			.classed("multiCloud-inputNumber", true)
 			.attr("type", inputType)
@@ -131,6 +127,10 @@ export default class UIHelper {
 
 		if (defaultValue) {
 			input.property('value', defaultValue);
+		}
+
+		if (disabled) {
+			input.property("disabled", true);
 		}
 
 		labelElement
