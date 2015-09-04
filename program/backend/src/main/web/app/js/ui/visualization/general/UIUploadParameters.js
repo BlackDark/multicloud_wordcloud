@@ -20,15 +20,22 @@ export default class UIUploadParameters {
 
 		this._itemContainer = this._container.append("div").attr("class", "ui items");
 
-		this._inputNumWords = UIHelper.getInputNumber("Number of words", "numWords", false, undefined, "Number of words...");
+		this._inputNumWords = UIHelper.getInputNumber("Number of requested words", "numWords", false, undefined, "Number of words...");
 		$(this._inputNumWords).find('input').change(function() {
 			that.requestData(+this.value);
 		});
 		this._itemContainer.append("div").attr("class", "item").node().appendChild(this._inputNumWords);
+
+		this._totalNumWords = UIHelper.getInputNumber("Total number of different words", "totalNumWords", true, undefined, undefined);
+		this._itemContainer.append("div").attr("class", "item").node().appendChild(this._totalNumWords);
 	}
 
 	updateNumWords(numWords) {
 		$('input[name="numWords"]').val(+numWords);
+	}
+
+	updateTotalNumWords(numWords) {
+		$('input[name="totalNumWords"]').val(+numWords);
 	}
 
 	requestData(numWords) {

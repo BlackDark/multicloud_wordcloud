@@ -54,6 +54,7 @@ export default class UIVisualization {
 
 	updateDocumentInformation(responseData) {
 		this.upload.updateNumWords(responseData.information.requestedNumWords);
+		this.upload.updateTotalNumWords(responseData.information.totalNumWords);
 	}
 
 	updateVisualization(responseData) {
