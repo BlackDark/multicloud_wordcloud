@@ -3,6 +3,8 @@ import StringExt from "js/visualization/util/StringExt";
 
 const color = d3.scale.category10();
 const emDivisor = 11;
+const widthPadding = 4;
+const heightPaddingReduceFactor = 0.2;
 
 export default class WordElement extends BaseElement{
 	constructor(id) {
@@ -60,6 +62,6 @@ export default class WordElement extends BaseElement{
 
 function setDimensions(object) {
 	let rect = object._container.select("text").node().getBoundingClientRect();
-	object.height = rect.height;
-	object.width = rect.width;
+	object.height = rect.height - rect.height * heightPaddingReduceFactor;
+	object.width = rect.width + widthPadding;
 }
