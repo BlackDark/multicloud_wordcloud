@@ -30,7 +30,7 @@ export default class WordElement extends BaseElement{
 
 		let index;
 
-		container.append("text")
+		this._textSelectedDom = container.append("text")
 			.classed("word-text", true)
 			.style("fill", function(d, i) {
 				index = d.endPointConnections.indexOf(Math.max.apply(Math, d.endPointConnections));
@@ -50,6 +50,11 @@ export default class WordElement extends BaseElement{
 			offset: [10, 10],
 			content: this.text + "<br>" + "Width: " + Math.round(this.width) + "<br>" + "Height: " + Math.round(this.height)
 		});
+	}
+
+	hover(hovered) {
+		this._container.classed("hovered", hovered);
+		this._textSelectedDom.classed("hovered", hovered);
 	}
 }
 

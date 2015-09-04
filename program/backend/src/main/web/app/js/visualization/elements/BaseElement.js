@@ -6,6 +6,7 @@ export default class BaseElement {
 
 	draw(container) {
 		this._container = container;
+		this.addDefaultMouseListener();
 	}
 
 	addMouseListener(type, method) {
@@ -17,13 +18,17 @@ export default class BaseElement {
 	}
 
 	addDefaultMouseListener() {
-		this.addMouseListener(BaseElement.onMouseDownType, this.onMouseDown);
+		//this.addMouseListener(BaseElement.onMouseDownType, this.onMouseDown);
+		this.addMouseListener(BaseElement.onMouseOverType, this.onMouseOver);
+		this.addMouseListener(BaseElement.onMouseOutType, this.onMouseOut);
 	}
 
 	onMouseOver() {
+		this.hover(true);
 	}
 
 	onMouseOut() {
+		this.hover(false);
 	}
 
 	onMouseUp() {
