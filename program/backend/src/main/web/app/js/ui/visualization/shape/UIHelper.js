@@ -142,4 +142,8 @@ export default class UIHelper {
 	static getInputNumber(text, name, disabled, defaultValue, placeHolder) {
 		return UIHelper.getInput(...arguments, "number");
 	}
+
+	static getInputText(text, name, disabled, defaultValue, placeHolder) {
+		return UIHelper.getInput(...arguments, "text");
+	}
 }

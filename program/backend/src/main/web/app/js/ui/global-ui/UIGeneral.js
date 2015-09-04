@@ -23,7 +23,7 @@ export default class UIGeneral {
 							$.ajax({
 								url: "upload/" + that.visualizedId + "/result",
 								success: function (data) {
-									that._thatShowVisualization.call(that, data);
+									that._showVisualization.call(that, data);
 								}
 							});
 						}
@@ -32,25 +32,8 @@ export default class UIGeneral {
 		});
 	}
 
-	_thatShowVisualization(data) {
-		if(data === undefined) {
-			return;
-		}
-
-		if(data.textNodes.length === 0) {
-			$('#visualizationEmpty').removeClass('hidden');
-			$('#visualizationNotReady').addClass('hidden');
-			$('#graph').addClass('hidden');
-
-			return;
-		}
-
-		$('#visualizationNotReady').addClass('hidden');
-		$('#visualizationEmpty').addClass('hidden');
-		$('#graph').removeClass('hidden');
-
-		this.objectVisualization.cleanVisualization();
-		this.objectVisualization.execute(data);
+	_showVisualization(data) {
+		this.objectUIVisualization.showVisualization(data);
 	}
 
 	registerUploading(objectUIGeneral) {
@@ -59,6 +42,10 @@ export default class UIGeneral {
 
 	registerVisualizationObject(objectVisualization) {
 		this.objectVisualization = objectVisualization;
+	}
+
+	registerUIVisualization(objectUIVisualization) {
+		this.objectUIVisualization = objectUIVisualization;
 	}
 
 	resizeEvent() {

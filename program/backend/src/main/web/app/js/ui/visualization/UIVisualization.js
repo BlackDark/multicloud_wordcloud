@@ -1,23 +1,25 @@
 import UIFontManipulation from "./general/UIFontManipulation";
 import UIShape from "./shape/UIShapeParameter";
+import UIUpload from "./general/UIUploadParameters";
 
 export default class UIVisualization {
 	constructor(container, graphObject) {
 		this._topContainer = container;
 		this._graphObject = graphObject;
 
-		console.log("UI VISUALIZATION");
 		this._generateSelectors();
 		this._drawLayout();
 	}
 
 	_drawLayout() {
-		let font = new UIFontManipulation(this._controlSelector, this._graphObject);
-		let shape = new UIShape(this._controlSelector, this._graphObject);
+		this.font = new UIFontManipulation(this._controlSelector, this._graphObject);
+		this.shape = new UIShape(this._controlSelector, this._graphObject);
+		this.upload = new UIUpload(this._topControlDiv, this._graphObject);
 	}
 
 	_generateSelectors() {
 		this._controlSelector = this._topContainer.find('#forbutton');
+		this._topControlDiv = this._topContainer.find('#topControlDiv');
 	}
 
 	resize() {
@@ -25,5 +27,31 @@ export default class UIVisualization {
 		let height = this._topContainer.find('#graph').height();
 
 		this._graphObject.resize(width, height);
+	}
+
+	showVisualization(responseDate) {
+		if(responseDate === undefined) {
+			return;
+		}
+
+		if(responseDate.textNodes.length === 0) {
+			$('#visualizationEmpty').removeClass('hidden');
+			$('#visualizationNotReady').addClass('hidden');
+			$('#graph').addClass('hidden');
+
+			return;
+		}
+
+		$('#visualizationNotReady').addClass('hidden');
+		$('#visualizationEmpty').addClass('hidden');
+		$('#graph').removeClass('hidden');
+
+		this.updateDocumentInformation(responseDate);
+		this._graphObject.cleanVisualization();
+		this._graphObject.execute(responseDate);
+	}
+
+	updateDocumentInformation(responseData) {
+		this.upload.updateNumWords(responseData.information.requestedNumWords);
 	}
 }

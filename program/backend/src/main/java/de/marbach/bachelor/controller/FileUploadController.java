@@ -125,7 +125,7 @@ public class FileUploadController {
 			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), new ArrayList<>(nodeElement.getAffinityToDocument().values())));
 		}
 
-		return new ResponseWordStorage(new ResponseInformation("Test"), endNodes, textNodes);
+		return new ResponseWordStorage(new ResponseInformation("Test", 200, 3000), endNodes, textNodes);
 	}
 
 	@ResponseBody
