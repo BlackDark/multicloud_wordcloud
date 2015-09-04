@@ -66,4 +66,8 @@ public class MergeDocument extends Document {
 		int endIndex = count > sortedList.size() ? sortedList.size() : count;
 		return sortedList.subList(0, endIndex);
 	}
+
+	public Integer getTotalNumWords() {
+		return mapping.values().size();
+	}
 }

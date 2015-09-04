@@ -121,11 +121,42 @@ public class FileUploadController {
 			endNodes.add(new ResponseEndNode("" + i));
 		}
 
-		for (NodeElement nodeElement : mergedDocument.getTopFrequentMerged(200)) {
+		List<NodeElement> topFrequentMerged = mergedDocument.getTopFrequentMerged(200);
+		for (NodeElement nodeElement : topFrequentMerged) {
 			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), new ArrayList<>(nodeElement.getAffinityToDocument().values())));
 		}
 
-		return new ResponseWordStorage(new ResponseInformation("Test", 200, 3000), endNodes, textNodes);
+		return new ResponseWordStorage(new ResponseInformation("Test", topFrequentMerged.size(), mergedDocument.getTotalNumWords()), endNodes, textNodes);
+	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/upload/{uploadId}/numWords", method = RequestMethod.POST)
+	public ResponseWordStorage getNumWords(@PathVariable Integer uploadId, @RequestParam("numWords") Integer numWords) {
+		if (uploadId == null || numWords == null) {
+			throw new IllegalArgumentException("Null value for parameter");
+		}
+
+		if (!idToModule.containsKey(uploadId)) {
+			throw new IllegalAccessError(uploadId.toString());
+		}
+
+		List<Document> documents = idToModule.get(uploadId).getDocuments();
+		MergeDocument mergedDocument = idToModule.get(uploadId).getMergedDocument();
+
+		List<ResponseEndNode> endNodes = new ArrayList<>();
+		List<ResponseTextNode> textNodes = new ArrayList<>();
+
+		for (int i = 0; i < documents.size(); i++) {
+			endNodes.add(new ResponseEndNode("" + i));
+		}
+
+		List<NodeElement> topFrequentMerged = mergedDocument.getTopFrequentMerged(numWords);
+		for (NodeElement nodeElement : topFrequentMerged) {
+			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), new ArrayList<>(nodeElement.getAffinityToDocument().values())));
+		}
+
+		return new ResponseWordStorage(new ResponseInformation("Test", topFrequentMerged.size(), mergedDocument.getTotalNumWords()), endNodes, textNodes);
 	}
 
 	@ResponseBody
