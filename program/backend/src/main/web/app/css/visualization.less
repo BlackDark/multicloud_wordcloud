@@ -27,11 +27,6 @@
   fill: red;
 }
 
-.node .container.hovered {
-  fill: #f00;
-  cursor: pointer;
-}
-
 .rectTest {
   margin: 5px;
   padding: 5px 5px 5px 5px;
@@ -58,6 +53,15 @@
 
 .word-text {
   dominant-baseline: hanging;
+}
+
+.node.hovered {
+  stroke-dasharray: 10, 10;
+}
+
+.word-text.hovered {
+  fill: red !important;
+  opacity: 1 !important;
 }
 
 .textForWidth {
