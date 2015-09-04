@@ -14,7 +14,7 @@ export default class UIVisualization {
 	_drawLayout() {
 		this.font = new UIFontManipulation(this._controlSelector, this._graphObject);
 		this.shape = new UIShape(this._controlSelector, this._graphObject);
-		this.upload = new UIUpload(this._topControlDiv, this._graphObject);
+		this.upload = new UIUpload(this, this._topControlDiv, this._graphObject);
 	}
 
 	_generateSelectors() {
@@ -29,7 +29,7 @@ export default class UIVisualization {
 		this._graphObject.resize(width, height);
 	}
 
-	showVisualization(responseDate) {
+	showVisualization(responseDate, id) {
 		if(responseDate === undefined) {
 			return;
 		}
@@ -46,12 +46,18 @@ export default class UIVisualization {
 		$('#visualizationEmpty').addClass('hidden');
 		$('#graph').removeClass('hidden');
 
+		this._graphObject.currentId = id;
+
 		this.updateDocumentInformation(responseDate);
-		this._graphObject.cleanVisualization();
-		this._graphObject.execute(responseDate);
+		this.updateVisualization(responseDate);
 	}
 
 	updateDocumentInformation(responseData) {
 		this.upload.updateNumWords(responseData.information.requestedNumWords);
+	}
+
+	updateVisualization(responseData) {
+		this._graphObject.cleanVisualization();
+		this._graphObject.execute(responseData);
 	}
 }

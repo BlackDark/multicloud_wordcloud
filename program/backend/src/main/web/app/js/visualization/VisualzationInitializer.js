@@ -8,10 +8,19 @@ export default class VisualzationInitializer {
 		this._currentGraph = undefined;
 		this._graphSelector = "#graph";
 		this._controllsSelector = "#forbutton";
+		this._currentId = undefined;
 	}
 
 	get currentGraph() {
 		return this._currentGraph;
+	}
+
+	get currentId() {
+		return this._currentId;
+	}
+
+	set currentId(id) {
+		this._currentId = id;
 	}
 
 	cleanVisualization() {

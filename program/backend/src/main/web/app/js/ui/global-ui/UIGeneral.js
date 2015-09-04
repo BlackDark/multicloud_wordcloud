@@ -23,7 +23,7 @@ export default class UIGeneral {
 							$.ajax({
 								url: "upload/" + that.visualizedId + "/result",
 								success: function (data) {
-									that._showVisualization.call(that, data);
+									that._showVisualization.call(that, data, that.visualizedId);
 								}
 							});
 						}
@@ -32,8 +32,8 @@ export default class UIGeneral {
 		});
 	}
 
-	_showVisualization(data) {
-		this.objectUIVisualization.showVisualization(data);
+	_showVisualization(data, id) {
+		this.objectUIVisualization.showVisualization(data, id);
 	}
 
 	registerUploading(objectUIGeneral) {
