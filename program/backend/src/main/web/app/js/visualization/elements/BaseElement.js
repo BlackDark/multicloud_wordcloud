@@ -4,6 +4,10 @@ export default class BaseElement {
 		this._container = undefined;
 	}
 
+	getFrequency() {
+		return this.frequency;
+	}
+
 	draw(container) {
 		this._container = container;
 		this.addDefaultMouseListener();

@@ -10,7 +10,6 @@ export default class UIFontManipulation {
 		this._parameter = new FontParameter();
 		this._graphObject = graphObject;
 		this._selectedScaleFormat = FontScaleEnum.LINEAR;
-		this._isActive = false;
 
 		this._addToLayout();
 	}
@@ -60,21 +59,6 @@ export default class UIFontManipulation {
 			that._parameter.scaleFormat = that._selectedScaleFormat;
 			that.changeEvent();
 		});
-
-		let inputUse = this._getCheckBox();
-		this._itemContainer.append("div").attr("class", "item").node().appendChild(inputUse);
-
-		$(inputUse).find('input').change(function() {
-			if (!this.checked) {
-				that._parameter.scaleFormat = FontScaleEnum.DEFAULT;
-			} else {
-				that._isActive = this.checked;
-				that._parameter.scaleFormat = that._selectedScaleFormat;
-			}
-
-			that.changeEvent();
-			that._isActive = this.checked;
-		});
 	}
 
 	_getButtonGrouping(array, activeIndex) {
@@ -113,7 +97,7 @@ export default class UIFontManipulation {
 	}
 
 	changeEvent() {
-		if(this._graphObject.currentGraph === undefined || !this._isActive) {
+		if(this._graphObject.currentGraph === undefined) {
 			return;
 		}
 

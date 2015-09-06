@@ -3,9 +3,9 @@ import * as FontScaleEnum from "./FontScaleEnum";
 
 export default class GeneralParameters {
 	constructor() {
-		this._maximalFontSize = 32;
-		this._minimalFontSize = 8;
-		this._scaleFormat = FontScaleEnum.DEFAULT;
+		this._maximalFontSize = 75;
+		this._minimalFontSize = 14;
+		this._scaleFormat = FontScaleEnum.SQRT;
 	}
 
 	get scaleFormat() {

@@ -8,13 +8,11 @@ import * as FontScaleEnum from "../configuration/FontScaleEnum";
 export default class FontScaler {
 	constructor(textNodes, minFreq, maxFreq) {
 		this.textNodes = textNodes;
-		this._currentFormat = FontScaleEnum.DEFAULT;
+		this._currentFormat = FontScaleEnum.SQRT;
 		this._currentMinFont = undefined;
 		this._currentMaxFont = undefined;
 		this.minFreq = minFreq;
 		this.maxFreq = maxFreq;
-		this._linearScaleFunction = undefined;
-		this._quadraticScaleFunction = undefined;
 	}
 	
 	changeScaling(generalParameter) {
@@ -38,6 +36,14 @@ export default class FontScaler {
 		this._quadraticScaleFunction = quadraticScaleFunction(this.minFreq, this.maxFreq, this._currentMinFont, this._currentMaxFont);
 		this._sqrtScaleFunction = sqrtScaleFunction(this.minFreq, this.maxFreq, this._currentMinFont, this._currentMaxFont);
 		this._logScaleFunction = logScaleFunction(this.minFreq, this.maxFreq, this._currentMinFont, this._currentMaxFont);
+	}
+
+	getFontSizeForFreq(freq) {
+		if (freq === undefined || freq === 0) {
+			throw "Not valid frequency!";
+		}
+
+		return this._getScaleFunction()(freq);
 	}
 
 	_getScaleFunction() {

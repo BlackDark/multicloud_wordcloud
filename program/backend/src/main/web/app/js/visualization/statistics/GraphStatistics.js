@@ -20,11 +20,11 @@ export default class GraphStatistics {
 		let big = undefined;
 
 		this._graph._textNodes.forEach(element => {
-			if (small === undefined || small.getSize() > element.getSize()) {
+			if (small === undefined || small.getFrequency() > element.getFrequency()) {
 				small = element;
 			}
 
-			if (big === undefined || big.getSize() < element.getSize()) {
+			if (big === undefined || big.getFrequency() < element.getFrequency()) {
 				big = element;
 			}
 		});
