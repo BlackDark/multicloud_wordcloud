@@ -11,6 +11,10 @@ export default class WordElement extends BaseElement{
 		super(id);
 	}
 
+	getSize() {
+		return this.size;
+	}
+
 	changeSize(newSize) {
 		this.size = newSize;
 		this._container.select("text")

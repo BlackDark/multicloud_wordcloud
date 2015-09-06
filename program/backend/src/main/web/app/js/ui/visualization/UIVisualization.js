@@ -60,5 +60,7 @@ export default class UIVisualization {
 	updateVisualization(responseData) {
 		this._graphObject.cleanVisualization();
 		this._graphObject.execute(responseData);
+		let graphStatistics = this._graphObject.currentGraph.graphStatistics;
+		this.font.updateFontValues.call(this.font, graphStatistics.minFont, graphStatistics.maxFont);
 	}
 }

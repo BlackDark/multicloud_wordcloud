@@ -13,6 +13,7 @@ import TimingHelper from "js/visualization/util/TimingHelper";
 import ShapeApplier from "js/visualization/shape/ShapeApplier";
 
 import FontScaler from "./font/FontScaler";
+import GraphStats from "./statistics/GraphStatistics";
 
 export default class Graph {
 	constructor(containerSelector) {
@@ -25,14 +26,19 @@ export default class Graph {
 		this._endPointContainer = this._container.append("g");
 
 		this._force = new ForceLayout(this);
+		this._graphStatistics = new GraphStats(this);
+	}
+
+	get graphStatistics() {
+		return this._graphStatistics;
 	}
 
 	start() {
 		this._redrawGraph();
 		this._redrawElements();
 		this._configureGraph();
+		this._updateStats();
 		this._force.start();
-
 	}
 
 	data(endPointsNodes, textNodes, links) {
@@ -295,6 +301,10 @@ export default class Graph {
 
 	_testCentration() {
 		this._currentLayout._shiftMiddle();
+	}
+
+	_updateStats() {
+		this._graphStatistics.updateStats.call(this._graphStatistics);
 	}
 }
 
