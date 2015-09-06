@@ -30,6 +30,7 @@ export default class UIFontManipulation {
 			that._parameter.minimalFontSize = +this.value;
 			that.changeEvent();
 		});
+		this._inputMin = inputMin;
 
 		let inputMax = UIHelper.getInputNumber("Max font-size", "maximumsize", false, this._parameter.maximalFontSize, undefined);
 		this._itemContainer.append("div").attr("class", "item").node().appendChild(inputMax);
@@ -37,21 +38,28 @@ export default class UIFontManipulation {
 			that._parameter.maximalFontSize = +this.value;
 			that.changeEvent();
 		});
+		this._inputMax = inputMax;
 
 		let button1 = UIHelper.getButton("Linear");
 		d3.select(button1).datum({"scaleFormat": FontScaleEnum.LINEAR});
 		let button2 = UIHelper.getButton("Quadratic");
 		d3.select(button2).datum({"scaleFormat": FontScaleEnum.QUADRATIC});
-		let test = UIHelper.getButtonGroup([button1, button2], 0);
+		let button3 = UIHelper.getButton("Sqrt");
+		d3.select(button3).datum({"scaleFormat": FontScaleEnum.SQRT});
+		let button4 = UIHelper.getButton("Log");
+		d3.select(button4).datum({"scaleFormat": FontScaleEnum.LOG});
 
-		$(test).find("button").click(function() {
-			$(test).find("button").removeClass("active");
+		let buttonGroup = this._itemContainer.append("div").attr("class", "item");
+		let buttonGrid = this._getButtonGrouping([button1, button2, button3, button4], 2).node();
+		buttonGroup.node().appendChild(buttonGrid);
+
+		$(buttonGrid).find("button").click(function() {
+			$(buttonGrid).find("button").removeClass("active");
 			$(this).addClass("active");
 			that._selectedScaleFormat = d3.select(this).datum().scaleFormat;
 			that._parameter.scaleFormat = that._selectedScaleFormat;
 			that.changeEvent();
 		});
-		this._itemContainer.append("div").attr("class", "item").node().appendChild(test);
 
 		let inputUse = this._getCheckBox();
 		this._itemContainer.append("div").attr("class", "item").node().appendChild(inputUse);
@@ -67,6 +75,31 @@ export default class UIFontManipulation {
 			that.changeEvent();
 			that._isActive = this.checked;
 		});
+	}
+
+	_getButtonGrouping(array, activeIndex) {
+		let selectedDiv = d3.select(document.createElement("div"));
+		selectedDiv.attr("class", "ui equal width grid container");
+
+		let indexMax = 2;
+		let currentIndex = 0;
+		let currentRow;
+		let index = 0;
+
+		array.forEach(element => {
+			if (currentIndex === 0) {
+				currentRow = selectedDiv.append("div").attr("class", "equal width row");
+			}
+			d3.select(element).classed("column", true);
+			if(index === activeIndex) {
+				d3.select(element).classed("active", true);
+			}
+			currentRow.node().appendChild(element);
+			currentIndex = (currentIndex + 1) % indexMax;
+			index++;
+		});
+
+		return selectedDiv;
 	}
 
 	_getCheckBox() {
@@ -85,5 +118,10 @@ export default class UIFontManipulation {
 		}
 
 		this._graphObject.currentGraph.applyFontScaling.call(this._graphObject.currentGraph, this._parameter);
+	}
+
+	updateFontValues(min, max) {
+		$(this._inputMin).find('input').val(min);
+		$(this._inputMax).find('input').val(max);
 	}
 }

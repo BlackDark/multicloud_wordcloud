@@ -36,6 +36,8 @@ export default class FontScaler {
 	recalculatedScalingFunctions() {
 		this._linearScaleFunction = linearScaleFunction(this.minFreq, this.maxFreq, this._currentMinFont, this._currentMaxFont);
 		this._quadraticScaleFunction = quadraticScaleFunction(this.minFreq, this.maxFreq, this._currentMinFont, this._currentMaxFont);
+		this._sqrtScaleFunction = sqrtScaleFunction(this.minFreq, this.maxFreq, this._currentMinFont, this._currentMaxFont);
+		this._logScaleFunction = logScaleFunction(this.minFreq, this.maxFreq, this._currentMinFont, this._currentMaxFont);
 	}
 
 	_getScaleFunction() {
@@ -48,6 +50,12 @@ export default class FontScaler {
 				break;
 			case FontScaleEnum.QUADRATIC:
 				return this._quadraticScaleFunction;
+				break;
+			case FontScaleEnum.SQRT:
+				return this._sqrtScaleFunction;
+				break;
+			case FontScaleEnum.LOG:
+				return this._logScaleFunction;
 				break;
 		}
 	}
@@ -68,5 +76,20 @@ function linearScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 function quadraticScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 	return function(frequency) {
 		return ((maxFont - minFont) / Math.pow((maxFreq - minFreq), 2)) * Math.pow((frequency - minFreq), 2) + minFont;
+	}
+}
+
+// a * sqrt(b(x+c)) + d, with b = 1
+function sqrtScaleFunction(minFreq, maxFreq, minFont, maxFont) {
+	return function(frequency) {
+		return ((maxFont - minFont) / Math.sqrt(maxFreq - minFreq)) * Math.sqrt(frequency - minFreq) + minFont;
+	}
+}
+
+// a * log(b(x+c)) + d, with b = 1
+function logScaleFunction(minFreq, maxFreq, minFont, maxFont) {
+	return function(frequency) {
+		// log(0) NaN avoid
+		return ((maxFont - minFont) / Math.log(maxFreq - minFreq)) * Math.log((frequency + 1) - minFreq) + minFont;
 	}
 }
