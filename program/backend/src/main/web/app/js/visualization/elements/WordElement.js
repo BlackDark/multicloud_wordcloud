@@ -54,13 +54,27 @@ export default class WordElement extends BaseElement{
 		$(container.node()).find("text").tooltipsy({
 			alignTo: 'cursor',
 			offset: [10, 10],
-			content: this.text + "<br>" + "Width: " + Math.round(this.width) + "<br>" + "Height: " + Math.round(this.height)
+			content: this.text + "<br>" +
+			"Width: " + Math.round(this.width) + "<br>" +
+			"Height: " + Math.round(this.height) + "<br>" +
+				this._getDocumentConnectionAsString()
+
 		});
 	}
 
 	hover(hovered) {
 		this._container.classed("hovered", hovered);
 		this._textSelectedDom.classed("hovered", hovered);
+	}
+
+	_getDocumentConnectionAsString() {
+		let documentString = "";
+
+		this.endPointConnections.forEach(function(element, index) {
+			documentString = documentString.concat('Document ' + index + ": " + Math.round((element * 100)) + '%<br>');
+		});
+
+		return documentString;
 	}
 }
 
