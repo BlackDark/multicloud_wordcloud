@@ -8,6 +8,8 @@ import EllipseConstructor from "../../../visualization/shape/ShapeEllipse";
 
 import ShapeParameter from "../../../visualization/shape/ShapeParameters";
 
+const GRAPH_SELECTOR = "#graph";
+
 export default class UIShapeParameter {
 	constructor(containerQuerySelector, graphObject) {
 		this._topContainer = containerQuerySelector;
@@ -116,10 +118,19 @@ export default class UIShapeParameter {
 
 	_addButtons() {
 		let buttonContainer = this._container.append("div").attr("class", "ui container");
-		let button = UIHelper.getButtonTest("Apply layout", this._graphObject, ["currentGraph", "_applyLayout"], [undefined, this]);
+		let button = UIHelper.getButton("Apply layout", this._buttonApplyLayout, this);
 		let buttonCentration = UIHelper.getButtonTest("Centrate...", this._graphObject, ["currentGraph", "_testCentration"], [undefined, ""]);
 
 		buttonContainer.node().appendChild(button);
 		buttonContainer.node().appendChild(buttonCentration);
+	}
+
+	_buttonApplyLayout() {
+		var queryDimElement = $(GRAPH_SELECTOR).find('#graphLoading');
+		UIHelper.setLoading(queryDimElement[0], true);
+		setTimeout(function() {
+			this._graphObject.currentGraph._applyLayout.call(this._graphObject.currentGraph, this);
+			UIHelper.setLoading(queryDimElement[0], false);
+		}.bind(this), 50);
 	}
 }

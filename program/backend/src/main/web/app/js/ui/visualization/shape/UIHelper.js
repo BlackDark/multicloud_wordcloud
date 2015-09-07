@@ -146,4 +146,8 @@ export default class UIHelper {
 	static getInputText(text, name, disabled, defaultValue, placeHolder) {
 		return UIHelper.getInput(...arguments, "text");
 	}
+
+	static setLoading(domElement, booleanLoaded) {
+		d3.select(domElement).classed("active", booleanLoaded);
+	}
 }
