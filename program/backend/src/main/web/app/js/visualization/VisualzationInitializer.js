@@ -24,7 +24,7 @@ export default class VisualzationInitializer {
 	}
 
 	cleanVisualization() {
-		$(this._graphSelector).empty();
+		$(this._graphSelector).find('svg').empty();
 	}
 
 	executeSample() {
