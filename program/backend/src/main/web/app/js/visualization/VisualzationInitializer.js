@@ -24,7 +24,7 @@ export default class VisualzationInitializer {
 	}
 
 	cleanVisualization() {
-		$(this._graphSelector).find('svg').empty();
+		d3.select(this._graphSelector).select("svg").remove();
 	}
 
 	executeSample() {
