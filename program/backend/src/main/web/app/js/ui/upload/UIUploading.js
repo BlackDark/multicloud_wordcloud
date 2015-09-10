@@ -98,7 +98,7 @@ export default class UIUploading {
 		});
 
 		$("#file-4").fileinput({
-			uploadUrl: '/uploadMulti/',
+			uploadUrl: 'uploadMulti',
 			uploadAsync: false,
 			dropZoneEnabled: false,
 			allowedFileTypes: ["text"],
