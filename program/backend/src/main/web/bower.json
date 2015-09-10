@@ -10,5 +10,12 @@
     "jquery": "~2.1.4",
     "semantic": "https://github.com/BlackDark/semantic-ui-test.git",
     "tooltipsy": "*"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/js/bootstrap.js"
+      ]
+    }
   }
 }
