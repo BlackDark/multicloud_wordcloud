@@ -8,6 +8,7 @@ export default class ShapeParameters {
 		this._shapeConstructor = ShapeRect;
 		this._fillSpace = false;
 		this._placeAllWords = false;
+		this._centrateWords = false;
 	}
 
 	get fillSpace() {
@@ -32,6 +33,18 @@ export default class ShapeParameters {
 
 	set shapeConstructor(shapeConstructor) {
 		this._shapeConstructor = shapeConstructor;
+	}
+
+	get centrateWords() {
+		return this._centrateWords;
+	}
+
+	set centrateWords(centrateWords) {
+		this._centrateWords = centrateWords;
+	}
+
+	static get centrateWordsPath() {
+		return "centrateWords";
 	}
 
 	static get fillSpacePath() {

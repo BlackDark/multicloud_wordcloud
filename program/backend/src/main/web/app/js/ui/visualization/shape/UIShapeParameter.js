@@ -108,6 +108,12 @@ export default class UIShapeParameter {
 			"domInput": d3.select(checkFillWords).select("input").node()
 		});
 		checkBoxArea.node().appendChild(checkFillWords);
+
+		var centrateWords = UIHelper.getCheckbox("Centrate", ShapeParameter.centrateWordsPath);
+		this.configParameters.push({
+			"domInput": d3.select(centrateWords).select("input").node()
+		});
+		checkBoxArea.node().appendChild(centrateWords);
 	}
 
 	_setConfigParameters(parameter) {
@@ -119,10 +125,8 @@ export default class UIShapeParameter {
 	_addButtons() {
 		let buttonContainer = this._container.append("div").attr("class", "ui container");
 		let button = UIHelper.getButton("Apply layout", this._buttonApplyLayout, this);
-		let buttonCentration = UIHelper.getButtonTest("Centrate...", this._graphObject, ["currentGraph", "_testCentration"], [undefined, ""]);
 
 		buttonContainer.node().appendChild(button);
-		buttonContainer.node().appendChild(buttonCentration);
 	}
 
 	_buttonApplyLayout() {

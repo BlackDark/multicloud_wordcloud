@@ -25,7 +25,7 @@ export default class ShapeApplier {
 		shapeObject.initialize();
 		let nodeFinder = new NodeSorter(this._textNodes, this._endPointNodes);
 
-		this._processShapeParameters(shapeObject, nodeFinder, this._parameters);
+		this._processParametersBeforePlacing(shapeObject, nodeFinder, this._parameters);
 
 		let timing = new TimingHelper("Placing nodes took: ");
 		timing.startRecording();
@@ -48,6 +48,7 @@ export default class ShapeApplier {
 					return "translate(" + [d.x, d.y] + ")";
 				})
 		});
+		this._processParametersAfterPlacing(shapeObject, nodeFinder, this._parameters);
 	}
 
 	_shiftToPoint(point) {
@@ -103,16 +104,6 @@ export default class ShapeApplier {
 		}
 	}
 
-	_processShapeParameters(shapeObject, nodeFinder, parameters) {
-		if(parameters.fillSpace) {
-			this._fillShapeSpace(shapeObject, nodeFinder);
-		}
-
-		if(parameters.placeAllWords) {
-			this._drawAllWords = true;
-		}
-	}
-
 	_processDrawAllWordsStep(shapeObject, nodeFinder) {
 		this._textNodes.forEach(textNode => textNode.decrementSize());
 		shapeObject.resetPlacing();
@@ -137,6 +128,22 @@ export default class ShapeApplier {
 			elements.forEach(element => space += element.height * element.width);
 
 			return space;
+		}
+	}
+
+	_processParametersBeforePlacing(shapeObject, nodeFinder, parameters) {
+		if(parameters.fillSpace) {
+			this._fillShapeSpace(shapeObject, nodeFinder);
+		}
+
+		if(parameters.placeAllWords) {
+			this._drawAllWords = true;
+		}
+	}
+
+	_processParametersAfterPlacing(shapeObject, nodeFinder, parameters) {
+		if(parameters.centrateWords) {
+			this._shiftMiddle();
 		}
 	}
 }
