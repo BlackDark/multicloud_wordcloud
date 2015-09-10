@@ -9,7 +9,8 @@
   },
   "scripts": {
     "postinstall": "bower install && brunch build",
-    "start": "brunch watch --server"
+    "start": "brunch watch --server",
+    "test": "brunch watch --env test"
   },
   "dependencies": {
     "assetsmanager-brunch": "^1.8.1",
