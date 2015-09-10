@@ -96,6 +96,26 @@ export default class UIUploading {
 				}
 			});
 		});
+
+		$("#file-4").fileinput({
+			uploadUrl: '/uploadMulti/',
+			uploadAsync: false,
+			dropZoneEnabled: false,
+			allowedFileTypes: ["text"],
+			minFileCount: 2,
+			maxFileCount: 20,
+			maxFileSize: 5000,
+			showUploadedThumbs: false,
+			allowedPreviewTypes: [],
+			previewSettings: {
+				text: {width: "50px", height: "30px"},
+				object: {width: "50px", height: "30px"},
+				other: {width: "50px", height: "30px"}
+			},
+			layoutTemplates: {
+				actionUpload: ''
+			}
+		});
 	}
 
 	_checkInput(fileList, that) {

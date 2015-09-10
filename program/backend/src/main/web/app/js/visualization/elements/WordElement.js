@@ -4,7 +4,7 @@ import StringExt from "js/visualization/util/StringExt";
 const color = d3.scale.category10();
 const emDivisor = 11;
 const widthPadding = 4;
-const heightPaddingReduceFactor = 0.2;
+const heightPaddingReduceFactor = 0.4;
 
 export default class WordElement extends BaseElement{
 	constructor(id) {
@@ -51,6 +51,7 @@ export default class WordElement extends BaseElement{
 
 		setDimensions(this);
 
+		/*
 		$(container.node()).find("text").tooltipsy({
 			alignTo: 'cursor',
 			offset: [10, 10],
@@ -60,6 +61,10 @@ export default class WordElement extends BaseElement{
 				this._getDocumentConnectionAsString()
 
 		});
+		*/
+
+		d3.select($(container.node()).find("text")[0]).append("title")
+		.text(this.width);
 	}
 
 	hover(hovered) {
@@ -82,4 +87,7 @@ function setDimensions(object) {
 	let rect = object._container.select("text").node().getBoundingClientRect();
 	object.height = rect.height - rect.height * heightPaddingReduceFactor;
 	object.width = rect.width + widthPadding;
+
+
+	object._container.select("title").text(object.height);
 }

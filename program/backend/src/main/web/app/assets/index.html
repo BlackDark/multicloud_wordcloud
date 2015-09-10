@@ -41,40 +41,13 @@
 	</div>
 
 	<div class="ui bottom attached tab segment active" data-tab="upload">
-		<h3 class="ui header">Please select at least 2 files with the <i class="attach icon"></i> icon.
-			Then upload the files.
+		<h3 class="ui header">Please select at least 2 files. Then upload the files.
 		</h3>
 
-		<div class="ui fluid action input">
 
-			<div class="ui dropdown fluid selection multiple" id="fileLabelDiv" style="cursor: auto;overflow-y:auto;white-space:nowrap;">
-			</div>
-
-			<label for="attachmentName" class="ui huge icon button btn-file">
-				<i class="attach icon"></i>
-			</label>
-
-			<form id="filesForm" name="files" enctype="multipart/form-data">
-				<input id="attachmentName" name="file" style="display: none" type="file" multiple>
-			</form>
-
-			<button class="ui huge teal right labeled icon button" id="submitUpload" disabled>
-				<i class="upload icon"></i>
-				Upload
-			</button>
+		<div class="ui container">
+			<input id="file-4" name="file" type="file" multiple>
 		</div>
-
-		<!--
-		<div class="ui segment">
-			<form id="filesForm" name="files" enctype="multipart/form-data">
-				<input class="ui button" id="filesInput" type='file' name='file' multiple>
-			</form>
-			<input type="number" value="ZAAAhL" title="Läuft" id="progressId"/>
-			<button class="ui button" id="checkFinish">Check finished...</button>
-			<button class="ui button" id="printResult">Log result</button>
-			<button class="ui button" id="submitUpload">Submit</button>
-		</div>
-		-->
 
 		<div class="ui divider"></div>
 

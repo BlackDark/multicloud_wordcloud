@@ -4,6 +4,8 @@
   "private": true,
   "main": "public/javascripts/app.js",
   "dependencies": {
+    "bootstrap": "~3.3.5",
+    "bootstrap-fileinput": "~4.2.6",
     "d3": "~3.5.6",
     "jquery": "~2.1.4",
     "semantic": "https://github.com/BlackDark/semantic-ui-test.git",

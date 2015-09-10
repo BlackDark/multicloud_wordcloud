@@ -22,9 +22,13 @@ exports.config =
 
     assetsmanager: {
       copyTo: {
-        '/themes/' : ['bower_components/semantic/dist/themes/*']
+        '/themes/' : ['bower_components/semantic/dist/themes/*'],
+        '/fonts/' : ['bower_components/bootstrap/fonts/*'],
+        '/img/' : ['bower_components/bootstrap-fileinput/img/*'],
         # For local testing needed
-        '/stylesheets/themes/' : ['bower_components/semantic/dist/themes/*']
+        '/stylesheets/themes/' : ['bower_components/semantic/dist/themes/*'],
+        '/stylesheets/fonts/' : ['bower_components/bootstrap/fonts/*'],
+        '/stylesheets/img/' : ['bower_components/bootstrap-fileinput/img/*']
       }
     }
 
