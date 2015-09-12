@@ -32,6 +32,7 @@ export default class WordElement extends BaseElement{
 	}
 
 	draw(container) {
+		let that = this;
 		super.draw(container);
 
 		let index;
@@ -51,20 +52,57 @@ export default class WordElement extends BaseElement{
 
 		setDimensions(this);
 
-		$(container.node()).find("text").tooltipsy({
-			alignTo: 'cursor',
-			offset: [10, 10],
-			content: this.text + "<br>" +
-			"Width: " + Math.round(this.width) + "<br>" +
-			"Height: " + Math.round(this.height) + "<br>" +
-				this._getDocumentConnectionAsString()
-
+		this.tipsySelector = $(container.node()).find("text");
+		this.tipsySelector.tipsy({
+			gravity: 'w',
+			html: true,
+			title: function() {
+				var getChart = that._getChart();
+				return getChart[0];
+			},
+			delayIn: 150,
+			delayOut: 200
 		});
 	}
 
 	hover(hovered) {
 		this._container.classed("hovered", hovered);
 		this._textSelectedDom.classed("hovered", hovered);
+	}
+
+	_getChart() {
+		let that = this;
+		$('#chartTest').empty();
+
+		var chart = nv.models.pieChart()
+				.x(function(d) { return d.index})
+				.y(function(d) { return d.value})
+				.color(function(d) {
+					return color(d.index);
+				})
+				.showLabels(true)
+				.labelThreshold(.5)  //Configure the minimum slice size for labels to show up
+			;
+
+		let chartData =[];
+		that.endPointConnections.forEach(function(el, i) {
+			chartData.push({
+				"index": i,
+				"value": el
+			});
+		});
+
+		let svgTe = d3.select('#chartTest').append("svg")
+			.datum(chartData)
+			.transition().duration(1200)
+			.call(chart);
+
+		let divClone = $('#chartTest').clone();
+		divClone.attr("id", "toolChart");
+		divClone.empty();
+		d3.select(divClone[0]).node().appendChild(svgTe.node());
+
+		return divClone;
 	}
 
 	_getDocumentConnectionAsString() {

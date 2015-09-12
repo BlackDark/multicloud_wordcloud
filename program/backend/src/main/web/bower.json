@@ -8,6 +8,7 @@
     "bootstrap-fileinput": "~4.2.6",
     "d3": "~3.5.6",
     "jquery": "~2.1.4",
+    "nvd3": "~1.8.1",
     "semantic": "https://github.com/BlackDark/semantic-ui-test.git",
     "tooltipsy": "*"
   },
