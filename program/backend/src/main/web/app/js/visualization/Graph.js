@@ -5,6 +5,7 @@ import SampleDataGenerator from "js/visualization/util/SampleDataGenerator";
 import CollisionModule from "js/visualization/CollisionModule";
 import DebugConfig from "js/visualization/DebugConfig";
 import DragBehaviour from "js/visualization/DragBehaviour";
+import ZoomBehaviour from "./behaviour/ZoomBehaviour";
 
 // Utils
 import TimingHelper from "js/visualization/util/TimingHelper";
@@ -28,6 +29,7 @@ export default class Graph {
 
 		this._force = new ForceLayout(this);
 		this._graphStatistics = new GraphStats(this);
+		this._zoom = new ZoomBehaviour(this);
 	}
 
 	get graphStatistics() {
@@ -57,7 +59,7 @@ export default class Graph {
 	}
 
 	_redrawGraph() {
-
+		this._svg.call(this._zoom.getZoomObject());
 	}
 
 	_redrawElements() {
@@ -293,6 +295,7 @@ export default class Graph {
 	// Applying a shape to the wordcloud.
 	_applyLayout(uiShapeParameterObject) {
 		this._force.stop();
+		this._zoom.reset();
 
 		let layoutApplier = new ShapeApplier(uiShapeParameterObject.parameterObject, this._textNodes, this._endPointsNodes, this._force);
 		this._currentLayout = layoutApplier;
