@@ -19,7 +19,7 @@ public class MergeDocument extends Document {
 	private List<Document> documents;
 
 	public MergeDocument(List<Document> documents) {
-		super(new ArrayList<>(), 0);
+		super(null, new ArrayList<>(), 0);
 		this.documents = documents;
 		mapping = new HashMap<>();
 

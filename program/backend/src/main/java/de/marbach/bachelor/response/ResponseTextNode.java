@@ -14,10 +14,9 @@ public class ResponseTextNode {
 
 	private final String text;
 	private final int frequency;
-	private final List<Integer> endPointConnections;
+	private final List<ResponseDocumentConnection> endPointConnections;
 
-	public ResponseTextNode(String text, int frequency, List<Integer> endPointConnections) {
-
+	public ResponseTextNode(String text, int frequency, List<ResponseDocumentConnection> endPointConnections) {
 		this.text = text;
 		this.frequency = frequency;
 		this.endPointConnections = endPointConnections;
@@ -31,7 +30,7 @@ public class ResponseTextNode {
 		return frequency;
 	}
 
-	public List<Integer> getEndPointConnections() {
+	public List<ResponseDocumentConnection> getEndPointConnections() {
 		return endPointConnections;
 	}
 }

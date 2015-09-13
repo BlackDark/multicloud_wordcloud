@@ -8,14 +8,16 @@ import StringExt from "js/visualization/util/StringExt";
 function parseEndPoints(rawData, width, height) {
 	var nodes = [];
 
-	rawData.forEach(function (element, index) {
-		let currentEndpoint = new EndPointElement(index);
+	rawData.forEach(function (element) {
+		let currentEndpoint = new EndPointElement(element.index);
 		let center = {
 			"x": width / 2,
 			"y": height / 2
 		};
-		currentEndpoint.x = center.x + index;
-		currentEndpoint.y = center.y + index;
+
+		currentEndpoint.name = element.documentName;
+		currentEndpoint.x = center.x + element.index;
+		currentEndpoint.y = center.y + element.index;
 		currentEndpoint.fixed = true;
 
 		nodes.push(currentEndpoint);
@@ -29,16 +31,18 @@ function parseTextNodes(rawData, startIndex) {
 	let index = startIndex;
 
 	rawData.forEach(element => {
-		let sum = element.endPointConnections.reduce(function(pv, cv) { return pv + cv; }, 0);
+		let sum = element.endPointConnections.reduce(function(pv, cv) {
+			return pv + cv.frequency;
+		}, 0);
 		let connections = [];
-		element.endPointConnections.forEach(connection => connections.push(connection / sum));
+		element.endPointConnections.forEach(connection => connection.distribution = (connection.frequency / sum));
 
 		let currentTextObject = new WordElement(index);
 		currentTextObject.text = element.text;
 		currentTextObject.frequency = element.frequency;
 		currentTextObject.size = 12;
 		currentTextObject.originalSize = currentTextObject.size;
-		currentTextObject.endPointConnections = connections;
+		currentTextObject.endPointConnections = element.endPointConnections;
 
 		index++;
 		nodes.push(currentTextObject);
@@ -69,6 +73,14 @@ function replaceIdsWithReferences(nodes, links) {
 		link.source = nodeMap.get(link.source);
 		link.target = nodeMap.get(link.target);
 	});
+
+	nodes.forEach(node => {
+		if(node.endPointConnections) {
+			node.endPointConnections.forEach(connection => {
+				connection.endpoint = nodes[connection.documentId];
+			});
+		}
+	});
 }
 
 function createLinks(nodes, number) {
@@ -78,12 +90,12 @@ function createLinks(nodes, number) {
 	for (var i = number; i < nodes.length; i++) {
 		var currentNode = nodes[i];
 
-		currentNode.endPointConnections.forEach(function (strength, i) {
+		currentNode.endPointConnections.forEach(function (connection, i) {
 			newLinks.push({
 				id: index++,
 				source: currentNode.id,
 				target: i,
-				strength: strength
+				strength: connection.distribution
 			});
 		});
 	}

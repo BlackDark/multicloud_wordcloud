@@ -243,12 +243,12 @@ export default class Graph {
 
 			var positionX = 0;
 			this._endPointsNodes.forEach(function(d, i) {
-				positionX += d.x * currentNode.endPointConnections[i];
+				positionX += d.x * currentNode.endPointConnections[i].distribution;
 			});
 
 			var positionY = 0;
 				this._endPointsNodes.forEach(function(d, i) {
-					positionY += d.y * currentNode.endPointConnections[i];
+					positionY += d.y * currentNode.endPointConnections[i].distribution;
 				});
 
 			this._originalPositionLinkContainer.append("g")

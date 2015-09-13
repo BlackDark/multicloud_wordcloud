@@ -70,7 +70,7 @@ public class AnalysisModule {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			documents.add(generateDocument(mapping));
+			documents.add(generateDocument(file, mapping));
 		}
 
 		mergedDocument = new MergeDocument(documents);
@@ -86,7 +86,7 @@ public class AnalysisModule {
 		files.forEach(File::delete);
 	}
 
-	protected Document generateDocument(Map<String, Integer> mapping) {
+	protected Document generateDocument(File file, Map<String, Integer> mapping) {
 		List<NodeElement> nodes = mapping.entrySet().stream().map(stringIntegerEntry -> new NodeElement(stringIntegerEntry.getKey(), stringIntegerEntry.getValue())).collect(Collectors.toList());
 		int wordCount = 0;
 
@@ -94,7 +94,7 @@ public class AnalysisModule {
 			wordCount += node.getFreq();
 		}
 
-		return new Document(nodes, wordCount);
+		return new Document(file.getName(), nodes, wordCount);
 	}
 
 	public boolean isFinished() {

@@ -37,12 +37,23 @@ export default class WordElement extends BaseElement{
 		let that = this;
 		super.draw(container);
 
-		let colorIndex = this.endPointConnections.indexOf(Math.max.apply(Math, that.endPointConnections));
+		let colorIndex = undefined;
+
+		let highest = Number.NEGATIVE_INFINITY;
+		let tmp;
+		for (let i=this.endPointConnections.length-1; i>=0; i--) {
+			tmp = this.endPointConnections[i].distribution;
+			if (tmp > highest) {
+				colorIndex = i
+				highest = tmp
+			}
+		}
+
 		d3.select("defs").append("filter")
 		.attr("id", "filter" + this.id)
 		.append("feColorMatrix")
 		.attr("type", "saturate")
-		.attr("values", saturationScale(this.endPointConnections[colorIndex]));
+		.attr("values", saturationScale(this.endPointConnections[colorIndex].distribution));
 
 		this._textSelectedDom = container.append("text")
 			.classed("word-text", true)
@@ -83,7 +94,7 @@ export default class WordElement extends BaseElement{
 		$('#chartTest').empty();
 
 		var chart = nv.models.pieChart()
-				.x(function(d) { return d.index})
+				.x(function(d) { return d.title})
 				.y(function(d) { return d.value})
 				.color(function(d) {
 					return color(d.index);
@@ -95,8 +106,9 @@ export default class WordElement extends BaseElement{
 		let chartData =[];
 		that.endPointConnections.forEach(function(el, i) {
 			chartData.push({
-				"index": i,
-				"value": el
+				"index": el.endpoint.id,
+				"title": el.endpoint.name,
+				"value": el.distribution
 			});
 		});
 

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -101,36 +102,6 @@ public class FileUploadController {
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/upload/{uploadId}/result", method = RequestMethod.GET)
-	public ResponseWordStorage getProcessedContent(@PathVariable Integer uploadId) {
-		if (uploadId == null) {
-			throw new IllegalArgumentException("Upload ID is null");
-		}
-
-		if (!idToModule.containsKey(uploadId)) {
-			throw new IllegalAccessError(uploadId.toString());
-		}
-
-		List<Document> documents = idToModule.get(uploadId).getDocuments();
-		MergeDocument mergedDocument = idToModule.get(uploadId).getMergedDocument();
-
-		List<ResponseEndNode> endNodes = new ArrayList<>();
-		List<ResponseTextNode> textNodes = new ArrayList<>();
-
-		for (int i = 0; i < documents.size(); i++) {
-			endNodes.add(new ResponseEndNode("" + i));
-		}
-
-		List<NodeElement> topFrequentMerged = mergedDocument.getTopFrequentMerged(200);
-		for (NodeElement nodeElement : topFrequentMerged) {
-			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), new ArrayList<>(nodeElement.getAffinityToDocument().values())));
-		}
-
-		return new ResponseWordStorage(new ResponseInformation("Test", topFrequentMerged.size(), mergedDocument.getTotalNumWords()), endNodes, textNodes);
-	}
-
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/upload/{uploadId}/numWords", method = RequestMethod.POST)
 	public ResponseWordStorage getNumWords(@PathVariable Integer uploadId, @RequestParam("numWords") Integer numWords) {
 		if (uploadId == null || numWords == null) {
@@ -147,13 +118,15 @@ public class FileUploadController {
 		List<ResponseEndNode> endNodes = new ArrayList<>();
 		List<ResponseTextNode> textNodes = new ArrayList<>();
 
-		for (int i = 0; i < documents.size(); i++) {
-			endNodes.add(new ResponseEndNode("" + i));
-		}
+		endNodes.addAll(documents.stream().map(document -> new ResponseEndNode(document.getTitle(), document.getId())).collect(Collectors.toList()));
 
 		List<NodeElement> topFrequentMerged = mergedDocument.getTopFrequentMerged(numWords);
 		for (NodeElement nodeElement : topFrequentMerged) {
-			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), new ArrayList<>(nodeElement.getAffinityToDocument().values())));
+			List<ResponseDocumentConnection> connections = new ArrayList<>();
+			for (Map.Entry<Document, Integer> documentIntegerEntry : nodeElement.getAffinityToDocument().entrySet()) {
+				connections.add(new ResponseDocumentConnection(documentIntegerEntry.getKey().getId(), documentIntegerEntry.getValue()));
+			}
+			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), connections));
 		}
 
 		return new ResponseWordStorage(new ResponseInformation("Test", topFrequentMerged.size(), mergedDocument.getTotalNumWords()), endNodes, textNodes);
