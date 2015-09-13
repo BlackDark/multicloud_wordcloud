@@ -1,3 +1,5 @@
+const DEFAULT_NUM_WORDS = 200;
+
 export default class UIGeneral {
 	constructor() {
 		this.visualizedId = undefined;
@@ -21,7 +23,9 @@ export default class UIGeneral {
 
 							//test.executeSample();
 							$.ajax({
-								url: "upload/" + that.visualizedId + "/result",
+								url: "upload/" + that.visualizedId + "/numWords",
+								type: 'POST',
+								data: {"numWords": DEFAULT_NUM_WORDS},
 								success: function (data) {
 									that._showVisualization.call(that, data, that.visualizedId);
 								}
