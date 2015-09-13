@@ -5,6 +5,8 @@ const color = d3.scale.category10();
 const emDivisor = 11;
 const widthPadding = 4;
 const heightPaddingReduceFactor = 0.2;
+const saturationMin = 0.3;
+const saturationMax = 0.8;
 
 export default class WordElement extends BaseElement{
 	constructor(id) {
@@ -35,15 +37,21 @@ export default class WordElement extends BaseElement{
 		let that = this;
 		super.draw(container);
 
-		let index;
+		let colorIndex = this.endPointConnections.indexOf(Math.max.apply(Math, that.endPointConnections));
+		d3.select("defs").append("filter")
+		.attr("id", "filter" + this.id)
+		.append("feColorMatrix")
+		.attr("type", "saturate")
+		.attr("values", saturationScale(this.endPointConnections[colorIndex]));
 
 		this._textSelectedDom = container.append("text")
 			.classed("word-text", true)
 			.style("fill", function(d, i) {
-				index = d.endPointConnections.indexOf(Math.max.apply(Math, d.endPointConnections));
-				return color(index);
+				return color(colorIndex);
 			})
-			.style("opacity", d => d.endPointConnections[index])
+			.style("filter", d => {
+				return 'url(#filter' + d.id + ')';
+			})
 			.style("font-size", function(d) {
 				return d.size / emDivisor + "em"; })
 			.text(function(d) {
@@ -120,4 +128,11 @@ function setDimensions(object) {
 	let rect = object._container.select("text").node().getBoundingClientRect();
 	object.height = rect.height - rect.height * heightPaddingReduceFactor;
 	object.width = rect.width + widthPadding;
+}
+
+function saturationScale(value) {
+	if( value <= saturationMin ) {
+		return 0;
+	}
+	return (1 / (saturationMax - saturationMin)) * (value - saturationMin);
 }
