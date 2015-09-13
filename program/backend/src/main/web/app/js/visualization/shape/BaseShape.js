@@ -21,7 +21,6 @@ export default class BaseShape {
 	}
 
 	get freeInitialSpace() {
-		// TODO
 		throw methodNotImplemented;
 	}
 
@@ -30,7 +29,11 @@ export default class BaseShape {
 	}
 
 	_calculateEndPointPositions() {
-		throw methodNotImplemented;
+		this._endpoints.forEach(endpoint => {
+			let distanceArray = this._endpointToPixelDistances.get(endpoint);
+			endpoint.px = distanceArray[0].x;
+			endpoint.py = distanceArray[0].y;
+		});
 	}
 
 	_getPlaceRadius() {

@@ -7,14 +7,6 @@ export default class ShapeCircle extends BaseShape {
 		this._radius = this._width < this._height ? this._width / 2 : this._height / 2;
 	}
 
-	_calculateEndPointPositions() {
-		this._endpoints.forEach(endpoint => {
-			let distanceArray = this._endpointToPixelDistances.get(endpoint);
-			endpoint.px = distanceArray[0].x;
-			endpoint.py = distanceArray[0].y;
-		});
-	}
-
 	_initializeFieldValues() {
 		for (let i = 0; i < this._field.length; i++) {
 			for (let j = 0; j < this._field[i].length; j++) {
