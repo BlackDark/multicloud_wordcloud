@@ -27,22 +27,6 @@ public class MergeDocument extends Document {
 		this.cleanMapping();
 	}
 
-	private void cleanMapping() {
-		List<String> valuesToRemove = new ArrayList<>();
-
-		for (NodeElement nodeElement : mapping.values()) {
-			if (nodeElement.getAffinityToDocument().keySet().size() <= 1) {
-				valuesToRemove.add(nodeElement.getText());
-			} else {
-				for (Document document : nodeElement.getAffinityToDocument().keySet()) {
-					document.removeUniqueNode(nodeElement.getText());
-				}
-			}
-		}
-
-		valuesToRemove.forEach(mapping::remove);
-	}
-
 	public void addDocument(Document document) {
 		for (NodeElement nodeElement : document.getNodes()) {
 			this.addNode(document, nodeElement);
@@ -69,5 +53,34 @@ public class MergeDocument extends Document {
 
 	public Integer getTotalNumWords() {
 		return mapping.values().size();
+	}
+
+	protected void cleanMapping() {
+		removeNodesWithoutIntersections();
+		fillEmptyAffinities();
+	}
+
+	protected void fillEmptyAffinities() {
+		for (NodeElement nodeElement : mapping.values()) {
+			documents.stream().filter(document -> !nodeElement.getAffinityToDocument().containsKey(document)).forEach(document -> {
+				nodeElement.getAffinityToDocument().put(document, 0);
+			});
+		}
+	}
+
+	protected void removeNodesWithoutIntersections() {
+		List<String> valuesToRemove = new ArrayList<>();
+
+		for (NodeElement nodeElement : mapping.values()) {
+			if (nodeElement.getAffinityToDocument().keySet().size() <= 1) {
+				valuesToRemove.add(nodeElement.getText());
+			} else {
+				for (Document document : nodeElement.getAffinityToDocument().keySet()) {
+					document.removeUniqueNode(nodeElement.getText());
+				}
+			}
+		}
+
+		valuesToRemove.forEach(mapping::remove);
 	}
 }
