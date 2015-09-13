@@ -294,10 +294,19 @@ export default class Graph {
 	_applyLayout(uiShapeParameterObject) {
 		this._force.stop();
 
-		let layoutApplier = new ShapeApplier(uiShapeParameterObject.parameterObject, this._textNodes, this._endPointsNodes);
+		let layoutApplier = new ShapeApplier(uiShapeParameterObject.parameterObject, this._textNodes, this._endPointsNodes, this._force);
 		this._currentLayout = layoutApplier;
 		//layoutApplier.registerProgressListener(new UIProgress(d3.select("#forbutton")));
 		layoutApplier.startShaping(this._height, this._width);
+		layoutApplier.onEnd(function() {
+			this._endPointsNodes.forEach(function (node) {
+				node._container.transition()
+					.duration(750)
+					.attr("transform", function (d) {
+						return "translate(" + [d.px, d.py] + ")";
+					})
+			});
+		}, this);
 	}
 
 	_testCentration() {
@@ -372,7 +381,7 @@ function linkstrengthForD3Force() {
 function chargeForD3Force() {
 	return function chargeTest(theNode) {
 		if (theNode.width) {
-			return theNode.width * (-4);
+			return theNode.width * (-12);
 		}
 
 		return 0;

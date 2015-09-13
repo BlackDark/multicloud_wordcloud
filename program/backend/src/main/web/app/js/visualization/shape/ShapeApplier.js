@@ -4,11 +4,19 @@ import NodeSorter from "js/visualization/NodeSorter";
 import ShapingHelper from "./ShapingHelper";
 
 export default class ShapeApplier {
-	constructor(parameters, textNodes, endPointNodes) {
+	constructor(parameters, textNodes, endPointNodes, forceLayout) {
 		this._parameters = parameters;
 		this._textNodes = textNodes;
 		this._endPointNodes = endPointNodes;
 		this._drawAllWords = false;
+		this._forceLayout = forceLayout;
+		this._endFunction = function(){};
+	}
+
+	onEnd(call, caller) {
+		this._endFunction = function() {
+			call.call(caller);
+		}.bind(this);
 	}
 
 	registerProgressListener(progress) {
@@ -21,22 +29,29 @@ export default class ShapeApplier {
 
 	startShaping(height, width) {
 		this._currentShapeObject = new this._parameters.shapeConstructor(height, width, this._endPointNodes);
-		let shapeObject = this._currentShapeObject;
-		shapeObject.initialize();
+		this._currentShapeObject.initialize();
+		this._forceLayout.resume();
+
+		setTimeout(this._beginShape.bind(this), 1000);
+	}
+
+	_beginShape() {
+		this._forceLayout.stop();
+
 		let nodeFinder = new NodeSorter(this._textNodes, this._endPointNodes);
 
-		this._processParametersBeforePlacing(shapeObject, nodeFinder, this._parameters);
+		this._processParametersBeforePlacing(this._currentShapeObject, nodeFinder, this._parameters);
 
 		let timing = new TimingHelper("Placing nodes took: ");
 		timing.startRecording();
-		this._placingNodes(nodeFinder, shapeObject, this._drawAllWords);
+		this._placingNodes(nodeFinder, this._currentShapeObject, this._drawAllWords);
 		timing.endRecording();
 
 		// Remove skipped nodes  TODO
 		nodeFinder.skippedNodes.forEach(element => element._container.classed("hidden", true));
 		console.log("Skipped nodes: " + nodeFinder.skippedNodes.length);
 
-		shapeObject.storedWords.forEach(function(objectStore) {
+		this._currentShapeObject.storedWords.forEach(function(objectStore) {
 			objectStore.element.x = objectStore.x;
 			objectStore.element.y = objectStore.y;
 
@@ -48,7 +63,9 @@ export default class ShapeApplier {
 					return "translate(" + [d.x, d.y] + ")";
 				})
 		});
-		this._processParametersAfterPlacing(shapeObject, nodeFinder, this._parameters);
+		this._processParametersAfterPlacing(this._currentShapeObject, nodeFinder, this._parameters);
+		this._endFunction();
+
 	}
 
 	_shiftToPoint(point) {

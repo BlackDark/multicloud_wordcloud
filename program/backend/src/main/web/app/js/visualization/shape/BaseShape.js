@@ -1,7 +1,10 @@
 import TimingHelper from "js/visualization/util/TimingHelper";
 import GeneratorUtil from "js/visualization/util/GeneratorUtil";
+import MathUtil from "../util/MathUtil";
 
 const methodNotImplemented = "METHOD IS NOT IMPLEMENTED!";
+const MAX_PLACE_RADIUS = 100;
+
 export default class BaseShape {
 	constructor(height, width, endpoints) {
 		this._height = height;
@@ -12,6 +15,8 @@ export default class BaseShape {
 			"x": this._width / 2,
 			"y": this._height / 2
 		};
+
+		this._initialEndPointPositions();
 	}
 
 	get freeInitialSpace() {
@@ -21,6 +26,31 @@ export default class BaseShape {
 
 	_initializeFieldValues() {
 		throw methodNotImplemented;
+	}
+
+	_calculateEndPointPositions() {
+		throw methodNotImplemented;
+	}
+
+	_initialEndPointPositions() {
+		let width = this._width;
+		let height = this._height;
+
+		this._endpoints.forEach(function(endPoint, index){
+			let angleStep = 360 / this._endpoints.length;
+			let startAngle = 45;
+			let center = {
+				"x": width / 2,
+				"y": height / 2
+			};
+			let radius = width > height ? width : height;
+			let point = MathUtil.getPointOnCircle(radius, startAngle + angleStep * index);
+
+			endPoint.px = point.x + center.x;
+			endPoint.py = point.y + center.y;
+			endPoint.x = endPoint.px;
+			endPoint.y = endPoint.py;
+		}.bind(this));
 	}
 
 	get storedWords() {
@@ -38,12 +68,13 @@ export default class BaseShape {
 		this._originalField = GeneratorUtil.copyField(this._field);
 
 		this._endpointToPixelDistances = new Map();
-
 		let timing = new TimingHelper("Calculating distances: ");
 		timing.startRecording();
 		this._calculatePixelDistances();
 		timing.endRecording();
 		this._originalDistanceMap = GeneratorUtil.copyMapObjectToArray(this._endpointToPixelDistances);
+
+		this._calculateEndPointPositions();
 	}
 
 	placeNearEndPoints(endpoint, element) {
@@ -130,7 +161,15 @@ export default class BaseShape {
 		}
 	}
 
+	_inRadius(coord, element) {
+		return MAX_PLACE_RADIUS > MathUtil.getDistance(coord, element);
+	}
+
 	_place(coord, element) {
+		if (!this._inRadius(coord, element)) {
+			return false;
+		}
+
 		// Look if enough free space
 		for (let yIndex = coord.y; yIndex < coord.y + element.height; yIndex++) {
 			for (let xIndex = coord.x; xIndex < coord.x + element.width; xIndex++) {

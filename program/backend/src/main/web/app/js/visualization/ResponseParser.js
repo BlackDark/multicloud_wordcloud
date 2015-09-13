@@ -7,37 +7,21 @@ import StringExt from "js/visualization/util/StringExt";
 
 function parseEndPoints(rawData, width, height) {
 	var nodes = [];
-	let index = 0;
 
-	rawData.forEach(function (element) {
+	rawData.forEach(function (element, index) {
 		let currentEndpoint = new EndPointElement(index);
-
-		let angleStep = 360 / rawData.length;
-		let startAngle = 45;
 		let center = {
 			"x": width / 2,
 			"y": height / 2
 		};
-		let radius = width > height ? width : height;
-		let point = getPointOnCircle(radius, startAngle + angleStep * index++);
-
-		currentEndpoint.x = point.x + center.x;
-		currentEndpoint.y = point.y + center.y;
+		currentEndpoint.x = center.x + index;
+		currentEndpoint.y = center.y + index;
 		currentEndpoint.fixed = true;
 
 		nodes.push(currentEndpoint);
 	});
 
 	return nodes;
-
-	function getPointOnCircle(radius, angle) {
-		let radAngle = angle / 180 * Math.PI;
-
-		return {
-			"x": Math.cos(radAngle) * radius,
-			"y": Math.sin(radAngle) * radius
-		}
-	}
 }
 
 function parseTextNodes(rawData, startIndex) {
