@@ -18,8 +18,9 @@ import GraphStats from "./statistics/GraphStatistics";
 export default class Graph {
 	constructor(containerSelector) {
 		this.config = new DebugConfig();
-		this._svg = d3.select(containerSelector).append("svg").classed("graph", true);
+		this._svg = d3.select(containerSelector).append("svg").classed("graph", true).attr("id", "svgGraph");
 		this._container = this._svg.append("g");
+		this._defContainer = this._container.append("defs");
 		this._linkContainer = this._container.append("g");
 		this._originalPositionLinkContainer = this._container.append("g");
 		this._nodeContainer = this._container.append("g");
