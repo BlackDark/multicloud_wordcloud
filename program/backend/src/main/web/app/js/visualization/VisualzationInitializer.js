@@ -55,8 +55,9 @@ export default class VisualzationInitializer {
 		var graphContainerSelector = "#graph";
 		var selectedGraph = d3.select(graphContainerSelector);
 		var graph = new GraphVisualization(graphContainerSelector);
-		var width = selectedGraph.property("offsetWidth");
-		var height = selectedGraph.property("offsetHeight");
+		var querySvgGraph = $('#svgGraph');
+		var width = +querySvgGraph.width();
+		var height = +querySvgGraph.height();
 		graph.resize(width, height);
 
 		console.log([width, height]);
