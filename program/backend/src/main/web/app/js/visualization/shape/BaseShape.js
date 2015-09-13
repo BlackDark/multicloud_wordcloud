@@ -3,7 +3,8 @@ import GeneratorUtil from "js/visualization/util/GeneratorUtil";
 import MathUtil from "../util/MathUtil";
 
 const methodNotImplemented = "METHOD IS NOT IMPLEMENTED!";
-const MAX_PLACE_RADIUS = 100;
+const MIN_RAD = 5;
+const radiusPixelDivisor = 5000;
 
 export default class BaseShape {
 	constructor(height, width, endpoints) {
@@ -30,6 +31,12 @@ export default class BaseShape {
 
 	_calculateEndPointPositions() {
 		throw methodNotImplemented;
+	}
+
+	_getPlaceRadius() {
+		let rad = this._width * this._height / radiusPixelDivisor;
+		return rad <= 0 ? MIN_RAD : rad;
+
 	}
 
 	_initialEndPointPositions() {
@@ -162,7 +169,7 @@ export default class BaseShape {
 	}
 
 	_inRadius(coord, element) {
-		return MAX_PLACE_RADIUS > MathUtil.getDistance(coord, element);
+		return this._getPlaceRadius() > MathUtil.getDistance(coord, element);
 	}
 
 	_place(coord, element) {
