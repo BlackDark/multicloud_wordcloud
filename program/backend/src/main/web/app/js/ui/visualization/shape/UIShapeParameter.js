@@ -7,6 +7,7 @@ import CircleConstructor from "../../../visualization/shape/ShapeCircle";
 import EllipseConstructor from "../../../visualization/shape/ShapeEllipse";
 
 import ShapeParameter from "../../../visualization/shape/ShapeParameters";
+import UIFont from "../general/UIFontManipulation";
 
 const GRAPH_SELECTOR = "#graph";
 
@@ -133,8 +134,14 @@ export default class UIShapeParameter {
 		var queryDimElement = $(GRAPH_SELECTOR).find('#graphLoading');
 		UIHelper.setLoading(queryDimElement[0], true);
 		setTimeout(function() {
-			this._graphObject.currentGraph._applyLayout.call(this._graphObject.currentGraph, this);
-			UIHelper.setLoading(queryDimElement[0], false);
+			this._graphObject.currentGraph._applyLayout.call(this._graphObject.currentGraph, this, this._callbackAfterLayout());
 		}.bind(this), 50);
+	}
+
+	_callbackAfterLayout() {
+		return function() {
+			UIFont.refreshFontValues();
+			UIHelper.setLoading($(GRAPH_SELECTOR).find('#graphLoading')[0], false);
+		}
 	}
 }

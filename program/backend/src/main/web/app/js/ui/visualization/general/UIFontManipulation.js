@@ -2,8 +2,11 @@ import UIHelper from "../shape/UIHelper";
 import FontParameter from "../../../visualization/configuration/GeneralParameters";
 import * as FontScaleEnum from "../../../visualization/configuration/FontScaleEnum";
 
+var currentUI = undefined;
+
 export default class UIFontManipulation {
 	constructor(containerQuerySelector, graphObject) {
+		currentUI = this;
 		this._topContainer = containerQuerySelector;
 		this._topContainerD3Selector = d3.select(this._topContainer[0]);
 		this._container = this._topContainerD3Selector.append("div").attr("class", "ui segment");
@@ -107,5 +110,18 @@ export default class UIFontManipulation {
 	updateFontValues(min, max) {
 		$(this._inputMin).find('input').val(min);
 		$(this._inputMax).find('input').val(max);
+	}
+
+	updateFont() {
+		let graphStatistics = this._graphObject.currentGraph.graphStatistics;
+		this.updateFontValues(graphStatistics.minFont, graphStatistics.maxFont);
+	}
+
+	static refreshFontValues() {
+		if (currentUI === undefined) {
+			return;
+		}
+
+		currentUI.updateFont();
 	}
 }

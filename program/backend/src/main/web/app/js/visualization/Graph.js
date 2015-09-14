@@ -293,7 +293,7 @@ export default class Graph {
 	}
 
 	// Applying a shape to the wordcloud.
-	_applyLayout(uiShapeParameterObject) {
+	_applyLayout(uiShapeParameterObject, endCallBack) {
 		this._force.stop();
 		this._zoom.reset();
 
@@ -309,6 +309,7 @@ export default class Graph {
 						return "translate(" + [d.px, d.py] + ")";
 					})
 			});
+			endCallBack();
 		}, this);
 	}
 
