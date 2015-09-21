@@ -4,7 +4,7 @@ import MathUtil from "../util/MathUtil";
 
 const methodNotImplemented = "METHOD IS NOT IMPLEMENTED!";
 const MIN_RAD = 5;
-const radiusPixelDivisor = 5000;
+const radiusPixelDivisor = 10000;
 
 export default class BaseShape {
 	constructor(height, width, endpoints) {
