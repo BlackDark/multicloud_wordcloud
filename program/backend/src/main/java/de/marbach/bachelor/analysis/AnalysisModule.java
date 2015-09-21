@@ -5,6 +5,7 @@
 
 package de.marbach.bachelor.analysis;
 
+import de.marbach.bachelor.model.AnalysisParameters;
 import de.marbach.bachelor.model.Document;
 import de.marbach.bachelor.model.MergeDocument;
 import de.marbach.bachelor.model.NodeElement;
@@ -22,13 +23,15 @@ import java.util.stream.Collectors;
  */
 public class AnalysisModule {
 
+	private final AnalysisParameters params;
 	private List<File> files;
 	private List<Document> documents;
 	private MergeDocument mergedDocument;
 	private boolean isFinished;
 	private List<String> fileNames;
 
-	public AnalysisModule() {
+	public AnalysisModule(AnalysisParameters params) {
+		this.params = params;
 		documents = new ArrayList<>();
 		isFinished = false;
 	}
@@ -39,7 +42,7 @@ public class AnalysisModule {
 		File file3 = new File("C:/Users/Eduard/Documents/git_repos/bachelor/repo/program/web/text/text3.txt");
 		File file4 = new File("C:/Users/Eduard/Documents/git_repos/bachelor/repo/program/web/text/text4.txt");
 
-		AnalysisModule analysisModule = new AnalysisModule();
+		AnalysisModule analysisModule = new AnalysisModule(new AnalysisParameters());
 		analysisModule.processFiles(Arrays.asList(file1, file2, file3, file4));
 	}
 
@@ -60,7 +63,7 @@ public class AnalysisModule {
 	}
 
 	public void processFiles(List<File> files) {
-		LuceneModule module = new LuceneModule();
+		LuceneModule module = new LuceneModule(params);
 		this.files = files;
 
 		for (int i = 0; i < files.size(); i++) {

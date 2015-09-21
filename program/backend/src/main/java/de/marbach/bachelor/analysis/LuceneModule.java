@@ -5,7 +5,9 @@
 
 package de.marbach.bachelor.analysis;
 
+import de.marbach.bachelor.model.AnalysisParameters;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -26,11 +28,19 @@ import java.util.Map;
  */
 public class LuceneModule {
 
-	public LuceneModule() {
+	private final AnalysisParameters params;
+
+	public LuceneModule(AnalysisParameters params) {
+		this.params = params;
 	}
 
 	public Map<String, Integer> getMapping(File file) throws IOException {
-		StandardAnalyzer analyzer = new StandardAnalyzer();
+		StandardAnalyzer analyzer;
+		if (params.getStopwords().size() != 0) {
+			analyzer = new StandardAnalyzer(new CharArraySet(params.getStopwords(), true));
+		} else {
+			analyzer = new StandardAnalyzer();
+		}
 		Directory index = new RAMDirectory();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		IndexWriter w = new IndexWriter(index, config);

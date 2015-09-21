@@ -5,11 +5,10 @@
 
 package de.marbach.bachelor.controller;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.marbach.bachelor.analysis.AnalysisModule;
-import de.marbach.bachelor.model.Datastore;
-import de.marbach.bachelor.model.Document;
-import de.marbach.bachelor.model.MergeDocument;
-import de.marbach.bachelor.model.NodeElement;
+import de.marbach.bachelor.model.*;
 import de.marbach.bachelor.response.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -50,9 +49,18 @@ public class FileUploadController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/uploadMulti", method = RequestMethod.POST)
-	public Integer uploadMultipleFileHandler(@RequestParam("file") MultipartFile[] files) throws IOException {
+	public Integer uploadMultipleFileHandler(@RequestParam("file") MultipartFile[] files, @RequestParam("parameters") String parameters) throws IOException {
 		if (files == null || files.length == 0) {
 			throw new IllegalArgumentException();
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+		AnalysisParameters params;
+
+		try {
+			params = mapper.readValue(parameters, AnalysisParameters.class);
+		} catch (IOException e) {
+			params = new AnalysisParameters();
 		}
 
 		List<File> createdFiles = new ArrayList<>();
@@ -76,7 +84,7 @@ public class FileUploadController {
 			}
 		}
 
-		AnalysisModule module = new AnalysisModule();
+		AnalysisModule module = new AnalysisModule(params);
 		idToModule.put(index++, module);
 		Runnable thread = () -> module.processFiles(createdFiles);
 
@@ -145,4 +153,11 @@ public class FileUploadController {
 		return documentsList;
 	}
 
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/upload/parameters", method = RequestMethod.GET)
+	public ResponseUploadParameters getUploadParameters() {
+		System.out.println("TEST");
+		return new ResponseUploadParameters();
+	}
 }

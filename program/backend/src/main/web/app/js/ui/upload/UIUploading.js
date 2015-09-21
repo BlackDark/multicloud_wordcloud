@@ -1,3 +1,4 @@
+import UIHelper from "../visualization/shape/UIHelper";
 
 const FILE_EXTENSIONS = '.txt';
 const MAX_SIZE = 1024; // KB
@@ -9,6 +10,7 @@ export default class UIUploading {
 		this.displayedElements = 0;
 		this.selectedId = undefined;
 
+		this._initateParameters();
 		this._applyListeners();
 		this._initPolling();
 	}
@@ -21,15 +23,6 @@ export default class UIUploading {
 		return "<div class='ui label'>   <i class='file text icon'></i>" + name + "</div>";
 	}
 
-	_getModalDiv(message) {
-		let modal = document.createElement('div');
-		$(modal).addClass('ui').addClass('modal');
-		$(modal).append("	<i class='close icon'></i> 	<div class='header'> 	</div> </div>  <div class='ui modal' id='wrongFileSize'> 	<i class='close icon'></i> 	<div class='header'> 	</div>");
-
-		$(modal).find('div.header').append(message);
-		return $(modal);
-	}
-
 	get selectedRow() {
 		return this.selectedId;
 	}
@@ -37,68 +30,17 @@ export default class UIUploading {
 	_applyListeners() {
 		var that = this;
 
-		$("#attachmentName").change(function () {
-			var fileList = $(this)[0].files;
+		let cleanData = {
+			parameters: {}
+		};
 
-			let fileNames = that._checkInput(fileList, that);
-
-			if(fileNames === false) {
-				let fileInput = $('#attachmentName');
-				fileInput.replaceWith(fileInput = fileInput.clone(true));
-				$('#submitUpload').attr('disabled', true);
-				$('#fileLabelDiv').empty();
-				return;
-			}
-
-			$('#submitUpload').removeAttr('disabled');
-			let fileLabels = "";
-			fileNames.forEach(name => fileLabels = fileLabels.concat(UIUploading.getInputFileLabel(name, name)));
-			$('#fileLabelDiv').empty();
-			$('#fileLabelDiv').append(fileLabels);
-		});
-
-		$("#checkFinish").click(function () {
-			var id = +$("#progressId").prop("value");
-			$.ajax({
-				url: "upload/" + id + "/progress",
-				success: function (data) {
-					console.log(data);
-				}
-			});
-		});
-
-		$("#printResult").click(function () {
-			var id = +$("#progressId").prop("value");
-
-			$.ajax({
-				url: "upload/" + id + "/result",
-				success: function (data) {
-					console.log(data);
-				}
-			});
-		});
-
-		$("#submitUpload").click(function () {
-			event.preventDefault();
-			var data = new FormData($('#filesForm')[0]);
-			console.log(data);
-
-			$.ajax({
-				url: 'uploadMulti',
-				type: 'post',
-				dataType: 'json',
-				contentType: false,
-				processData: false,
-				data: data,
-				success: function (data) {
-					$('#fileLabelDiv').empty();
-					that._pollOnceForResources();
-				}
-			});
-		});
+		let extraData = {
+			parameters: {}
+		};
 
 		$("#file-4").fileinput({
 			uploadUrl: 'uploadMulti',
+			uploadExtraData: extraData,
 			uploadAsync: false,
 			dropZoneEnabled: false,
 			allowedFileTypes: ["text"],
@@ -115,39 +57,14 @@ export default class UIUploading {
 			layoutTemplates: {
 				actionUpload: ''
 			}
+		}).on('filebatchuploadcomplete', function (event, data, id, index) {
+			that._pollOnceForResources();
+			extraData = cleanData;
+		}).on('filepreajax', function (event, previewId, index) {
+			extraData.parameters.stopwords = that._getStopWords();
+			extraData.parameters = JSON.stringify(extraData.parameters);
 		});
-	}
-
-	_checkInput(fileList, that) {
-		var fileNames = [];
-		var size = 0;
-
-		if(fileList.length === 0) {
-			return false;
-		}
-
-		for (var i = 0; i < fileList.length; i++) {
-			var file = fileList.item(i);
-			size += file.size;
-
-			var postfix = file.name.substr(file.name.lastIndexOf('.'));
-
-			if (FILE_EXTENSIONS.indexOf(postfix.toLowerCase()) > -1) {
-
-			} else {
-				that._getModalDiv(FILE_TYPE_ERROR_MESSAGE).modal('show');
-				return false;
-			}
-
-			fileNames.push(file.name);
-		}
-
-		if (size > 1024 * MAX_SIZE) {
-			that._getModalDiv(FILE_SIZE_ERROR_MESSAGE).modal('show');
-			return false;
-		}
-
-		return fileNames;
+		$('#upload-parameters').accordion();
 	}
 
 	_initPolling() {
@@ -241,4 +158,85 @@ export default class UIUploading {
 
 		return jsonData.length;
 	}
+
+	_initateParameters() {
+		$.ajax({
+			url: "upload/parameters",
+			type: "GET",
+			success: function (data) {
+				setUploadParameters(data);
+			},
+			error: function (error, data) {
+
+			}
+		})
+	}
+
+	_getStopWords() {
+		if (d3.select('#upload-parameters').select("textarea").node() === null) {
+			return "";
+		}
+
+		let stopwords = d3.select('#upload-parameters').select("textarea").property("value");
+
+		return stopwords.split(", ");
+	}
+}
+
+function setUploadParameters(jsonData) {
+	let divContent = d3.select('#upload-parameters').select("div.content");
+	addStopWords(jsonData, divContent);
+}
+
+function addStopWords(data, divContent) {
+	let stopwordContainer = document.createElement("div");
+	d3.select(stopwordContainer).attr("class", "ui segment container").append("h3").text("Stopword list");
+
+
+
+	let gridDiv = document.createElement("div");
+	let modeDiv = document.createElement("div");
+	let textContentDiv = document.createElement("div");
+	let textDiv = document.createElement("div");
+
+	d3.select(textDiv).attr("class", "ui container");
+
+	let bootstrapDiv = document.createElement("div");
+	d3.select(bootstrapDiv).attr("class", "bootstrap-isolated form-group");
+	let textAreaInput = document.createElement("textarea");
+	d3.select(textAreaInput).attr("class", "form-control").attr("rows", 5).attr("id", "commentStopWord");
+
+	let defaultRadio = UIHelper.getRadioButton("stopword", false, "Default list", undefined);
+	let longRadio = UIHelper.getRadioButton("stopword", false, "Long list", undefined);
+	let radioGroup = UIHelper.getRadioGroup([defaultRadio, longRadio], 0);
+
+	d3.select(defaultRadio).select("input").on("change", function () {
+		if (this.checked) {
+			d3.select(textAreaInput).property("value", data.defaultStopwords.join(", "));
+		}
+	});
+
+	d3.select(longRadio).select("input").on("change", function () {
+		if (this.checked) {
+			d3.select(textAreaInput).property("value", data.longStopwords.join(", "));
+		}
+	});
+
+
+	modeDiv.appendChild(radioGroup);
+
+	d3.select(textAreaInput).property("value", data.defaultStopwords.join(", "));
+
+	let selectedGrid = d3.select(gridDiv).attr("class", "ui grid container");
+	let selectedMode = d3.select(modeDiv).attr("class", "four wide column");
+	let selectedText = d3.select(textContentDiv).attr("class", "twelve wide column");
+	bootstrapDiv.appendChild(textAreaInput);
+	textDiv.appendChild(bootstrapDiv);
+	textContentDiv.appendChild(textDiv);
+
+	gridDiv.appendChild(modeDiv);
+	gridDiv.appendChild(textContentDiv);
+	stopwordContainer.appendChild(gridDiv);
+
+	divContent.node().appendChild(stopwordContainer);
 }
