@@ -72,6 +72,10 @@ function replaceIdsWithReferences(nodes, links) {
 	links.forEach(function (link) {
 		link.source = nodeMap.get(link.source);
 		link.target = nodeMap.get(link.target);
+
+		if (link.source === undefined || link.target === undefined) {
+			throw "PARSER ERROR! ID REPLACING NOT FOUND FOUND";
+		}
 	});
 
 	nodes.forEach(node => {
@@ -89,14 +93,18 @@ function createLinks(nodes, number) {
 
 	for (var i = number; i < nodes.length; i++) {
 		var currentNode = nodes[i];
+		currentNode.links = [];
 
 		currentNode.endPointConnections.forEach(function (connection, i) {
-			newLinks.push({
+			var linkObject = {
 				id: index++,
 				source: currentNode.id,
-				target: i,
+				target: connection.documentId,
 				strength: connection.distribution
-			});
+			};
+
+			currentNode.links.push(linkObject);
+			newLinks.push(linkObject);
 		});
 	}
 
