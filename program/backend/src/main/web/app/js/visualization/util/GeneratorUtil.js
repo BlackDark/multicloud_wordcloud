@@ -1,5 +1,7 @@
 
 
+const color = d3.scale.category10().domain(d3.range(10));
+
 export default class GeneratorUtil {
 
 	// Depending on parameters multi-dimensional arrays are created.
@@ -37,5 +39,9 @@ export default class GeneratorUtil {
 		}
 
 		return newField;
+	}
+
+	static getColorForId(id) {
+		return color(id);
 	}
 }

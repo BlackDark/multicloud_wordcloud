@@ -1,7 +1,7 @@
 import BaseElement from "js/visualization/elements/BaseElement";
 import StringExt from "js/visualization/util/StringExt";
+import GeneratorUtil from "../util/GeneratorUtil";
 
-const color = d3.scale.category10();
 const emDivisor = 11;
 const widthPadding = 4;
 const heightPaddingReduceFactor = 0.2;
@@ -37,15 +37,15 @@ export default class WordElement extends BaseElement{
 		let that = this;
 		super.draw(container);
 
-		let colorIndex = undefined;
+		let highestConnectionId = undefined;
 
 		let highest = Number.NEGATIVE_INFINITY;
 		let tmp;
 		for (let i=this.endPointConnections.length-1; i>=0; i--) {
 			tmp = this.endPointConnections[i].distribution;
 			if (tmp > highest) {
-				colorIndex = i
-				highest = tmp
+				highestConnectionId = i;
+				highest = tmp;
 			}
 		}
 
@@ -53,12 +53,12 @@ export default class WordElement extends BaseElement{
 		.attr("id", "filter" + this.id)
 		.append("feColorMatrix")
 		.attr("type", "saturate")
-		.attr("values", saturationScale(this.endPointConnections[colorIndex].distribution));
+		.attr("values", saturationScale(this.endPointConnections[highestConnectionId].distribution));
 
 		this._textSelectedDom = container.append("text")
 			.classed("word-text", true)
 			.style("fill", function(d, i) {
-				return color(colorIndex);
+				return GeneratorUtil.getColorForId(that.endPointConnections[highestConnectionId].documentId);
 			})
 			.style("filter", d => {
 				return 'url(#filter' + d.id + ')';
@@ -72,15 +72,18 @@ export default class WordElement extends BaseElement{
 		setDimensions(this);
 
 		this.tipsySelector = $(container.node()).find("text");
-		this.tipsySelector.tipsy({
-			gravity: 'w',
-			html: true,
-			title: function() {
+
+		this.tipsySelector.popup({
+			position: "right center",
+			hoverable: true,
+			html: function() {
 				var getChart = that._getChart();
 				return getChart[0];
 			},
-			delayIn: 150,
-			delayOut: 200
+			delay: {
+				show: 150,
+				hide: 200
+			}
 		});
 	}
 
@@ -97,7 +100,7 @@ export default class WordElement extends BaseElement{
 				.x(function(d) { return d.title})
 				.y(function(d) { return d.value})
 				.color(function(d) {
-					return color(d.index);
+					return GeneratorUtil.getColorForId(d.index);
 				})
 				.showLabels(true)
 				.labelThreshold(.5)  //Configure the minimum slice size for labels to show up

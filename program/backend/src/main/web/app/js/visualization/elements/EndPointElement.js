@@ -1,6 +1,5 @@
 import BaseElement from "js/visualization/elements/BaseElement";
-
-const color = d3.scale.category10();
+import GeneratorUtil from "../util/GeneratorUtil";
 
 export default class EndPointElement extends BaseElement {
 	constructor(id) {
@@ -12,7 +11,9 @@ export default class EndPointElement extends BaseElement {
 
 		container.append("circle")
 			.classed("endpoint", true)
-			.style("fill", color(this.id))
+			.style("fill", GeneratorUtil.getColorForId(this.id))
 			.attr("r", 10);
+
+		container.append("text").text(this.id);
 	}
 }
