@@ -63,14 +63,13 @@ public class AnalysisModule {
 		LuceneModule module = new LuceneModule();
 		this.files = files;
 
-		for (File file : files) {
-			Map<String, Integer> mapping = null;
+		for (int i = 0; i < files.size(); i++) {
+			File file = files.get(i);
 			try {
-				mapping = module.getMapping(file);
+				documents.add(generateDocument(file, module.getMapping(file), i));
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new IllegalStateException("Problems during parsing of file.");
 			}
-			documents.add(generateDocument(file, mapping));
 		}
 
 		mergedDocument = new MergeDocument(documents);
@@ -86,7 +85,7 @@ public class AnalysisModule {
 		files.forEach(File::delete);
 	}
 
-	protected Document generateDocument(File file, Map<String, Integer> mapping) {
+	protected Document generateDocument(File file, Map<String, Integer> mapping, int i) {
 		List<NodeElement> nodes = mapping.entrySet().stream().map(stringIntegerEntry -> new NodeElement(stringIntegerEntry.getKey(), stringIntegerEntry.getValue())).collect(Collectors.toList());
 		int wordCount = 0;
 
@@ -94,7 +93,10 @@ public class AnalysisModule {
 			wordCount += node.getFreq();
 		}
 
-		return new Document(file.getName(), nodes, wordCount);
+		Document document = new Document(file.getName(), nodes, wordCount);
+		document.setId(i);
+
+		return document;
 	}
 
 	public boolean isFinished() {

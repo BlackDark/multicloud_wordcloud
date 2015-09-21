@@ -13,11 +13,10 @@ import java.util.List;
  */
 public class Document {
 
-	private static int counter = 0;
 	private String title;
 	private List<NodeElement> nodes;
 	private List<NodeElement> uniqueNodes;
-	private int id;
+	private int id = 0;
 	private int wordCount;
 
 	public Document(String title, List<NodeElement> nodes, int wordCount) {
@@ -25,7 +24,6 @@ public class Document {
 		this.nodes = nodes;
 		this.uniqueNodes = new ArrayList<>(nodes);
 		this.wordCount = wordCount;
-		this.id = counter++;
 	}
 
 	public int getWordCount() {
@@ -56,5 +54,9 @@ public class Document {
 
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }
