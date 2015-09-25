@@ -74,10 +74,7 @@ public class MergeDocument extends Document {
 		for (NodeElement nodeElement : mapping.values()) {
 			if (nodeElement.getAffinityToDocument().keySet().size() <= 1) {
 				valuesToRemove.add(nodeElement.getText());
-			} else {
-				for (Document document : nodeElement.getAffinityToDocument().keySet()) {
-					document.removeUniqueNode(nodeElement.getText());
-				}
+				nodeElement.getAffinityToDocument().keySet().iterator().next().addUniqueNode(nodeElement);
 			}
 		}
 

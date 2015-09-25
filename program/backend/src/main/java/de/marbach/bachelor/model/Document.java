@@ -15,14 +15,13 @@ public class Document {
 
 	private String title;
 	private List<NodeElement> nodes;
-	private List<NodeElement> uniqueNodes;
+	private List<NodeElement> uniqueNodes = new ArrayList<>();
 	private int id = 0;
 	private int wordCount;
 
 	public Document(String title, List<NodeElement> nodes, int wordCount) {
 		this.title = title;
 		this.nodes = nodes;
-		this.uniqueNodes = new ArrayList<>(nodes);
 		this.wordCount = wordCount;
 	}
 
@@ -44,8 +43,15 @@ public class Document {
 		return uniqueNodes;
 	}
 
-	public void removeUniqueNode(String text) {
+	public void addUniqueNode(NodeElement textNode) {
+		uniqueNodes.add(textNode);
+	}
 
+	public List<NodeElement> getTopFrequentUniqueNodes(int num) {
+		uniqueNodes.sort((o1, o2) -> o2.getFreq() - o1.getFreq());
+
+		int endIndex = num > uniqueNodes.size() ? uniqueNodes.size() : num;
+		return uniqueNodes.subList(0, endIndex);
 	}
 
 	public String getTitle() {

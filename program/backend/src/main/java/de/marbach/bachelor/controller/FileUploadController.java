@@ -5,7 +5,6 @@
 
 package de.marbach.bachelor.controller;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.marbach.bachelor.analysis.AnalysisModule;
 import de.marbach.bachelor.model.*;
@@ -111,8 +110,8 @@ public class FileUploadController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/upload/{uploadId}/numWords", method = RequestMethod.POST)
-	public ResponseWordStorage getNumWords(@PathVariable Integer uploadId, @RequestParam("numWords") Integer numWords) {
-		if (uploadId == null || numWords == null) {
+	public ResponseWordStorage getNumWords(@PathVariable Integer uploadId, @RequestParam("numWords") Integer numWords, @RequestParam("numDocumentWords") Integer numDocumentWords) {
+		if (uploadId == null || numWords == null || numDocumentWords == null) {
 			throw new IllegalArgumentException("Null value for parameter");
 		}
 
@@ -124,20 +123,26 @@ public class FileUploadController {
 		MergeDocument mergedDocument = idToModule.get(uploadId).getMergedDocument();
 
 		List<ResponseEndNode> endNodes = new ArrayList<>();
+		endNodes.addAll(documents.stream().map(document -> new ResponseEndNode(document.getTitle(), document.getId(), createNodeList(document.getTopFrequentUniqueNodes(numDocumentWords)))).collect(Collectors.toList()));
+
+
 		List<ResponseTextNode> textNodes = new ArrayList<>();
-
-		endNodes.addAll(documents.stream().map(document -> new ResponseEndNode(document.getTitle(), document.getId())).collect(Collectors.toList()));
-
 		List<NodeElement> topFrequentMerged = mergedDocument.getTopFrequentMerged(numWords);
-		for (NodeElement nodeElement : topFrequentMerged) {
-			List<ResponseDocumentConnection> connections = new ArrayList<>();
-			for (Map.Entry<Document, Integer> documentIntegerEntry : nodeElement.getAffinityToDocument().entrySet()) {
-				connections.add(new ResponseDocumentConnection(documentIntegerEntry.getKey().getId(), documentIntegerEntry.getValue()));
-			}
-			textNodes.add(new ResponseTextNode(nodeElement.getText(), nodeElement.getFreq(), connections));
-		}
+		textNodes.addAll(createNodeList(topFrequentMerged));
 
 		return new ResponseWordStorage(new ResponseInformation("Test", topFrequentMerged.size(), mergedDocument.getTotalNumWords()), endNodes, textNodes);
+	}
+
+	protected List<ResponseTextNode> createNodeList(Collection<NodeElement> elements) {
+		return elements.stream().map(this::createNode).collect(Collectors.toList());
+	}
+
+	protected ResponseTextNode createNode(NodeElement element) {
+		return new ResponseTextNode(element.getText(), element.getFreq(), createConnections(element));
+	}
+
+	protected List<ResponseDocumentConnection> createConnections(NodeElement element) {
+		return element.getAffinityToDocument().entrySet().stream().map(documentIntegerEntry -> new ResponseDocumentConnection(documentIntegerEntry.getKey().getId(), documentIntegerEntry.getValue())).collect(Collectors.toList());
 	}
 
 	@ResponseBody
@@ -157,7 +162,6 @@ public class FileUploadController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/upload/parameters", method = RequestMethod.GET)
 	public ResponseUploadParameters getUploadParameters() {
-		System.out.println("TEST");
 		return new ResponseUploadParameters();
 	}
 }
