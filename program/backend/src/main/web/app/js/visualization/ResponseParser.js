@@ -115,7 +115,11 @@ export default class ResponseParser {
 
 	static parse(resposenData, width, height) {
 		var endPoints = parseEndPoints(resposenData.endPoints, width, height);
-		var textObjects = parseTextNodes(resposenData.textNodes, endPoints.length);
+		let textNodes = [];
+		textNodes = textNodes.concat(resposenData.textNodes);
+		resposenData.endPoints.forEach(element => textNodes = textNodes.concat(element.textNodes));
+
+		var textObjects = parseTextNodes(textNodes, endPoints.length);
 		var links = mapLinks(createLinks(endPoints.concat(textObjects), endPoints.length));
 
 		replaceIdsWithReferences(endPoints.concat(textObjects), links);
