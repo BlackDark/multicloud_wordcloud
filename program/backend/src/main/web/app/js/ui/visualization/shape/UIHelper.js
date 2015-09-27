@@ -237,6 +237,16 @@ export default class UIHelper {
 		}
 		return createdElement;
 	}
+
+	static getNewAccordionContentDiv(accordionDiv, accordTitle) {
+		let selection = d3.select(accordionDiv);
+		let titleDiv = selection.append("div").attr("class", "title");
+		let contentDiv = selection.append("div").attr("class", "content");
+
+		titleDiv.html('<i class="dropdown icon"></i>' + accordTitle);
+
+		return contentDiv.node();
+	}
 }
 
 function getTableTr(trItems) {

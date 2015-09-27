@@ -1,6 +1,8 @@
 import UIFontManipulation from "./general/UIFontManipulation";
 import UIShape from "./shape/UIShapeParameter";
 import UIUpload from "./general/UIUploadParameters";
+import UIDebug from "./UIDebug";
+import UIHelper from "./shape/UIHelper";
 
 export default class UIVisualization {
 	constructor(container, graphObject) {
@@ -9,17 +11,24 @@ export default class UIVisualization {
 
 		this._generateSelectors();
 		this._drawLayout();
+		this._activation();
 	}
 
 	_drawLayout() {
-		this.font = new UIFontManipulation(this._controlSelector, this._graphObject);
-		this.shape = new UIShape(this._controlSelector, this._graphObject);
-		this.upload = new UIUpload(this, this._topControlDiv, this._graphObject);
+		let controllDiv = $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Graph Manipulation"));
+		this.font = new UIFontManipulation(controllDiv, this._graphObject);
+		this.shape = new UIShape(controllDiv, this._graphObject);
+		this.upload = new UIUpload(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Document Configuration")), this._graphObject);
+		this.debug = new  UIDebug(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Debug information")), this._graphObject);
+	}
+
+	_activation() {
+		this._topControlDiv.accordion();
 	}
 
 	_generateSelectors() {
-		this._controlSelector = this._topContainer.find('#forbutton');
 		this._topControlDiv = this._topContainer.find('#topControlDiv');
+		this._topAccordion = this._topControlDiv.find('.accordion');
 	}
 
 	resize() {
