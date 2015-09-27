@@ -7,7 +7,6 @@ export default class VisualzationInitializer {
 	constructor() {
 		this._currentGraph = undefined;
 		this._graphSelector = "#graph";
-		this._controllsSelector = "#forbutton";
 		this._currentId = undefined;
 	}
 
