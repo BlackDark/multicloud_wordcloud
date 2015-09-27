@@ -237,19 +237,18 @@ export default class Graph {
 		}.bind(this));
 	}
 
-	_drawOriginalPositionLink() {
+	_drawOriginalPositionLink(boolDraw) {
+		if (!boolDraw) {
+			this._originalPositionLinkContainer.empty();
+			return;
+		}
+
 		for (var i = 0; i < this._textNodes.length; i++) {
 			var currentNode = this._textNodes[i];
 
-			var positionX = 0;
-			this._endPointsNodes.forEach(function(d, i) {
-				positionX += d.x * currentNode.endPointConnections[i].distribution;
-			});
-
-			var positionY = 0;
-				this._endPointsNodes.forEach(function(d, i) {
-					positionY += d.y * currentNode.endPointConnections[i].distribution;
-				});
+			if (currentNode.isHidden() || currentNode.orgPosX === undefined || currentNode.orgPosY === undefined) {
+				continue;
+			}
 
 			this._originalPositionLinkContainer.append("g")
 				.datum(currentNode)
@@ -263,10 +262,10 @@ export default class Graph {
 					return d.y;
 				})
 				.attr("x2", function (d) {
-					return positionX;
+					return d.orgPosX;
 				})
 				.attr("y2", function (d) {
-					return positionY;
+					return d.orgPosY;
 				});
 		}
 	}

@@ -52,6 +52,10 @@ export default class BaseElement {
 		this._container.attr("transform", "translate(" + [this.x, this.y] + ")");
 	}
 
+	isHidden() {
+		return this._container.classed("hidden");
+	}
+
 	static get onMouseDownType() {
 		return "mousedown";
 	}

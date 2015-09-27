@@ -38,6 +38,8 @@ export default class ShapeApplier {
 	_beginShape() {
 		this._forceLayout.stop();
 
+		this._saveOriginalPositionsInNodes();
+
 		let nodeFinder = new NodeSorter(this._textNodes, this._endPointNodes);
 
 		this._processParametersBeforePlacing(this._currentShapeObject, nodeFinder, this._parameters);
@@ -162,5 +164,12 @@ export default class ShapeApplier {
 		if(parameters.centrateWords) {
 			this._shiftMiddle();
 		}
+	}
+
+	_saveOriginalPositionsInNodes() {
+		this._textNodes.forEach(node => {
+			node.orgPosX = node.x;
+			node.orgPosY = node.y;
+		});
 	}
 }
