@@ -239,7 +239,7 @@ export default class Graph {
 
 	_drawOriginalPositionLink(boolDraw) {
 		if (!boolDraw) {
-			this._originalPositionLinkContainer.empty();
+			this._originalPositionLinkContainer.selectAll("*").remove();
 			return;
 		}
 
