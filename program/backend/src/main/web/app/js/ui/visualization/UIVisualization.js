@@ -15,9 +15,8 @@ export default class UIVisualization {
 	}
 
 	_drawLayout() {
-		let controllDiv = $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Graph Manipulation"));
-		this.font = new UIFontManipulation(controllDiv, this._graphObject);
-		this.shape = new UIShape(controllDiv, this._graphObject);
+		this.font = new UIFontManipulation(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);
+		this.shape = new UIShape(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);
 		this.upload = new UIUpload(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Document Configuration")), this._graphObject);
 		this.debug = new  UIDebug(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Debug information")), this._graphObject);
 	}
@@ -29,6 +28,8 @@ export default class UIVisualization {
 	_generateSelectors() {
 		this._topControlDiv = this._topContainer.find('#topControlDiv');
 		this._topAccordion = this._topControlDiv.find('.accordion');
+		this._graphManipulationDiv = $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Graph Manipulation"));
+		this._graphManipulationItems = $(d3.select(this._graphManipulationDiv[0]).append("div").attr("class", "ui stackable two columns grid container").node());
 	}
 
 	resize() {

@@ -247,6 +247,17 @@ export default class UIHelper {
 
 		return contentDiv.node();
 	}
+
+	static appendGridColumnWithClass(gridQuerySelection, additionalClassesAsArray) {
+		let column = $('<div class="ui column"></div>');
+		gridQuerySelection.append(column);
+
+		if (additionalClassesAsArray !== undefined) {
+			additionalClassesAsArray.forEach(classString => column.addClass(classString));
+		}
+
+		return column;
+	}
 }
 
 function getTableTr(trItems) {

@@ -9,7 +9,7 @@ export default class UIFontManipulation {
 		currentUI = this;
 		this._topContainer = containerQuerySelector;
 		this._topContainerD3Selector = d3.select(this._topContainer[0]);
-		this._container = this._topContainerD3Selector.append("div").attr("class", "ui segment");
+		this._container = this._topContainerD3Selector.append("div").attr("class", "ui segment container");
 		this._parameter = new FontParameter();
 		this._graphObject = graphObject;
 		this._selectedScaleFormat = FontScaleEnum.LINEAR;
@@ -20,9 +20,9 @@ export default class UIFontManipulation {
 	_addToLayout() {
 		let that = this;
 
-		this._container.append("h2")
+		this._container.append("h3")
 			.attr("class", "ui header")
-			.text("General");
+			.text("Font");
 
 		this._itemContainer = this._container.append("div").attr("class", "ui items");
 

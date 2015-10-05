@@ -15,7 +15,7 @@ export default class UIShapeParameter {
 	constructor(containerQuerySelector, graphObject) {
 		this._topContainer = containerQuerySelector;
 		this._topContainerD3Selector = d3.select(this._topContainer[0]);
-		this._container = this._topContainerD3Selector.append("div").attr("class", "ui segment");
+		this._container = this._topContainerD3Selector.append("div").attr("class", "ui segment container");
 		this._graphObject = graphObject;
 
 		this.addToLayout();
@@ -55,7 +55,7 @@ export default class UIShapeParameter {
 	_addShapeForm() {
 		this.shapeDiv = this._container.append("div").attr("class", "ui container");
 
-		this.shapeDiv.append("h2")
+		this.shapeDiv.append("h3")
 			.attr("class", "ui medium header")
 			.text("Form");
 
