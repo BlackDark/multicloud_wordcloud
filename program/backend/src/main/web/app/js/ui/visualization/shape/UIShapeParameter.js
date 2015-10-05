@@ -22,6 +22,11 @@ export default class UIShapeParameter {
 	}
 
 	addToLayout() {
+		this._container.append("h3")
+			.attr("class", "ui header")
+			.text("Shape");
+
+		this._grid = this._container.append("div").attr("class", "ui two column grid");
 		this._addShapeForm();
 		this._addFillingConfiguration();
 		this._addButtons();
@@ -53,11 +58,7 @@ export default class UIShapeParameter {
 	}
 
 	_addShapeForm() {
-		this.shapeDiv = this._container.append("div").attr("class", "ui container");
-
-		this.shapeDiv.append("h3")
-			.attr("class", "ui medium header")
-			.text("Form");
+		this.shapeDiv = d3.select(UIHelper.appendGridColumnWithClass($(this._grid.node()))[0]).append("div").attr("class", "ui container");
 
 		this.formDiv = this.shapeDiv.append("div")
 			.attr("class", "ui form");
@@ -88,29 +89,29 @@ export default class UIShapeParameter {
 	}
 
 	_addFillingConfiguration() {
-		this.fillingConfigDiv = this._container.append("div").attr("class", "ui padded container");
+		this.fillingConfigDiv = d3.select(UIHelper.appendGridColumnWithClass($(this._grid.node()))[0]).append("div").attr("class", "ui container");
 
-		this.fillingConfigDiv.append("h2")
-			.attr("class", "ui medium header")
+		this.fillingConfigDiv.append("h4")
+			.attr("class", "ui header")
 			.text("Parameters");
 
 		let checkBoxArea = this.fillingConfigDiv.append("div").attr("class", "grouped fields");
 
 		this.configParameters = [];
 
-		var checkFillSpace = UIHelper.getCheckbox("Fill space", ShapeParameter.fillSpacePath);
+		var checkFillSpace = UIHelper.getCheckbox("Use maximal space", ShapeParameter.fillSpacePath);
 		this.configParameters.push({
 			"domInput": d3.select(checkFillSpace).select("input").node()
 		});
 		checkBoxArea.node().appendChild(checkFillSpace);
 
-		var checkFillWords = UIHelper.getCheckbox("Fill words", ShapeParameter.placeAllWordsPath);
+		var checkFillWords = UIHelper.getCheckbox("Place all words", ShapeParameter.placeAllWordsPath);
 		this.configParameters.push({
 			"domInput": d3.select(checkFillWords).select("input").node()
 		});
 		checkBoxArea.node().appendChild(checkFillWords);
 
-		var centrateWords = UIHelper.getCheckbox("Centrate", ShapeParameter.centrateWordsPath);
+		var centrateWords = UIHelper.getCheckbox("Centrate words", ShapeParameter.centrateWordsPath);
 		this.configParameters.push({
 			"domInput": d3.select(centrateWords).select("input").node()
 		});
@@ -124,8 +125,9 @@ export default class UIShapeParameter {
 	}
 
 	_addButtons() {
-		let buttonContainer = this._container.append("div").attr("class", "ui container");
+		let buttonContainer = this._container.append("div").attr("class", "ui center aligned container");
 		let button = UIHelper.getButton("Apply layout", this._buttonApplyLayout, this);
+		d3.select(button).classed("fluid", true).classed("teal", true);
 
 		buttonContainer.node().appendChild(button);
 	}
