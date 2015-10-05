@@ -18,6 +18,10 @@ export default class WordElement extends BaseElement{
 	}
 
 	changeSize(newSize) {
+		if (newSize <= 0) {
+			return;
+		}
+
 		this.size = newSize;
 		this._container.select("text")
 			.style("font-size", function(d) {
