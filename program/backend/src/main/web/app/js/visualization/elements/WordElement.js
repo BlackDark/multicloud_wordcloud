@@ -19,7 +19,7 @@ export default class WordElement extends BaseElement{
 
 	changeSize(newSize) {
 		if (newSize <= 0) {
-			return;
+			return false;
 		}
 
 		this.size = newSize;
@@ -27,14 +27,15 @@ export default class WordElement extends BaseElement{
 			.style("font-size", function(d) {
 				return d.size / emDivisor + "em"; });
 		setDimensions(this);
+		return true;
 	}
 
 	incrementSize() {
-		this.changeSize(this.size + 1);
+		return this.changeSize(this.size + 1);
 	}
 
 	decrementSize() {
-		this.changeSize(this.size - 1);
+		return this.changeSize(this.size - 1);
 	}
 
 	draw(container) {

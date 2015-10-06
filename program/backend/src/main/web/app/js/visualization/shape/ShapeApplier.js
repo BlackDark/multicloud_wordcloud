@@ -46,7 +46,14 @@ export default class ShapeApplier {
 
 		let timing = new TimingHelper("Placing nodes took: ");
 		timing.startRecording();
-		this._placingNodes(nodeFinder, this._currentShapeObject, this._drawAllWords);
+		try {
+			this._placingNodes(nodeFinder, this._currentShapeObject, this._drawAllWords);
+		} catch (err) {
+			$('#failPlacing')
+				.modal('show');
+			this._endFunction();
+			return;
+		}
 		timing.endRecording();
 
 		// Remove skipped nodes  TODO
@@ -67,7 +74,6 @@ export default class ShapeApplier {
 		});
 		this._processParametersAfterPlacing(this._currentShapeObject, nodeFinder, this._parameters);
 		this._endFunction();
-
 	}
 
 	_shiftToPoint(point) {
@@ -115,7 +121,9 @@ export default class ShapeApplier {
 				nodeFinder.placeNode(nodeAndEndPoint.node);
 			} else {
 				if(drawAllWords) {
-					this._processDrawAllWordsStep(shapeObject, nodeFinder);
+					if (!this._decrementWordSize(shapeObject, nodeFinder)) {
+						throw new Error("Cannot place all words. Word sizes reached minimum!");
+					}
 				} else {
 					nodeFinder.skipNode(nodeAndEndPoint.node);
 				}
@@ -123,10 +131,17 @@ export default class ShapeApplier {
 		}
 	}
 
-	_processDrawAllWordsStep(shapeObject, nodeFinder) {
-		this._textNodes.forEach(textNode => textNode.decrementSize());
+	_decrementWordSize(shapeObject, nodeFinder) {
+		let reducedAnyWord = false;
+		this._textNodes.forEach(textNode => {
+			if (textNode.decrementSize()) {
+				reducedAnyWord = true;
+			}
+		});
 		shapeObject.resetPlacing();
 		nodeFinder.reset();
+
+		return reducedAnyWord;
 	}
 
 	_fillShapeSpace(shapeObject, nodeFinder) {
