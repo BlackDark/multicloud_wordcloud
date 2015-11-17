@@ -16,4 +16,24 @@ export default class EndPointElement extends BaseElement {
 
 		container.append("text").text(this.id);
 	}
+
+	registerHoverListener(nodeArray) {
+		let highlight = [];
+		let other = [];
+
+		nodeArray.forEach(node => {
+			if (node.mostConnectedDocument === this.id) {
+				highlight.push(node);
+			} else {
+				other.push(node);
+			}
+		});
+
+		this.nodesToFade = other;
+		this.addDefaultMouseListener();
+	}
+
+	hover(hovered) {
+		this.nodesToFade.forEach(node => node._container.classed("fadeOut", hovered));
+	}
 }

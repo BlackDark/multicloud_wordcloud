@@ -63,6 +63,7 @@ export default class Graph {
 	}
 
 	_redrawElements() {
+		let that = this;
 		this._nodeElements = this._nodeContainer.selectAll(".node")
 			.data(this._textNodes, d => d.id);
 		this._nodeElements.exit().remove();
@@ -82,12 +83,13 @@ export default class Graph {
 
 		this._endPointElements = this._endPointContainer.selectAll(".endpoint")
 			.data(this._endPointsNodes, d => d.id);
-			this._endPointElements.exit().remove();
+		this._endPointElements.exit().remove();
 
 		this._endPointElements.enter().append("g").classed("endpoint", true)
 			.each(function (node) {
 				node.draw(d3.select(this));
 				node._container.attr("transform", "translate(" + [node.x, node.y] + ")");
+				node.registerHoverListener.call(node, that._textNodes);
 			});
 	}
 
@@ -97,7 +99,7 @@ export default class Graph {
 		this._force.changeCharge(chargeForD3Force());
 		this._force.onEnd(this._d3EndFunction.bind(this));
 
-		this._endPointElements.call(function() {
+		this._endPointElements.call(function () {
 			let dragging = new DragBehaviour(this, this._force);
 			return dragging.dragBehaviour
 		}.bind(this)());
@@ -212,7 +214,7 @@ export default class Graph {
 
 		this._colaForce = new ColaLayout(this);
 
-		this._endPointElements.call(function() {
+		this._endPointElements.call(function () {
 			let dragging = new DragBehaviour(this, this._colaForce);
 			dragging.changeDragFunction(dragging.getMoveNodesBoxWise(this._endPointsNodes));
 			return dragging.dragBehaviour
@@ -225,8 +227,8 @@ export default class Graph {
 		}.bind(this));
 
 		this._colaForce.tick(function () {
-			if(this.config.drawLinksColaForce) {
-				this._linkElements.selectAll("path").attr("d", function(link){
+			if (this.config.drawLinksColaForce) {
+				this._linkElements.selectAll("path").attr("d", function (link) {
 					return linkPathFunction([link.source, link.target]);
 				});
 			}
@@ -300,7 +302,7 @@ export default class Graph {
 		this._currentLayout = layoutApplier;
 		//layoutApplier.registerProgressListener(new UIProgress(d3.select("#forbutton")));
 		layoutApplier.startShaping(this._height, this._width);
-		layoutApplier.onEnd(function() {
+		layoutApplier.onEnd(function () {
 			this._endPointsNodes.forEach(function (node) {
 				node._container.transition()
 					.duration(750)
@@ -336,7 +338,7 @@ function boundsSortedNodes(nodesToSort) {
 function tickForD3Force(link, node) {
 	return function () {
 		if (this.config.drawLinksD3Force) {
-			link.selectAll("path").attr("d", function(link){
+			link.selectAll("path").attr("d", function (link) {
 				return linkPathFunction([link.source, link.target]);
 			});
 		}

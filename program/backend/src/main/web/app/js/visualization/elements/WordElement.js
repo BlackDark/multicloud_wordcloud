@@ -54,6 +54,8 @@ export default class WordElement extends BaseElement{
 			}
 		}
 
+		this.mostConnectedDocument = that.endPointConnections[highestConnectionId].documentId;
+
 		d3.select("defs").append("filter")
 		.attr("id", "filter" + this.id)
 		.append("feColorMatrix")
