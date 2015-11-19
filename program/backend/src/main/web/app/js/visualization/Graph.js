@@ -30,6 +30,15 @@ export default class Graph {
 		this._force = new ForceLayout(this);
 		this._graphStatistics = new GraphStats(this);
 		this._zoom = new ZoomBehaviour(this);
+
+		let that = this;
+
+		$(document).keyup(function(e){
+			if (e.keyCode==27) {
+				that._endPointsNodes.forEach(node => node.deselect.call(node));
+				that.updateSelectedDocuments();
+			}
+		});
 	}
 
 	get graphStatistics() {
@@ -116,7 +125,6 @@ export default class Graph {
 				for (let i = 0; i < node.endPointConnections.length; i++) {
 					if (selectedDocumentIds.indexOf(node.endPointConnections[i].documentId) !== -1) {
 						contains = true;
-						nodesToHide.push(node);
 						break;
 					}
 				}
