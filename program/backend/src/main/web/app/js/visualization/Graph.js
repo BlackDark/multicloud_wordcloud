@@ -90,7 +90,42 @@ export default class Graph {
 				node.draw(d3.select(this));
 				node._container.attr("transform", "translate(" + [node.x, node.y] + ")");
 				node.registerHoverListener.call(node, that._textNodes);
+				node.registerOnClick.call(node, that.updateSelectedDocuments, that);
 			});
+	}
+
+	updateSelectedDocuments() {
+		let selectedNodes = [];
+		let selectedDocumentIds = [];
+
+		this._endPointsNodes.forEach(node => {
+			if (node.selected) {
+				selectedNodes.push(node);
+				selectedDocumentIds.push(node.id);
+			}
+		});
+
+		for(let i = 0; i < this._textNodes.length; i++) {
+			this._textNodes[i]._container.classed("unselected", false);
+		}
+
+		if (selectedNodes.length !== 0) {
+			this._textNodes.forEach(node => {
+				let contains = false;
+
+				for (let i = 0; i < node.endPointConnections.length; i++) {
+					if (selectedDocumentIds.indexOf(node.endPointConnections[i].documentId) !== -1) {
+						contains = true;
+						nodesToHide.push(node);
+						break;
+					}
+				}
+
+				if (!contains) {
+					node._container.classed("unselected", true);
+				}
+			});
+		}
 	}
 
 	_configureGraph() {

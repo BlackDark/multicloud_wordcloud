@@ -46,6 +46,10 @@ export default class BaseElement {
 		d3.event.preventDefault();
 	}
 
+	onClick() {
+
+	}
+
 	// Not working
 	onMouseMove() {
 		var pos = d3.mouse(this._container.node());
@@ -74,6 +78,10 @@ export default class BaseElement {
 
 	static get onMouseOutType() {
 		return "mouseout";
+	}
+
+	static get onClick() {
+		return "click";
 	}
 
 	hover (hovering) {

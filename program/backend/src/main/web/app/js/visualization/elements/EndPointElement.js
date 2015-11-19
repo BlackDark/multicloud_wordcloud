@@ -4,6 +4,7 @@ import GeneratorUtil from "../util/GeneratorUtil";
 export default class EndPointElement extends BaseElement {
 	constructor(id) {
 		super(id);
+		this.selected = false;
 	}
 
 	draw(container) {
@@ -35,5 +36,15 @@ export default class EndPointElement extends BaseElement {
 
 	hover(hovered) {
 		this.nodesToFade.forEach(node => node._container.classed("fadeOut", hovered));
+	}
+
+	registerOnClick(callback, caller) {
+		this.addMouseListener(BaseElement.onClick, this.onClick.bind(this, callback, caller));
+	}
+
+	onClick(callback, caller) {
+		this.selected = !this.selected;
+		this._container.classed("selected", this.selected);
+		callback.call(caller);
 	}
 }
