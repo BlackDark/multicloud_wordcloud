@@ -12,10 +12,7 @@ import de.marbach.bachelor.model.NodeElement;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +26,7 @@ public class AnalysisModule {
 	private MergeDocument mergedDocument;
 	private boolean isFinished;
 	private List<String> fileNames;
+	public Map<String, NodeElement> allNodes = new HashMap<>();
 
 	public AnalysisModule(AnalysisParameters params) {
 		this.params = params;
@@ -37,13 +35,18 @@ public class AnalysisModule {
 	}
 
 	public static void main(String[] args) {
-		File file1 = new File("C:/Users/Eduard/Documents/git_repos/bachelor/repo/program/web/text/text1.txt");
-		File file2 = new File("C:/Users/Eduard/Documents/git_repos/bachelor/repo/program/web/text/text2.txt");
-		File file3 = new File("C:/Users/Eduard/Documents/git_repos/bachelor/repo/program/web/text/text3.txt");
-		File file4 = new File("C:/Users/Eduard/Documents/git_repos/bachelor/repo/program/web/text/text4.txt");
+		File file1 = new File("D:/bachelor/text/text5.txt");
+		File file2 = new File("D:/bachelor/text/text6.txt");
+		File file3 = new File("D:/bachelor/text/text7.txt");
+		File file4 = new File("D:/bachelor/text/text8.txt");
 
 		AnalysisModule analysisModule = new AnalysisModule(new AnalysisParameters());
 		analysisModule.processFiles(Arrays.asList(file1, file2, file3, file4));
+		ArrayList<String> strings = new ArrayList<>(analysisModule.allNodes.keySet());
+		Collections.sort(strings);
+		List<String> nn = analysisModule.allNodes.values().stream().filter(nodeElement -> nodeElement.getTags().contains("NN")).map(NodeElement::getText).collect(Collectors.toList());
+		//System.out.println(nn);
+		System.out.println(analysisModule.getMergedDocument().getTotalNumWords());
 	}
 
 	public List<String> getFileNames() {
@@ -70,14 +73,17 @@ public class AnalysisModule {
 			File file = files.get(i);
 			try {
 				documents.add(generateDocument(file, module.getMapping(file), i));
+				StanfordTagger tagger = new StanfordTagger();
+				tagger.annotate(file, allNodes);
 			} catch (IOException e) {
 				throw new IllegalStateException("Problems during parsing of file.");
 			}
 		}
 
+
 		mergedDocument = new MergeDocument(documents);
 
-		finishProcess();
+		//finishProcess();
 	}
 
 	private void finishProcess() {
@@ -88,18 +94,25 @@ public class AnalysisModule {
 		files.forEach(File::delete);
 	}
 
-	protected Document generateDocument(File file, Map<String, Integer> mapping, int i) {
-		List<NodeElement> nodes = mapping.entrySet().stream().map(stringIntegerEntry -> new NodeElement(stringIntegerEntry.getKey(), stringIntegerEntry.getValue())).collect(Collectors.toList());
-		int wordCount = 0;
+	protected Document generateDocument(File file, Map<String, Integer> mapping, int documentId) {
+		Document documentTest = new Document();
+		documentTest.setId(documentId);
+		documentTest.setTitle(file.getName());
 
-		for (NodeElement node : nodes) {
-			wordCount += node.getFreq();
+		for (Map.Entry<String, Integer> stringIntegerEntry : mapping.entrySet()) {
+			if (!allNodes.containsKey(stringIntegerEntry.getKey())) {
+				allNodes.put(stringIntegerEntry.getKey(), new NodeElement(stringIntegerEntry.getKey()));
+			}
+
+			NodeElement nodeElement = allNodes.get(stringIntegerEntry.getKey());
+			nodeElement.addFreq(stringIntegerEntry.getValue());
+			nodeElement.getAffinityToDocument().put(documentTest, stringIntegerEntry.getValue());
+			documentTest.addNode(nodeElement, stringIntegerEntry.getValue());
 		}
 
-		Document document = new Document(file.getName(), nodes, wordCount);
-		document.setId(i);
+		documentTest.calculateWordCount();
 
-		return document;
+		return documentTest;
 	}
 
 	public boolean isFinished() {

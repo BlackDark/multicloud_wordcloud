@@ -19,7 +19,7 @@ public class MergeDocument extends Document {
 	private List<Document> documents;
 
 	public MergeDocument(List<Document> documents) {
-		super(null, new ArrayList<>(), 0);
+		super();
 		this.documents = documents;
 		mapping = new HashMap<>();
 
@@ -29,18 +29,10 @@ public class MergeDocument extends Document {
 
 	public void addDocument(Document document) {
 		for (NodeElement nodeElement : document.getNodes()) {
-			this.addNode(document, nodeElement);
+			if (!mapping.containsKey(nodeElement.getText())) {
+				mapping.put(nodeElement.getText(), nodeElement);
+			}
 		}
-	}
-
-	public void addNode(Document document, NodeElement element) {
-		if (!mapping.containsKey(element.getText())) {
-			mapping.put(element.getText(), new NodeElement(element.getText(), 0));
-		}
-
-		NodeElement nodeElement = mapping.get(element.getText());
-		nodeElement.setFreq(nodeElement.getFreq() + element.getFreq());
-		nodeElement.getAffinityToDocument().put(document, element.getFreq());
 	}
 
 	public List<NodeElement> getTopFrequentMerged(int count) {

@@ -6,7 +6,9 @@
 package de.marbach.bachelor.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -14,10 +16,15 @@ import java.util.List;
 public class Document {
 
 	private String title;
-	private List<NodeElement> nodes;
+	private List<NodeElement> nodes = new ArrayList<>();
 	private List<NodeElement> uniqueNodes = new ArrayList<>();
+	private Map<NodeElement, Integer> nodeToFreq = new HashMap<>();
 	private int id = 0;
-	private int wordCount;
+	private int wordCount = 0;
+
+	public Document() {
+
+	}
 
 	public Document(String title, List<NodeElement> nodes, int wordCount) {
 		this.title = title;
@@ -25,12 +32,8 @@ public class Document {
 		this.wordCount = wordCount;
 	}
 
-	public int getWordCount() {
-		return wordCount;
-	}
-
 	public List<NodeElement> getNodes() {
-		return nodes;
+		return new ArrayList<>(nodeToFreq.keySet());
 	}
 
 	public List<NodeElement> getTopFrequentWords(int numberOfElements) {
@@ -58,11 +61,27 @@ public class Document {
 		return title;
 	}
 
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public int getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Map<NodeElement, Integer> getNodeToFreq() {
+		return nodeToFreq;
+	}
+
+	public void calculateWordCount() {
+		this.wordCount = nodeToFreq.values().stream().mapToInt(Integer::intValue).sum();
+	}
+
+	public void addNode(NodeElement nodeElement, Integer freq) {
+		nodeToFreq.put(nodeElement, freq);
 	}
 }

@@ -6,7 +6,9 @@
 package de.marbach.bachelor.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -14,14 +16,22 @@ import java.util.Map;
 public class NodeElement {
 
 	private String text;
-	private int freq;
+	protected Set<String> tags = new HashSet<>();
 	private int tfidf = 0;
-	private Map<Document, Integer> affinityToDocument;
+	private int freq = 0;
+	private Map<Document, Integer> affinityToDocument = new HashMap<>();
+
+	public NodeElement(String text) {
+		this.text = text;
+	}
+
+	public Set<String> getTags() {
+		return tags;
+	}
 
 	public NodeElement(String text, int freq) {
 		this.text = text;
 		this.freq = freq;
-		affinityToDocument = new HashMap<>();
 	}
 
 	public String getText() {
@@ -46,5 +56,13 @@ public class NodeElement {
 
 	public void setAffinityToDocument(Map<Document, Integer> affinityToDocument) {
 		this.affinityToDocument = affinityToDocument;
+	}
+
+	public void addFreq(Integer value) {
+		freq += value;
+	}
+
+	public void addTag(String tag) {
+		tags.add(tag);
 	}
 }
