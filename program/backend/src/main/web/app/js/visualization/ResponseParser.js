@@ -34,7 +34,6 @@ function parseTextNodes(rawData, startIndex) {
 		let sum = element.endPointConnections.reduce(function(pv, cv) {
 			return pv + cv.frequency;
 		}, 0);
-		let connections = [];
 		element.endPointConnections.forEach(connection => connection.distribution = (connection.frequency / sum));
 
 		let currentTextObject = new WordElement(index);
@@ -43,6 +42,7 @@ function parseTextNodes(rawData, startIndex) {
 		currentTextObject.size = 12;
 		currentTextObject.originalSize = currentTextObject.size;
 		currentTextObject.endPointConnections = element.endPointConnections;
+		currentTextObject.posTags = element.posTags;
 
 		index++;
 		nodes.push(currentTextObject);

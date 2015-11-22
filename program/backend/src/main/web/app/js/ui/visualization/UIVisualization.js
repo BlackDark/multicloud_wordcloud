@@ -2,6 +2,7 @@ import UIFontManipulation from "./general/UIFontManipulation";
 import UIShape from "./shape/UIShapeParameter";
 import UIUpload from "./general/UIUploadParameters";
 import UIDebug from "./UIDebug";
+import UIFilter from "./UIFilter";
 import UIHelper from "./shape/UIHelper";
 
 export default class UIVisualization {
@@ -19,6 +20,7 @@ export default class UIVisualization {
 		this.shape = new UIShape(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);
 		this.upload = new UIUpload(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Document Configuration")), this._graphObject);
 		this.debug = new  UIDebug(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Debug information")), this._graphObject);
+		this.filter = new UIFilter(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Filter")), this._graphObject);
 	}
 
 	_activation() {

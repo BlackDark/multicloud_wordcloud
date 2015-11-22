@@ -47,7 +47,7 @@ export default class Graph {
 
 	start() {
 		this._redrawGraph();
-		this._redrawElements();
+		this._drawElements();
 		this._configureGraph();
 		this._updateStats();
 		this._force.start();
@@ -56,6 +56,7 @@ export default class Graph {
 	data(endPointsNodes, textNodes, links) {
 		this._endPointsNodes = endPointsNodes;
 		this._textNodes = textNodes;
+		this._allTextNodes = textNodes;
 		this._links = links;
 		this._force.nodes(endPointsNodes.concat(textNodes));
 		this._force.links(links);
@@ -71,7 +72,7 @@ export default class Graph {
 		this._svg.call(this._zoom.getZoomObject());
 	}
 
-	_redrawElements() {
+	_drawElements() {
 		let that = this;
 		this._nodeElements = this._nodeContainer.selectAll(".node")
 			.data(this._textNodes, d => d.id);
@@ -101,6 +102,21 @@ export default class Graph {
 				node.registerHoverListener.call(node, that._textNodes);
 				node.registerOnClick.call(node, that.updateSelectedDocuments, that);
 			});
+	}
+
+	_refreshNodes() {
+		let that = this;
+		let newTextNodes = [];
+
+		this._allTextNodes.forEach(node => {
+			if (!node._container.classed("filtered")) {
+				newTextNodes.push(node);
+			}
+		});
+
+		//this._force.nodes(that._endPointsNodes.concat(newTextNodes));
+		this._textNodes = newTextNodes;
+		this._force.resume();
 	}
 
 	updateSelectedDocuments() {
@@ -236,6 +252,29 @@ export default class Graph {
 
 	_updateStats() {
 		this._graphStatistics.updateStats.call(this._graphStatistics);
+	}
+
+	filtering(filterList) {
+		if (filterList.length === 0) {
+			this._allTextNodes.forEach(node => node._container.classed("filtered", true));
+		} else if (filterList.length === 5) {
+			this._allTextNodes.forEach(node => node._container.classed("filtered", false));
+		} else {
+			this._allTextNodes.forEach(node => {
+				for (let i = 0; i < node.posTags.length; i++) {
+					for (var j = 0; j < filterList.length; j++) {
+						var obj = filterList[j];
+						if (node.posTags[0].indexOf(obj) !== -1) {
+							node._container.classed("filtered", false);
+							return;
+						}
+					}
+				}
+				node._container.classed("filtered", true);
+			});
+		}
+
+		this._refreshNodes();
 	}
 }
 
