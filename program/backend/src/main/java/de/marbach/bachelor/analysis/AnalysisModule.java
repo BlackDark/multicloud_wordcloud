@@ -66,6 +66,7 @@ public class AnalysisModule {
 	}
 
 	public void processFiles(List<File> files) {
+		StanfordTagger tagger = new StanfordTagger();
 		LuceneModule module = new LuceneModule(params);
 		this.files = files;
 
@@ -73,7 +74,6 @@ public class AnalysisModule {
 			File file = files.get(i);
 			try {
 				documents.add(generateDocument(file, module.getMapping(file), i));
-				StanfordTagger tagger = new StanfordTagger();
 				tagger.annotate(file, allNodes);
 			} catch (IOException e) {
 				throw new IllegalStateException("Problems during parsing of file.");
@@ -83,7 +83,8 @@ public class AnalysisModule {
 
 		mergedDocument = new MergeDocument(documents);
 
-		//finishProcess();
+		finishProcess();
+		System.out.println("Analyzed documents: " + files);
 	}
 
 	private void finishProcess() {

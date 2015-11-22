@@ -138,7 +138,7 @@ public class FileUploadController {
 	}
 
 	protected ResponseTextNode createNode(NodeElement element) {
-		return new ResponseTextNode(element.getText(), element.getFreq(), createConnections(element));
+		return new ResponseTextNode(element.getText(), element.getFreq(), createConnections(element), element.getTags());
 	}
 
 	protected List<ResponseDocumentConnection> createConnections(NodeElement element) {
