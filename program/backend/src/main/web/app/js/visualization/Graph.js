@@ -176,112 +176,6 @@ export default class Graph {
 		this._fontScaler.changeScaling.call(this._fontScaler, parameterObject);
 	}
 
-	_moveToTopLeftCorner() {
-		var uncheckedNodes = boundsSortedNodes(this._textNodes);
-		var checkedNodes = [];
-		var restKnoten = [].concat(uncheckedNodes);
-		//uncheckedNodes = uncheckedNodes.slice(0, 1);
-
-
-		// TODO not correct bounds
-		var bounds = {
-			x0: 0,
-			y0: 0,
-			x1: this._width,
-			y1: this._height
-		};
-
-		uncheckedNodes.forEach(function (currentNode) {
-			// Remove this node from other nodes
-			restKnoten = restKnoten.splice(1, restKnoten.length);
-
-			var movable = CollisionModule.isInBounds(currentNode, bounds);
-
-			while (movable) {
-				var failMove = 0;
-
-				currentNode.x = currentNode.x - 2;
-
-				if (!CollisionModule.isInBounds(currentNode, bounds) || CollisionModule.testOverlap(currentNode, checkedNodes)) {
-					currentNode.x = currentNode.x + 2;
-					failMove++;
-				}
-
-				currentNode.y = currentNode.y - 2;
-
-				if (!CollisionModule.isInBounds(currentNode, bounds) || CollisionModule.testOverlap(currentNode, checkedNodes)) {
-					currentNode.y = currentNode.y + 2;
-					failMove++;
-				}
-
-				if (failMove === 2) {
-					movable = false;
-				}
-			}
-
-			checkedNodes.push(currentNode);
-			currentNode._container.transition()
-				.duration(750)
-				.delay(10 * checkedNodes.length)
-				.attr("transform", function (d) {
-					return "translate(" + [d.x, d.y] + ")";
-				})
-		}.bind(this));
-
-		// Moving the nodes flawlessy
-		/*
-		 node.transition()
-		 .duration(750)
-		 .attr("transform", function(d) {
-		 return "translate(" + [d.x, d.y] + ")";
-		 });
-		 */
-	}
-
-	// Not working i think
-	_overlapRemoval() {
-		for (var i = 0; i < this.config.collisionRemovalTimes; i++) {
-			var q = d3.geom.quadtree(this._textNodes),
-				j = 3,
-				n = this._textNodes.length;
-
-			while (++j < n) {
-				q.visit(CollisionModule.collide(this._textNodes[j]));
-			}
-		}
-	}
-
-	_applyColaJSLayout() {
-		this._removeD3States();
-		this._addColaButtons();
-
-		this._colaForce = new ColaLayout(this);
-
-		this._endPointElements.call(function () {
-			let dragging = new DragBehaviour(this, this._colaForce);
-			dragging.changeDragFunction(dragging.getMoveNodesBoxWise(this._endPointsNodes));
-			return dragging.dragBehaviour
-		}.bind(this)());
-
-		this._colaForce.nodes(this._endPointsNodes.concat(this._textNodes));
-
-		this._textNodes.forEach(function (element) {
-			element._container.call(this._colaForce.layoutObject.drag);
-		}.bind(this));
-
-		this._colaForce.tick(function () {
-			if (this.config.drawLinksColaForce) {
-				this._linkElements.selectAll("path").attr("d", function (link) {
-					return linkPathFunction([link.source, link.target]);
-				});
-			}
-
-			this._nodeElements.attr("transform", function (d) {
-				return "translate(" + [d.x - d.width / 2, d.y - d.height / 2] + ")";
-			});
-		}.bind(this));
-	}
-
 	_drawOriginalPositionLink(boolDraw) {
 		if (!boolDraw) {
 			this._originalPositionLinkContainer.selectAll("*").remove();
@@ -313,27 +207,6 @@ export default class Graph {
 					return d.orgPosY;
 				});
 		}
-	}
-
-	_markOverlapping() {
-		this._textNodes.forEach(function (element) {
-			if (CollisionModule.testOverlap(element, this._textNodes)) {
-				element._container.classed("overlap", true);
-			}
-		}.bind(this));
-	}
-
-	_getLinksForColaForce() {
-		return this._links;
-	}
-
-	_getLinkDistanceColaForce(link) {
-		var number = 20 / link.strength;
-		return number;
-	}
-
-	_removeD3States() {
-		this._endPointElements.each(element => element._container.on(".drag", null));
 	}
 
 	// Applying a shape to the wordcloud.
@@ -385,17 +258,6 @@ function tickForD3Force(link, node) {
 				return linkPathFunction([link.source, link.target]);
 			});
 		}
-
-		/* TODO Collision detection removed
-		 var q = d3.geom.quadtree(this._textNodes),
-		 i = 3,
-		 n = this._textNodes.length;
-
-		 while (++i < n) {
-		 q.visit(CollisionModule.collide(this._textNodes[i]));
-		 }
-		 */
-
 
 		node.attr("transform", function (d) {
 			return "translate(" + [d.x, d.y] + ")";
