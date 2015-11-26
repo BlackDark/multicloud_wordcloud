@@ -87,6 +87,7 @@ export default class WordElement extends BaseElement{
 				let tooltipDiv = document.createElement("div");
 				let elementInformationDiv = d3.select(document.createElement("div"));
 				elementInformationDiv.append("p").text("Frequency: " + that.frequency);
+				elementInformationDiv.append("p").text("NLP tags: " + that.posTags);
 				tooltipDiv.appendChild(elementInformationDiv.node());
 				var getChart = that._getChart();
 				tooltipDiv.appendChild(getChart[0]);
