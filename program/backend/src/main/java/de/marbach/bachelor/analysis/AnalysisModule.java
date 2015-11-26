@@ -76,13 +76,12 @@ public class AnalysisModule {
 				documents.add(generateDocument(file, module.getMapping(file), i));
 				tagger.annotate(file, allNodes);
 			} catch (IOException e) {
+				finishProcess();
 				throw new IllegalStateException("Problems during parsing of file.");
 			}
 		}
 
-
 		mergedDocument = new MergeDocument(documents);
-
 		finishProcess();
 		System.out.println("Analyzed documents: " + files);
 	}
