@@ -22,16 +22,14 @@ public class AnalysisModule {
 
 	private final AnalysisParameters params;
 	private List<File> files;
-	private List<Document> documents;
+	private List<Document> documents = new ArrayList<>();
 	private MergeDocument mergedDocument;
-	private boolean isFinished;
-	private List<String> fileNames;
+	private boolean isFinished = false;
+	private List<String> fileNames = new ArrayList<>();
 	public Map<String, NodeElement> allNodes = new HashMap<>();
 
 	public AnalysisModule(AnalysisParameters params) {
 		this.params = params;
-		documents = new ArrayList<>();
-		isFinished = false;
 	}
 
 	public static void main(String[] args) {
@@ -66,6 +64,8 @@ public class AnalysisModule {
 	}
 
 	public void processFiles(List<File> files) {
+		files.forEach(file -> fileNames.add(file.getName()));
+
 		StanfordTagger tagger = new StanfordTagger();
 		LuceneModule module = new LuceneModule(params);
 		this.files = files;
@@ -83,14 +83,10 @@ public class AnalysisModule {
 
 		mergedDocument = new MergeDocument(documents);
 		finishProcess();
-		System.out.println("Analyzed documents: " + files);
 	}
 
 	private void finishProcess() {
 		isFinished = true;
-
-		fileNames = new ArrayList<>();
-		files.forEach(file -> fileNames.add(file.getName()));
 		files.forEach(File::delete);
 	}
 
