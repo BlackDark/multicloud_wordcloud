@@ -102,12 +102,15 @@ export default class UIUploading {
 	_addTableRow(fileNames, id, isFinished) {
 		var tr = d3.select("#uploadTableBody").append("tr");
 
-		let label = "";
-		fileNames.forEach(name => label = label.concat(UIUploading.getInputTableFileLabel(name)));
-		tr.append("td").html(label);
-		tr.append("td").attr("class", "center aligned").attr("id", "dataId").html(id);
+		if (isFinished) {
+			let label = "";
+			fileNames.forEach(name => label = label.concat(UIUploading.getInputTableFileLabel(name)));
+			tr.append("td").html(label);
+		} else {
+			tr.append("td");
+		}
 
-		console.log(isFinished);
+		tr.append("td").attr("class", "center aligned").attr("id", "dataId").html(id);
 
 		if(isFinished) {
 			tr.append("td").attr("class", "center aligned").html("<i class='check circle icon green'></i>");
@@ -125,10 +128,6 @@ export default class UIUploading {
 			return 0;
 		}
 
-		if (displayedElements === jsonData.length) {
-			return displayedElements;
-		}
-
 		$('#uploadResourceEmpty').addClass('hidden');
 		$('#uploaedResource').removeClass('hidden');
 
@@ -138,7 +137,6 @@ export default class UIUploading {
 		for (var i = 0; i < jsonData.length; i++) {
 			that._addTableRow(jsonData[i].fileNames, jsonData[i].id, jsonData[i].isFinished);
 		}
-
 
 		$('#uploadTableBody').find('tr').click(function () {
 			var newId = +$(this).find('td#dataId').text();
