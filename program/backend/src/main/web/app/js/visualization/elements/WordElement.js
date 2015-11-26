@@ -84,8 +84,13 @@ export default class WordElement extends BaseElement{
 			position: "right center",
 			hoverable: true,
 			html: function() {
+				let tooltipDiv = document.createElement("div");
+				let elementInformationDiv = d3.select(document.createElement("div"));
+				elementInformationDiv.append("p").text("Frequency: " + that.frequency);
+				tooltipDiv.appendChild(elementInformationDiv.node());
 				var getChart = that._getChart();
-				return getChart[0];
+				tooltipDiv.appendChild(getChart[0]);
+				return tooltipDiv;
 			},
 			delay: {
 				show: 150,
@@ -115,9 +120,17 @@ export default class WordElement extends BaseElement{
 
 		let chartData =[];
 		that.endPointConnections.forEach(function(el, i) {
+			let filename;
+
+			if (el.endpoint.name.length > 10) {
+				filename = el.endpoint.name.substring(0, 10) + "...";
+			} else {
+				filename = el.endpoint.name;
+			}
+
 			chartData.push({
 				"index": el.endpoint.id,
-				"title": el.endpoint.name,
+				"title": filename,
 				"value": el.distribution
 			});
 		});
