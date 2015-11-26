@@ -68,10 +68,8 @@ public class FileUploadController {
 			MultipartFile file = files[i];
 			try {
 				byte[] bytes = file.getBytes();
-
 				String fileName = file.getOriginalFilename().isEmpty() ? UUID.randomUUID().toString() : file.getOriginalFilename();
-
-				File serverFile = new File(datastore.getLocation().resolve(fileName));
+				File serverFile = new File(datastore.getLocation().resolve(fileName.replace(" ", "%20")));
 				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
 				stream.write(bytes);
 				stream.close();
