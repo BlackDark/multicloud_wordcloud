@@ -28,7 +28,7 @@ export default class ShapeApplier {
 	}
 
 	startShaping(height, width) {
-		this._currentShapeObject = new this._parameters.shapeConstructor(height, width, this._endPointNodes);
+		this._currentShapeObject = new this._parameters.shapeConstructor(height, width, this._endPointNodes, this._textNodes.length);
 		this._currentShapeObject.initialize();
 		this._forceLayout.resume();
 

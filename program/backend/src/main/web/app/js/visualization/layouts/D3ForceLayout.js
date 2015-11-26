@@ -2,7 +2,7 @@ export default class D3ForceLayout {
 	constructor(graph) {
 		this.relatedGraph = graph;
 		this._force = d3.layout.force();
-		this.changeGravity(0.8);
+		this.changeGravity(0.9);
 	}
 
 	start() {

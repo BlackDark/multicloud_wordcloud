@@ -7,7 +7,7 @@ const MIN_RAD = 5;
 const radiusPixelDivisor = 10000;
 
 export default class BaseShape {
-	constructor(height, width, endpoints) {
+	constructor(height, width, endpoints, numTextNodes) {
 		this._height = height;
 		this._width = width;
 		this._endpoints = endpoints;
@@ -16,8 +16,15 @@ export default class BaseShape {
 			"x": this._width / 2,
 			"y": this._height / 2
 		};
+		this.numTextNodes = numTextNodes;
+
+		this.placeRadius = this._initialPlacingRadius();
 
 		this._initialEndPointPositions();
+	}
+
+	increasePlacingRadius() {
+		this.placeRadius += 10;
 	}
 
 	get freeInitialSpace() {
@@ -36,8 +43,9 @@ export default class BaseShape {
 		});
 	}
 
-	_getPlaceRadius() {
+	_initialPlacingRadius() {
 		let rad = this._width * this._height / radiusPixelDivisor;
+		rad += this.numTextNodes > 100 ? this.numTextNodes * 0.1 : 0;
 		return rad <= 0 ? MIN_RAD : rad;
 
 	}
@@ -172,7 +180,7 @@ export default class BaseShape {
 	}
 
 	_inRadius(coord, element) {
-		return this._getPlaceRadius() > MathUtil.getDistance(coord, element);
+		return this.placeRadius > MathUtil.getDistance(coord, element);
 	}
 
 	_place(coord, element) {
