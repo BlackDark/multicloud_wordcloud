@@ -21,6 +21,9 @@ import edu.stanford.nlp.util.CoreMap;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -43,8 +46,8 @@ public class StanfordTagger {
 		pipeline = new StanfordCoreNLP(props);
 	}
 
-	public void annotate(File file, Map<String, NodeElement> allNodes) throws FileNotFoundException {
-		String content = new Scanner(file).useDelimiter("\\Z").next();
+	public void annotate(File file, Map<String, NodeElement> allNodes) throws IOException {
+		String content = new String(Files.readAllBytes(file.toPath()));
 
 		// create an empty Annotation just with the given text
 		Annotation document = new Annotation(content);
