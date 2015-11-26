@@ -158,10 +158,8 @@ export default class Graph {
 		this._force.changeCharge(chargeForD3Force());
 		this._force.onEnd(this._d3EndFunction.bind(this));
 
-		this._endPointElements.call(function () {
-			let dragging = new DragBehaviour(this, this._force);
-			return dragging.dragBehaviour
-		}.bind(this)());
+		// Add drag behaviour to end nodes
+		//this._activateEndNodeDrag();
 		//this._endPointsNodes.forEach( node => node.addDefaultMouseListener());
 
 		let min = undefined;
@@ -178,6 +176,13 @@ export default class Graph {
 		});
 
 		this._fontScaler = new FontScaler(this._textNodes, min, max);
+	}
+
+	_activateEndNodeDrag() {
+		this._endPointElements.call(function () {
+			let dragging = new DragBehaviour(this, this._force);
+			return dragging.dragBehaviour
+		}.bind(this)());
 	}
 
 	_d3EndFunction() {
