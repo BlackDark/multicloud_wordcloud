@@ -280,6 +280,14 @@ export default class Graph {
 		}
 
 		this._refreshNodes();
+		this._updateStats();
+	}
+
+	toggleSearchMode(activated) {
+		for (var i = 0; i < this._textNodes.length; i++) {
+			var obj = this._textNodes[i];
+			obj._container.classed("search-mode", activated);
+		}
 	}
 }
 
