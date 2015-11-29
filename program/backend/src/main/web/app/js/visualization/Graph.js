@@ -136,16 +136,15 @@ export default class Graph {
 
 		if (selectedNodes.length !== 0) {
 			this._textNodes.forEach(node => {
-				let contains = false;
+				let numMatches = 0;
 
 				for (let i = 0; i < node.endPointConnections.length; i++) {
 					if (selectedDocumentIds.indexOf(node.endPointConnections[i].documentId) !== -1) {
-						contains = true;
-						break;
+						numMatches++;
 					}
 				}
 
-				if (!contains) {
+				if (selectedDocumentIds.length > numMatches ) {
 					node._container.classed("unselected", true);
 				}
 			});

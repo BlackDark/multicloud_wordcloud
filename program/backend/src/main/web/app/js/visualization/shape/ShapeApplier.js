@@ -3,7 +3,6 @@ import TimingHelper from "js/visualization/util/TimingHelper";
 import NodeSorter from "js/visualization/NodeSorter";
 import ShapingHelper from "./ShapingHelper";
 
-
 const INCREASE_RADIUS_ON_DECREASE = false;
 
 export default class ShapeApplier {

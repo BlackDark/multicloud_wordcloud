@@ -36,12 +36,23 @@ function parseTextNodes(rawData, startIndex) {
 		}, 0);
 		element.endPointConnections.forEach(connection => connection.distribution = (connection.frequency / sum));
 
+		// Remove connections with a distribution of 0
+		let connection = [];
+
+		for (var i = 0; i < element.endPointConnections.length; i++) {
+			var obj = element.endPointConnections[i];
+
+			if (obj.distribution !== 0) {
+				connection.push(obj);
+			}
+		}
+
 		let currentTextObject = new WordElement(index);
 		currentTextObject.text = element.text;
 		currentTextObject.frequency = element.frequency;
 		currentTextObject.size = 12;
 		currentTextObject.originalSize = currentTextObject.size;
-		currentTextObject.endPointConnections = element.endPointConnections;
+		currentTextObject.endPointConnections = connection;
 		currentTextObject.posTags = element.posTags;
 
 		index++;
