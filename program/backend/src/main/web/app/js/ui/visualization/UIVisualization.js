@@ -17,10 +17,24 @@ export default class UIVisualization {
 
 	_drawLayout() {
 		let that = this;
-		let searchCheckbox = this._alwaysVisible.append(UIHelper.getCheckbox("Activate search mode", "search_mode", undefined, false));
 
-		$(searchCheckbox).find("input").on("change", function() {
+		let searchCheckbox = UIHelper.getCheckbox("Activate search mode", "search_mode", undefined, false);
+		var queriedCheckbox = $(searchCheckbox);
+
+		queriedCheckbox.find("input").on("change", function() {
 				that._graphObject.currentGraph.toggleSearchMode(this.checked);
+		});
+
+		this._alwaysVisible.append(searchCheckbox);
+
+		let selectionButton = UIHelper.getButton("Select all nodes");
+		let queriedButton = $(selectionButton);
+		queriedButton.addClass("basic");
+
+		this._alwaysVisible.append(selectionButton);
+
+		queriedButton.click(function() {
+			that._graphObject.currentGraph.selectAllEndNodes.call(that._graphObject.currentGraph);
 		});
 
 		this.font = new UIFontManipulation(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);

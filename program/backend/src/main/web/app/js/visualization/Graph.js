@@ -288,6 +288,14 @@ export default class Graph {
 			obj._container.classed("search-mode", activated);
 		}
 	}
+
+	selectAllEndNodes() {
+		for (var i = 0; i < this._endPointsNodes.length; i++) {
+			var obj = this._endPointsNodes[i];
+			obj.selected = true;
+		}
+		this.updateSelectedDocuments();
+	}
 }
 
 function boundsSortedNodes(nodesToSort) {
