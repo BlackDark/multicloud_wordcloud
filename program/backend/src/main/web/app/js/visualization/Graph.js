@@ -342,6 +342,10 @@ function linkstrengthForD3Force() {
 
 function chargeForD3Force() {
 	return function chargeTest(theNode) {
+		if (theNode.endPointConnections !== undefined && theNode.endPointConnections.length === 1) {
+			return 0;
+		}
+
 		if (theNode.width) {
 			return theNode.width * (-12);
 		}
