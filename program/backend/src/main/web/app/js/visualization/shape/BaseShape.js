@@ -24,7 +24,7 @@ export default class BaseShape {
 	}
 
 	increasePlacingRadius() {
-		this.placeRadius += 10;
+		this.placeRadius += 5;
 	}
 
 	get freeInitialSpace() {

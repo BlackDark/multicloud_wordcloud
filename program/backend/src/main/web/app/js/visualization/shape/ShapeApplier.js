@@ -3,6 +3,9 @@ import TimingHelper from "js/visualization/util/TimingHelper";
 import NodeSorter from "js/visualization/NodeSorter";
 import ShapingHelper from "./ShapingHelper";
 
+
+const INCREASE_RADIUS_ON_DECREASE = false;
+
 export default class ShapeApplier {
 	constructor(parameters, textNodes, endPointNodes, forceLayout) {
 		this._parameters = parameters;
@@ -123,6 +126,10 @@ export default class ShapeApplier {
 				if(drawAllWords) {
 					if (!this._decrementWordSize(shapeObject, nodeFinder)) {
 						throw new Error("Cannot place all words. Word sizes reached minimum!");
+					}
+
+					if (INCREASE_RADIUS_ON_DECREASE) {
+						shapeObject.increasePlacingRadius();
 					}
 				} else {
 					nodeFinder.skipNode(nodeAndEndPoint.node);
