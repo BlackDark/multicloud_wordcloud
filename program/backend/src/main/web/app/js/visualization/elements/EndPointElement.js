@@ -67,8 +67,13 @@ export default class EndPointElement extends BaseElement {
 		callback.call(caller);
 	}
 
+	select() {
+		this.selected = true;
+		this._container.classed("selected", true);
+	}
+
 	deselect() {
 		this.selected = false;
-		this._container.classed("selected", this.selected);
+		this._container.classed("selected", false);
 	}
 }

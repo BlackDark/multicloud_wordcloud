@@ -292,7 +292,7 @@ export default class Graph {
 	selectAllEndNodes() {
 		for (var i = 0; i < this._endPointsNodes.length; i++) {
 			var obj = this._endPointsNodes[i];
-			obj.selected = true;
+			obj.select.call(obj);
 		}
 		this.updateSelectedDocuments();
 	}
