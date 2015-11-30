@@ -19,8 +19,6 @@
 .endpoint circle {
   stroke: #fff;
   stroke-width: 1.5px;
-  cursor: move;
-  fill: blue;
 }
 
 .endpoint text {
@@ -68,8 +66,9 @@
 }
 
 .word-text.hovered {
-  fill: red !important;
   filter: initial !important;
+  transition: text-shadow 0.05s, font-size 0.05s;
+  text-shadow:0.5px 0.5px 0 gray;
 }
 
 .textForWidth {
@@ -132,4 +131,15 @@
 
 .search-mode text{
   filter: initial !important;
+}
+
+.endpoint-tooltip {
+  pointer-events:none; /*let mouse events pass through*/
+  opacity:0;
+  transition: opacity 0.3s;
+  background: white;
+  border:solid black;
+  position: absolute;
+  max-width: 8em;
+  text-align:center;
 }
