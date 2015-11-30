@@ -1,7 +1,9 @@
 package de.marbach.bachelor.response;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +17,12 @@ public class ResponseUploadParameters {
 	private List<String> longStopwords;
 
 	public ResponseUploadParameters() {
-		defaultStopwords = convertFileToStopwordList(getResourceFile("stopwords/default.txt"));
-		longStopwords = convertFileToStopwordList(getResourceFile("stopwords/long.txt"));
+		try {
+			defaultStopwords = convertFileToStopwordList(getResourceFile("stopwords/default.txt"));
+			longStopwords = convertFileToStopwordList(getResourceFile("stopwords/long.txt"));
+		} catch (URISyntaxException | FileNotFoundException e) {
+			System.err.println("Problems during stop word list generation: " + e.getMessage());
+		}
 	}
 
 	public List<String> getDefaultStopwords() {
@@ -27,7 +33,7 @@ public class ResponseUploadParameters {
 		return longStopwords;
 	}
 
-	protected File getResourceFile(String resourcePath) {
+	protected File getResourceFile(String resourcePath) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		URL resource = classLoader.getResource(resourcePath);
 
@@ -35,10 +41,10 @@ public class ResponseUploadParameters {
 			return null;
 		}
 
-		return new File(resource.getFile());
+		return new File(resource.toURI().getPath());
 	}
 
-	protected List<String> convertFileToStopwordList(File file) {
+	protected List<String> convertFileToStopwordList(File file) throws FileNotFoundException {
 		List<String> stopList = new ArrayList<>();
 
 		try (Scanner scanner = new Scanner(file)) {
@@ -50,8 +56,6 @@ public class ResponseUploadParameters {
 
 			scanner.close();
 
-		} catch (IOException e) {
-			System.err.println("Problems during stop word list generation.");
 		}
 
 		return stopList;
