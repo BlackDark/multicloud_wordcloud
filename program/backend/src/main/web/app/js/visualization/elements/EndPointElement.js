@@ -8,14 +8,33 @@ export default class EndPointElement extends BaseElement {
 	}
 
 	draw(container) {
+		let that = this;
+		let HTMLabsoluteTip = d3.select(".endpoint-tooltip");
+
 		super.draw(container);
 
-		container.append("circle")
+		let circle = container.append("circle")
 			.classed("endpoint", true)
 			.style("fill", GeneratorUtil.getColorForId(this.id))
 			.attr("r", 10);
 
-		container.append("text").text(this.id);
+		circle.on("mouseover", function () {
+			HTMLabsoluteTip.style("opacity", "1");
+
+			HTMLabsoluteTip.text(that.name);
+
+			var matrix = this.getScreenCTM()
+					.translate(+this.getAttribute("cx"),
+							+this.getAttribute("cy"));
+			HTMLabsoluteTip
+					.style("left",
+							(window.pageXOffset + matrix.e) + "px")
+					.style("top",
+							(window.pageYOffset + matrix.f + 30) + "px");
+
+		}).on("mouseout", function () {
+			return HTMLabsoluteTip.style("opacity", "0");
+		});
 	}
 
 	registerHoverListener(nodeArray) {
