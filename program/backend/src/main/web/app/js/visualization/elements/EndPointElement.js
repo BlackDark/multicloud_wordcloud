@@ -1,13 +1,15 @@
 import BaseElement from "js/visualization/elements/BaseElement";
 import GeneratorUtil from "../util/GeneratorUtil";
 
+const MAX_RADIUS = 30;
+const MIN_RADIUS = 5;
 export default class EndPointElement extends BaseElement {
 	constructor(id) {
 		super(id);
 		this.selected = false;
 	}
 
-	draw(container) {
+	draw(container, totalWordCount) {
 		let that = this;
 		let HTMLabsoluteTip = d3.select(".endpoint-tooltip");
 
@@ -16,7 +18,10 @@ export default class EndPointElement extends BaseElement {
 		let circle = container.append("circle")
 			.classed("endpoint", true)
 			.style("fill", GeneratorUtil.getColorForId(this.id))
-			.attr("r", 10);
+			.attr("r", function() {
+				let calculatedRadius = MAX_RADIUS * that.numWords / totalWordCount;
+				return calculatedRadius < 5 ? MIN_RADIUS : calculatedRadius;
+			});
 
 		circle.on("mouseover", function () {
 			HTMLabsoluteTip.style("opacity", "1");

@@ -98,7 +98,7 @@ export default class Graph {
 
 		this._endPointElements.enter().append("g").classed("endpoint", true)
 			.each(function (node) {
-				node.draw(d3.select(this));
+				node.draw(d3.select(this), that._information.totalAllWords);
 				node._container.attr("transform", "translate(" + [node.x, node.y] + ")");
 				node.registerHoverListener.call(node, that._textNodes);
 				node.registerOnClick.call(node, that.updateSelectedDocuments, that);
