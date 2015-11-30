@@ -123,6 +123,7 @@ export default class WordElement extends BaseElement{
 				.color(function(d) {
 					return GeneratorUtil.getColorForId(d.index);
 				})
+				.valueFormat(d3.format(','))
 				.showLabels(true)
 				.labelThreshold(.5)  //Configure the minimum slice size for labels to show up
 			;
@@ -140,7 +141,7 @@ export default class WordElement extends BaseElement{
 			chartData.push({
 				"index": el.endpoint.id,
 				"title": filename,
-				"value": el.distribution
+				"value": el.frequency
 			});
 		});
 
