@@ -17,16 +17,17 @@
 }
 
 .endpoint circle {
-  stroke: #fff;
   stroke-width: 1.5px;
 }
 
-.endpoint text {
-  pointer-events: none;
+.endpoint.selected circle  {
+  stroke: black;
+  stroke-dasharray: 5, 5;
 }
 
-.endpoint.selected circle  {
-  fill: yellow !important;
+.endpoint circle:hover  {
+  stroke: black;
+  stroke-dasharray: none;
 }
 
 .node.overlap rect {
@@ -138,8 +139,13 @@
   opacity:0;
   transition: opacity 0.3s;
   background: white;
-  border:solid black;
+  border:solid black 2px;
+  padding: 2px 2px 2px 2px;
   position: absolute;
   max-width: 8em;
   text-align:center;
+}
+
+.interaction-selection {
+  float: right;
 }
