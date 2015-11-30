@@ -64,10 +64,10 @@ public class StanfordTagger {
 			// a CoreLabel is a CoreMap with additional token-specific methods
 			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
 				// this is the text of the token
-				String word = token.get(CoreAnnotations.TextAnnotation.class);
+				String word = token.get(CoreAnnotations.TextAnnotation.class).toLowerCase();
 				// this is the POS tag of the token
 				String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-				String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
+				//String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
 
 				if (allNodes.containsKey(word)) {
 					NodeElement nodeElement = allNodes.get(word);
