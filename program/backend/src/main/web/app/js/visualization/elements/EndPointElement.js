@@ -47,7 +47,7 @@ export default class EndPointElement extends BaseElement {
 		let other = [];
 
 		nodeArray.forEach(node => {
-			if (node.mostConnectedDocument === this.id) {
+			if (node.mostConnectedDocument === this.id && node.endPointConnections.length === 1) {
 				highlight.push(node);
 			} else {
 				other.push(node);
