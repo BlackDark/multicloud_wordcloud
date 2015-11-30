@@ -15,11 +15,17 @@ public class ResponseEndNode {
 	private final String documentName;
 	private final Integer index;
 	private final List<ResponseTextNode> textNodes;
+	private final Integer numWords;
 
-	public ResponseEndNode(String documentName, Integer index, List<ResponseTextNode> textNodes) {
+	public ResponseEndNode(String documentName, Integer index, List<ResponseTextNode> textNodes, Integer numWords) {
 		this.documentName = documentName;
 		this.index = index;
 		this.textNodes = textNodes;
+		this.numWords = numWords;
+	}
+
+	public Integer getNumWords() {
+		return numWords;
 	}
 
 	public String getDocumentName() {

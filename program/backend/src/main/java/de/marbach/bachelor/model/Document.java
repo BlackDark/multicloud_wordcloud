@@ -32,6 +32,10 @@ public class Document {
 		this.wordCount = wordCount;
 	}
 
+	public int getWordCount() {
+		return wordCount;
+	}
+
 	public List<NodeElement> getNodes() {
 		return new ArrayList<>(nodeToFreq.keySet());
 	}

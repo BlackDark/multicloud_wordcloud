@@ -9,14 +9,19 @@ package de.marbach.bachelor.response;
  *
  */
 public class ResponseInformation {
-	private final String test;
 	private final Integer requestedNumWords;
 	private final Integer totalNumWords;
+	private final Integer totalAllWords;
 
-	public ResponseInformation(String test, Integer requestedNumWords, Integer totalNumWords) {
-		this.test = test;
+	public ResponseInformation(Integer requestedNumWords, Integer totalNumWords, Integer totalAllWords) {
 		this.requestedNumWords = requestedNumWords;
 		this.totalNumWords = totalNumWords;
+		this.totalAllWords = totalAllWords;
+
+	}
+
+	public Integer getTotalAllWords() {
+		return totalAllWords;
 	}
 
 	public Integer getTotalNumWords() {
@@ -25,9 +30,5 @@ public class ResponseInformation {
 
 	public Integer getRequestedNumWords() {
 		return requestedNumWords;
-	}
-
-	public String getTest() {
-		return test;
 	}
 }

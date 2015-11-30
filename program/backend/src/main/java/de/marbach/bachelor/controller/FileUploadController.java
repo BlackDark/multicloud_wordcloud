@@ -121,14 +121,14 @@ public class FileUploadController {
 		MergeDocument mergedDocument = idToModule.get(uploadId).getMergedDocument();
 
 		List<ResponseEndNode> endNodes = new ArrayList<>();
-		endNodes.addAll(documents.stream().map(document -> new ResponseEndNode(document.getTitle(), document.getId(), createNodeList(document.getTopFrequentUniqueNodes(numDocumentWords)))).collect(Collectors.toList()));
+		endNodes.addAll(documents.stream().map(document -> new ResponseEndNode(document.getTitle(), document.getId(), createNodeList(document.getTopFrequentUniqueNodes(numDocumentWords)), document.getWordCount())).collect(Collectors.toList()));
 
 
 		List<ResponseTextNode> textNodes = new ArrayList<>();
 		List<NodeElement> topFrequentMerged = mergedDocument.getTopFrequentMerged(numWords);
 		textNodes.addAll(createNodeList(topFrequentMerged));
 
-		return new ResponseWordStorage(new ResponseInformation("Test", topFrequentMerged.size(), mergedDocument.getTotalNumWords()), endNodes, textNodes);
+		return new ResponseWordStorage(new ResponseInformation(topFrequentMerged.size(), mergedDocument.getTotalNumWords(), documents.stream().mapToInt(Document::getWordCount).sum()), endNodes, textNodes);
 	}
 
 	protected List<ResponseTextNode> createNodeList(Collection<NodeElement> elements) {
