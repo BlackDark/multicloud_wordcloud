@@ -63,7 +63,7 @@ export default class VisualzationInitializer {
 		let data = ResponseParser.parse(responseData, width, height);
 
 		console.log(data);
-		graph.data(data.endPoints, data.textObjects, data.links);
+		graph.data(data);
 
 		this._currentGraph = graph;
 		graph.start();

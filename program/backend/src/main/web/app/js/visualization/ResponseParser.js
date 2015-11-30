@@ -19,6 +19,7 @@ function parseEndPoints(rawData, width, height) {
 		currentEndpoint.x = center.x + element.index;
 		currentEndpoint.y = center.y + element.index;
 		currentEndpoint.fixed = true;
+		currentEndpoint.numWords = element.numWords;
 
 		nodes.push(currentEndpoint);
 	});
@@ -136,6 +137,7 @@ export default class ResponseParser {
 		replaceIdsWithReferences(endPoints.concat(textObjects), links);
 
 		return {
+			information: resposenData.information,
 			endPoints: endPoints,
 			textObjects: textObjects,
 			links: links

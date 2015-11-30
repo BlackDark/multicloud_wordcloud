@@ -53,13 +53,14 @@ export default class Graph {
 		this._force.start();
 	}
 
-	data(endPointsNodes, textNodes, links) {
-		this._endPointsNodes = endPointsNodes;
-		this._textNodes = textNodes;
-		this._allTextNodes = textNodes;
-		this._links = links;
-		this._force.nodes(endPointsNodes.concat(textNodes));
-		this._force.links(links);
+	data(data) {
+		this._information = data.information;
+		this._endPointsNodes = data.endPoints;
+		this._textNodes = data.textObjects;
+		this._allTextNodes = data.textObjects;
+		this._links = data.links;
+		this._force.nodes(data.endPoints.concat(data.textObjects));
+		this._force.links(data.links);
 	}
 
 	resize(width, height) {
