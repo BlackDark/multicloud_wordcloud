@@ -103,6 +103,14 @@ export default class WordElement extends BaseElement{
 	hover(hovered) {
 		this._container.classed("hovered", hovered);
 		this._textSelectedDom.classed("hovered", hovered);
+
+		if (hovered) {
+			this._textSelectedDom.style("font-size", function(d) {
+				return d.size * 1.1 / emDivisor + "em"; })
+		} else {
+			this._textSelectedDom.style("font-size", function(d) {
+				return d.size / emDivisor + "em"; })
+		}
 	}
 
 	_getChart() {
