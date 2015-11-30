@@ -297,6 +297,14 @@ export default class Graph {
 		}
 		this.updateSelectedDocuments();
 	}
+
+	deselectAllEndNodes() {
+		for (var i = 0; i < this._endPointsNodes.length; i++) {
+			var obj = this._endPointsNodes[i];
+			obj.deselect.call(obj);
+		}
+		this.updateSelectedDocuments();
+	}
 }
 
 function boundsSortedNodes(nodesToSort) {

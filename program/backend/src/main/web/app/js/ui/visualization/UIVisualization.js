@@ -18,11 +18,23 @@ export default class UIVisualization {
 	_drawLayout() {
 		let that = this;
 
+		this._addInteractionControls();
+
+		this.font = new UIFontManipulation(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);
+		this.shape = new UIShape(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);
+		this.upload = new UIUpload(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Document Configuration")), this._graphObject);
+		this.debug = new  UIDebug(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Debug information")), this._graphObject);
+		this.filter = new UIFilter(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Filter")), this._graphObject);
+	}
+
+	_addInteractionControls() {
+		let that = this;
+
 		let searchCheckbox = UIHelper.getCheckbox("Activate search mode", "search_mode", undefined, false);
 		var queriedCheckbox = $(searchCheckbox);
 
 		queriedCheckbox.find("input").on("change", function() {
-				that._graphObject.currentGraph.toggleSearchMode(this.checked);
+			that._graphObject.currentGraph.toggleSearchMode(this.checked);
 		});
 
 		this._alwaysVisible.append(searchCheckbox);
@@ -31,17 +43,22 @@ export default class UIVisualization {
 		let queriedButton = $(selectionButton);
 		queriedButton.addClass("basic");
 
-		this._alwaysVisible.append(selectionButton);
+		let deselectButton = UIHelper.getButton("Deselct all nodes");
+		$(deselectButton).addClass("basic");
+		$(deselectButton).click(function() {
+			that._graphObject.currentGraph.deselectAllEndNodes.call(that._graphObject.currentGraph);
+		});
+
+		let container = $(document.createElement("div"));
+		container.addClass("ui").addClass("container").addClass("interaction-selection");
+		container.append(selectionButton);
+		container.append(deselectButton);
+
+		this._alwaysVisible.append(container);
 
 		queriedButton.click(function() {
 			that._graphObject.currentGraph.selectAllEndNodes.call(that._graphObject.currentGraph);
 		});
-
-		this.font = new UIFontManipulation(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);
-		this.shape = new UIShape(UIHelper.appendGridColumnWithClass(this._graphManipulationItems, undefined), this._graphObject);
-		this.upload = new UIUpload(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Document Configuration")), this._graphObject);
-		this.debug = new  UIDebug(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Debug information")), this._graphObject);
-		this.filter = new UIFilter(this, $(UIHelper.getNewAccordionContentDiv(this._topAccordion[0], "Filter")), this._graphObject);
 	}
 
 	_activation() {
