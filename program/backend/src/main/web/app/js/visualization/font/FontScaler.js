@@ -75,12 +75,18 @@ export default class FontScaler {
 
 function linearScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 	return function(frequency) {
+		if (maxFreq === minFreq) {
+			return (maxFont + minFont) / 2;
+		}
 		return ((maxFont - minFont) / (maxFreq - minFreq)) * (frequency - minFreq) + minFont;
 	}
 }
 
 function quadraticScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 	return function(frequency) {
+		if (maxFreq === minFreq) {
+			return (maxFont + minFont) / 2;
+		}
 		return ((maxFont - minFont) / Math.pow((maxFreq - minFreq), 2)) * Math.pow((frequency - minFreq), 2) + minFont;
 	}
 }
@@ -88,6 +94,9 @@ function quadraticScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 // a * sqrt(b(x+c)) + d, with b = 1
 function sqrtScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 	return function(frequency) {
+		if (maxFreq === minFreq) {
+			return (maxFont + minFont) / 2;
+		}
 		return ((maxFont - minFont) / Math.sqrt(maxFreq - minFreq)) * Math.sqrt(frequency - minFreq) + minFont;
 	}
 }
@@ -95,6 +104,9 @@ function sqrtScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 // a * log(b(x+c)) + d, with b = 1
 function logScaleFunction(minFreq, maxFreq, minFont, maxFont) {
 	return function(frequency) {
+		if (maxFreq === minFreq) {
+			return (maxFont + minFont) / 2;
+		}
 		// log(0) NaN avoid
 		return ((maxFont - minFont) / Math.log(maxFreq - minFreq)) * Math.log((frequency + 1) - minFreq) + minFont;
 	}
