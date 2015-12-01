@@ -328,6 +328,10 @@ function tickForD3Force(link, node) {
 		}
 
 		node.attr("transform", function (d) {
+			if (d.endPointConnections.length === 1) {
+				let endPoint = d.endPointConnections[0].endpoint;
+				return "translate(" + [endPoint.x, endPoint.y] + ")";
+			}
 			return "translate(" + [d.x, d.y] + ")";
 		});
 	}.bind(this);
