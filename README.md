@@ -1,8 +1,10 @@
-Instructions to use:
+# MultiCloud WordCloud
+This is a multi-document visualization to create word clouds.
+This project was implemented in my bachelor thesis.
+
+### Instructions to use:
 
 The best way is to clone the repository at github.
-https://github.com/BlackDark/bachelor_wordcloud.git
-
 
 After that you can simply import it to your desired IDE and use it together with Apache Maven.
 
