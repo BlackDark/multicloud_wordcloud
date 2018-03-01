@@ -2,6 +2,10 @@
 This is a multi-document visualization to create word clouds.
 This project was implemented in my bachelor thesis.
 
+![Upload view of app](https://github.com/BlackDark/bachelor_wordcloud/blob/master/text/graphics/uploadBereich.png?raw=true)
+
+![Image of sample generated wordcloud](https://github.com/BlackDark/bachelor_wordcloud/blob/master/text/graphics/multicloud_harry_default.png?raw=true)
+
 ### Instructions to use:
 
 The best way is to clone the repository at github.
