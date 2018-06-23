@@ -11,3 +11,10 @@ After that you can simply import it to your desired IDE and use it together with
 To generate the WAR file just run mvn package and wait until the process finished.
 
 The generate war is located under the /target location.
+
+
+### Directly from IDEA:
+- Run `mvn package` in order to load all packages/build UI
+- Start the `Application` class from IDEA
+  - Spring should boot up correctly
+- Visit `localhost:8080`
