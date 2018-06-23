@@ -1,3 +1,8 @@
+# Web Part (not really necessary for directly using whole project)
+Most part can be done via maven in root folder and together with the server part.
+For continous developing in can be useful for using watch server of brunch to apply direct changes to UI.
+
+
 # Javascript App Skeleton for use with [Brunch](http://brunch.io/)
 
 Main languages are JavaScript,
